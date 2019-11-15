@@ -1,0 +1,67 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group = 'eu.xenit.alfresco.client'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }
+}
+
+ext {
+    lombokVersion = '1.18.10'
+    junitVersion = '5.3.1'
+    assertjVersion = '3.11.1'
+}
+
+dependencies {
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    api project(':alfresco-solrapi-client:alfresco-solrapi-client-spi')
+    api 'eu.xenit.testing.ditto:ditto-core:0.0.1-SNAPSHOT'
+
+//    implementation 'org.springframework.boot:spring-boot'
+//    implementation 'org.springframework:spring-web'
+//    implementation 'com.fasterxml.jackson.core:jackson-databind'
+//    implementation 'org.slf4j:slf4j-api'
+
+    testImplementation "org.assertj:assertj-core:${assertjVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    from sourceSets.main.allSource
+    archiveClassifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    archiveClassifier = 'javadoc'
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}

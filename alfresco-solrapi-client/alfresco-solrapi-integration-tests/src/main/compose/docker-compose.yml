@@ -1,0 +1,34 @@
+version: '2.2'
+
+services:
+  alfresco:
+    image: docker.io/xenit/alfresco-repository-community:5.2.g
+    volumes:
+    - alfresco:/opt/alfresco/alf_data
+    ports:
+    - 8080:8080
+    - 8443:8443
+    environment:
+    - INDEX=noindex
+
+  postgresql:
+    image: docker.io/xenit/postgres
+    volumes:
+    - postgres:/var/lib/postgresql/data
+    environment:
+    - POSTGRES_USER=alfresco
+    - POSTGRES_PASSWORD=admin
+    - POSTGRES_DB=alfresco
+
+  solr:
+    image: docker.io/xenit/alfresco-solr4:5.2.g
+    command: "cp /opt/alfresco/keystore/* /opt/alfresco/keystore-copy/"
+    healthcheck:
+      disable: true
+    volumes:
+    - ../../../build/keystore/:/opt/alfresco/keystore-copy/
+
+volumes:
+  alfresco:
+  postgres:
+  solr:

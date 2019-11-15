@@ -1,0 +1,7 @@
+plugins {
+    id 'com.avast.gradle.docker-compose' version '0.9.5'
+}
+
+dockerCompose {
+    dockerComposeWorkingDirectory = 'src/main/compose'
+}
