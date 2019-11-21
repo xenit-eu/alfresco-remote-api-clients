@@ -20,14 +20,6 @@ services:
     - POSTGRES_PASSWORD=admin
     - POSTGRES_DB=alfresco
 
-  solr:
-    image: docker.io/xenit/alfresco-solr4:5.2.g
-    command: "cp /opt/alfresco/keystore/* /opt/alfresco/keystore-copy/"
-    healthcheck:
-      disable: true
-    volumes:
-    - ../../../build/keystore/:/opt/alfresco/keystore-copy/
-
 volumes:
   alfresco:
   postgres:

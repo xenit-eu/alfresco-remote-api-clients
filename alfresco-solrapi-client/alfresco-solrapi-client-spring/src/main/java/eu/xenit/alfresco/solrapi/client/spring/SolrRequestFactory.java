@@ -3,6 +3,7 @@ package eu.xenit.alfresco.solrapi.client.spring;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -20,23 +21,21 @@ import org.springframework.util.StringUtils;
 
 public class SolrRequestFactory extends HttpComponentsClientHttpRequestFactory implements ClientHttpRequestFactory {
 
-    public SolrRequestFactory(SolrSSLProperties properties)
-            throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+    public SolrRequestFactory(SolrSslProperties properties) throws GeneralSecurityException, IOException {
         this(properties.getKeystoreType(), properties.getKeystorePath(), properties.getKeystorePassword(),
                 properties.getTruststorePath(), properties.getTruststorePassword());
     }
 
     public SolrRequestFactory(String keyStoreType, String keyStorePath, String keystorePassword, String truststorePath,
             String truststorePassword)
-            throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+            throws GeneralSecurityException, IOException {
 
         if (StringUtils.hasText(keyStoreType)
                 && StringUtils.hasText(keyStorePath)
                 && StringUtils.hasText(truststorePath))
         {
             setHttpClient(HttpClients.custom()
-                    .setSSLContext(
-                            sslContext(keyStoreType, keyStorePath, keystorePassword, truststorePath, truststorePassword))
+                    .setSSLContext(sslContext(keyStoreType, keyStorePath, keystorePassword, truststorePath, truststorePassword))
                     .setSSLHostnameVerifier(new NoopHostnameVerifier())
                     .build());
         }

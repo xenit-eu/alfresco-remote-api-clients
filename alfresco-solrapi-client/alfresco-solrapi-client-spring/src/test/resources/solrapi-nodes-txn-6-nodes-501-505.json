@@ -1,0 +1,55 @@
+{
+   "nodes" :
+   [
+      {
+         "id": 501,
+         "nodeRef": "workspace://SpacesStore/0eedf5dc-ee27-44c8-907c-2a4784ae0587",
+         "txnId": 6,
+         "status": "u",
+         "aclId": 13,
+         
+         "tenant": ""
+      }
+         ,
+      {
+         "id": 502,
+         "nodeRef": "workspace://SpacesStore/67f49146-0a79-46cc-bcb9-d716dbf29a8b",
+         "txnId": 6,
+         "status": "u",
+         "aclId": 13,
+         
+         "tenant": ""
+      }
+         ,
+      {
+         "id": 503,
+         "nodeRef": "workspace://SpacesStore/587c732e-0825-45df-ad41-ded1312d3f43",
+         "txnId": 6,
+         "status": "u",
+         "aclId": 13,
+         
+         "tenant": ""
+      }
+         ,
+      {
+         "id": 504,
+         "nodeRef": "workspace://SpacesStore/fc522f04-2270-4717-8453-9252cd8fce9c",
+         "txnId": 6,
+         "status": "u",
+         "aclId": 13,
+         
+         "tenant": ""
+      }
+         ,
+      {
+         "id": 505,
+         "nodeRef": "workspace://SpacesStore/6ed0f4cf-c7fb-481d-b8aa-d01676cb8c50",
+         "txnId": 6,
+         "status": "u",
+         "aclId": 13,
+         
+         "tenant": ""
+      }
+         
+   ]
+}

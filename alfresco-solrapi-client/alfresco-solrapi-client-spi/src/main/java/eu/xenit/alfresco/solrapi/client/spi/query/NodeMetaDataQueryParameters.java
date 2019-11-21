@@ -23,8 +23,10 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package eu.xenit.alfresco.solrapi.client.spi;
+package eu.xenit.alfresco.solrapi.client.spi.query;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -35,6 +37,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(fluent = true)
+@JsonInclude(Include.NON_NULL)
 public class NodeMetaDataQueryParameters
 {
     private List<Long> transactionIds;

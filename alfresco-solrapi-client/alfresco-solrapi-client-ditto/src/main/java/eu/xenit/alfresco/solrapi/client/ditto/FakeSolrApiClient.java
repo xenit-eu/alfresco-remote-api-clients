@@ -1,18 +1,18 @@
 package eu.xenit.alfresco.solrapi.client.ditto;
 
-import eu.xenit.alfresco.solrapi.client.spi.Acl;
-import eu.xenit.alfresco.solrapi.client.spi.AclChangeSet;
-import eu.xenit.alfresco.solrapi.client.spi.AclChangeSets;
-import eu.xenit.alfresco.solrapi.client.spi.AclReaders;
-import eu.xenit.alfresco.solrapi.client.spi.AlfrescoModel;
-import eu.xenit.alfresco.solrapi.client.spi.AlfrescoModelDiff;
-import eu.xenit.alfresco.solrapi.client.spi.SolrNode;
-import eu.xenit.alfresco.solrapi.client.spi.SolrNodeMetaData;
-import eu.xenit.alfresco.solrapi.client.spi.NodeMetaDataQueryParameters;
-import eu.xenit.alfresco.solrapi.client.spi.NodesQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSets;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.spi.SolrTransaction;
-import eu.xenit.alfresco.solrapi.client.spi.SolrTransactions;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransaction;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
 import eu.xenit.testing.ditto.alfresco.AlfrescoDataSet;
 import eu.xenit.testing.ditto.alfresco.TransactionContainer;
 import eu.xenit.testing.ditto.alfresco.TransactionFilter;
@@ -78,32 +78,32 @@ public class FakeSolrApiClient implements SolrApiClient {
 
     @Override
     public List<SolrNode> getNodes(NodesQueryParameters parameters) {
-        if (parameters.fromNodeId() != null) {
+        if (parameters.getFromNodeId() != null) {
             throw new UnsupportedOperationException("fromNodeId is not yet supported");
         }
 
-        if (parameters.toNodeId() != null) {
+        if (parameters.getToNodeId() != null) {
             throw new UnsupportedOperationException("toNodeId is not yet supported");
         }
 
 
 
-        if (parameters.transactionIds() != null) {
-            return parameters.transactionIds().stream()
+        if (parameters.getTxnIds() != null) {
+            return parameters.getTxnIds().stream()
                     .map(txnId -> this.dataSet.getTransactions().getTransactionById(txnId))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .flatMap(txn -> Stream.concat(
                             txn.getUpdated()
                                     .stream()
-                                    .map(n -> new SolrNode(n.getNodeId(), n.getNodeRef().toString(), txn.getId(), "u", -1, "")),
+                                    .map(n -> new SolrNode(n.getNodeId(), n.getNodeRef().toString(), txn.getId(), "u", "", -1, "")),
                             txn.getDeleted()
                                     .stream()
-                                    .map(n -> new SolrNode(n.getNodeId(), n.getNodeRef().toString(), txn.getId(), "d", -1, ""))
+                                    .map(n -> new SolrNode(n.getNodeId(), n.getNodeRef().toString(), txn.getId(), "d", "", -1, ""))
                     ))
                     .collect(Collectors.toList());
         } else {
-            throw new UnsupportedOperationException("missing transactionIds");
+            throw new UnsupportedOperationException("missing txnIds");
         }
 
 

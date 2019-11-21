@@ -1,4 +1,4 @@
-package eu.xenit.alfresco.solrapi.client.spi;
+package eu.xenit.alfresco.solrapi.client.spi.dto;
 
 import java.util.ArrayList;
 import java.util.HashMap;

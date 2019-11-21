@@ -1,10 +1,11 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
 }
 
-group = 'eu.xenit.alfresco.client'
-version = '0.0.1-SNAPSHOT'
+group = rootProject.group
+version = rootProject.version
+
 sourceCompatibility = '1.8'
 
 repositories {
@@ -12,15 +13,11 @@ repositories {
     maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }
 }
 
-ext {
-    lombokVersion = '1.18.10'
-    junitVersion = '5.3.2'
-    assertjVersion = '3.11.1'
-}
-
 dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    api "com.fasterxml.jackson.core:jackson-annotations:2.10.0"
 
     testImplementation "org.assertj:assertj-core:${assertjVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
@@ -31,28 +28,4 @@ test {
     useJUnitPlatform()
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.allSource
-    archiveClassifier = 'sources'
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    archiveClassifier = 'javadoc'
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-
-            artifact sourcesJar
-            artifact javadocJar
-        }
-    }
-}
+apply from: "${rootProject.projectDir}/maven-publish.gradle"

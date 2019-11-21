@@ -25,6 +25,17 @@
  */
 package eu.xenit.alfresco.solrapi.client.spi;
 
+import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSets;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import java.util.List;
 
 
