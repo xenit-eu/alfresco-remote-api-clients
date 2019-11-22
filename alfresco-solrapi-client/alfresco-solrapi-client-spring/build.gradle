@@ -26,8 +26,8 @@ sourceSets {
 }
 
 configurations {
-    integrationTestImplementation.extendsFrom testImplementation
-    integrationTestRuntime.extendsFrom testRuntime
+    integrationTestImplementation.extendsFrom implementation
+    integrationTestRuntimeOnly.extendsFrom runtimeOnly
 }
 
 dependencies {
@@ -47,6 +47,9 @@ dependencies {
     }
 
     integrationTestRuntimeOnly 'org.slf4j:slf4j-simple'
+    integrationTestImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }
 
 dependencyManagement {
@@ -58,5 +61,20 @@ dependencyManagement {
 test {
     useJUnitPlatform()
 }
+
+task integrationTest(type: Test, group: "verification") {
+    shouldRunAfter(test)
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    useJUnitPlatform()
+    outputs.upToDateWhen { false }
+}
+
+evaluationDependsOn(':alfresco-solrapi-client:alfresco-solrapi-integration-tests')
+rootProject.project(':alfresco-solrapi-client:alfresco-solrapi-integration-tests').dockerCompose.isRequiredBy(integrationTest)
+
+project.tasks.check.dependsOn(integrationTest)
 
 apply from: "${rootProject.projectDir}/maven-publish.gradle"

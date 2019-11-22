@@ -6,8 +6,8 @@ services:
     volumes:
     - alfresco:/opt/alfresco/alf_data
     ports:
-    - 8080:8080
-    - 8443:8443
+    - ${SERVICE_ALFRESCO_PORT_8080:-8080:8080}
+    - ${SERVICE_ALFRESCO_PORT_8443:-8443:8443}
     environment:
     - INDEX=noindex
 

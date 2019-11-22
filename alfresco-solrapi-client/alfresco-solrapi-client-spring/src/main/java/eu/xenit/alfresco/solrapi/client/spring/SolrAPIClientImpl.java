@@ -1,8 +1,6 @@
 package eu.xenit.alfresco.solrapi.client.spring;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSets;
@@ -12,26 +10,17 @@ import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetadataList;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
@@ -40,8 +29,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public class SolrAPIClientImpl implements SolrApiClient {
 
-    private final String url;
     private final RestTemplate restTemplate;
+    private final String url;
 
     public SolrAPIClientImpl(SolrApiProperties solrApiProperties, SolrSslProperties solrSslProperties)
             throws GeneralSecurityException, IOException {
@@ -56,14 +45,10 @@ public class SolrAPIClientImpl implements SolrApiClient {
     }
 
     public SolrAPIClientImpl(SolrApiProperties solrProperties, RestTemplate restTemplate) {
-        this.url = solrProperties.getUrl();
+        this.url = UriComponentsBuilder.fromHttpUrl(solrProperties.getUrl())
+                .path("/service/api/solr")
+                .toUriString();
         this.restTemplate = restTemplate;
-    }
-
-    private static HttpEntity<String> generateJsonHttpEntity(String query) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Content-Type", "application/json");
-        return new HttpEntity<>(query, httpHeaders);
     }
 
     @Override
@@ -85,9 +70,8 @@ public class SolrAPIClientImpl implements SolrApiClient {
     @Override
     public SolrTransactions getTransactions(Long fromCommitTime, Long minTxnId, Long toCommitTime, Long maxTxnId,
             int maxResults) {
-        log.debug("Get SolrTransactions [{},{}[", minTxnId, maxTxnId);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url + "transactions");
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url).path("/transactions");
         conditionalQueryParam(uriBuilder, "fromCommitTime", fromCommitTime, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "minTxnId", minTxnId, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "toCommitTime", toCommitTime, Objects::nonNull);
@@ -102,7 +86,9 @@ public class SolrAPIClientImpl implements SolrApiClient {
     public List<SolrNode> getNodes(NodesQueryParameters parameters) {
         log.debug("getNodes with " + parameters);
 
-        SolrNodeList solrNodeList = restTemplate.postForObject(url + "nodes", parameters, SolrNodeList.class);
+        SolrNodeList solrNodeList = restTemplate.postForObject(
+                UriComponentsBuilder.fromHttpUrl(url).path("/nodes").toUriString(),
+                parameters, SolrNodeList.class);
         Assert.notNull(solrNodeList, "Response for getNodes(" + parameters + ") should not be null");
         return solrNodeList.getNodes();
     }
@@ -111,7 +97,8 @@ public class SolrAPIClientImpl implements SolrApiClient {
     public List<SolrNodeMetaData> getNodesMetaData(NodeMetaDataQueryParameters params) {
         log.debug("getNodesMetaData({})", params);
         SolrNodeMetadataList result = restTemplate.postForObject(
-                url + "metadata", params, SolrNodeMetadataList.class);
+                UriComponentsBuilder.fromHttpUrl(url).path("/metadata").toUriString(),
+                params, SolrNodeMetadataList.class);
         Assert.notNull(result, "Response for getNodes(" + params + ") should not be null");
         return result.getNodes();
     }
@@ -131,13 +118,12 @@ public class SolrAPIClientImpl implements SolrApiClient {
 
     }
 
-    private UriComponentsBuilder conditionalQueryParam(UriComponentsBuilder builder, String key, Object value,
+    private void conditionalQueryParam(UriComponentsBuilder builder, String key, Object value,
             Predicate<Object> condition) {
         Objects.requireNonNull(builder, "builder is required");
         Objects.requireNonNull(key, "key is required");
-        if (value != null) {
+        if (condition.test(value)) {
             builder.queryParam(key, value);
         }
-        return builder;
     }
 }
