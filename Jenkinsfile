@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage("Tests") {
+        stage("Integration Tests") {
             steps {
                 sh "./gradlew integrationTest -Pservice.alfresco.port.8080=8080 -Pservice.alfresco.port.8443=8443"
             }
