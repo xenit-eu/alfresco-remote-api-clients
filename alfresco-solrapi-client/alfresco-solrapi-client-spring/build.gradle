@@ -46,7 +46,7 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
-    integrationTestRuntimeOnly 'org.slf4j:slf4j-simple'
+//    integrationTestRuntimeOnly 'org.slf4j:slf4j-simple'
     integrationTestImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }

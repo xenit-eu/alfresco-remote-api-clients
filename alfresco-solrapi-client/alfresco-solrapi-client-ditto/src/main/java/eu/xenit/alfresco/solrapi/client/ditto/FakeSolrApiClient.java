@@ -1,5 +1,6 @@
 package eu.xenit.alfresco.solrapi.client.ditto;
 
+import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSets;
@@ -8,14 +9,13 @@ import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransaction;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
-import eu.xenit.testing.ditto.alfresco.AlfrescoDataSet;
-import eu.xenit.testing.ditto.alfresco.TransactionContainer;
-import eu.xenit.testing.ditto.alfresco.TransactionFilter;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
+import eu.xenit.testing.ditto.api.AlfrescoDataSet;
+import eu.xenit.testing.ditto.api.Transaction;
+import eu.xenit.testing.ditto.api.TransactionView;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,13 +52,13 @@ public class FakeSolrApiClient implements SolrApiClient {
     @Override
     public SolrTransactions getTransactions(Long fromCommitTime, Long minTxnId, Long toCommitTime, Long maxTxnId,
             int maxResults) {
-        TransactionContainer txnLog = this.dataSet.getTransactions();
+        TransactionView txnView = this.dataSet.getTransactionView();
 
-        List<SolrTransaction> transactions = txnLog.stream()
-                .filter(TransactionFilter.fromCommitTime(fromCommitTime))
-                .filter(TransactionFilter.minTxnId(minTxnId))
-                .filter(TransactionFilter.toCommitTime(toCommitTime))
-                .filter(TransactionFilter.maxTxnId(maxTxnId))
+        List<SolrTransaction> transactions = txnView.stream()
+                .filter(Transaction.Filters.fromCommitTime(fromCommitTime))
+                .filter(Transaction.Filters.minTxnId(minTxnId))
+                .filter(Transaction.Filters.toCommitTime(toCommitTime))
+                .filter(Transaction.Filters.maxTxnId(maxTxnId))
                 .limit(maxResults)
 
                 .map(txn -> {
@@ -72,7 +72,7 @@ public class FakeSolrApiClient implements SolrApiClient {
 
                 .collect(Collectors.toList());
 
-        return new SolrTransactions(transactions, txnLog.getLastCommitTimeMs(), txnLog.getLastTxnId());
+        return new SolrTransactions(transactions, txnView.getLastCommitTimeMs(), txnView.getLastTxnId());
 
     }
 
@@ -86,11 +86,9 @@ public class FakeSolrApiClient implements SolrApiClient {
             throw new UnsupportedOperationException("toNodeId is not yet supported");
         }
 
-
-
         if (parameters.getTxnIds() != null) {
             return parameters.getTxnIds().stream()
-                    .map(txnId -> this.dataSet.getTransactions().getTransactionById(txnId))
+                    .map(txnId -> this.dataSet.getTransactionView().getTransactionById(txnId))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .flatMap(txn -> Stream.concat(

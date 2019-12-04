@@ -36,7 +36,7 @@ import lombok.experimental.Accessors;
  */
 
 @Data
-@Accessors(fluent = true)
+@Accessors(chain = true)
 @JsonInclude(Include.NON_NULL)
 public class NodeMetaDataQueryParameters
 {
@@ -44,8 +44,8 @@ public class NodeMetaDataQueryParameters
     private Long fromTxnId;
     private Long toTxnId;
 
-    // 0 means no limit
-    private int maxResults = 0;
+    // 0 means literally NO results
+    private int maxResults;
 
     private Long fromNodeId;
     private Long toNodeId;

@@ -19,7 +19,8 @@ public class SolrNodeMetaData
     private Map<String, Object> properties = new HashMap<>();
     private List<String> aspects = new ArrayList<>();
 
-    private List<String> paths = new ArrayList<>();
+    private List<NodePathInfo> paths = new ArrayList<>();
+    private List<NodeNamePaths> namePaths = new ArrayList<>();
     private List<String> ancestors = new ArrayList<>();
     private List<String> parentAssocs = new ArrayList<>();
     private long parentAssocsCrc = -1L;

@@ -5,6 +5,9 @@ plugins {
 dockerCompose {
     dockerComposeWorkingDirectory = 'src/main/compose'
 
+    // For running integration test during local development
+    // stopContainers = false
+
     environment.put 'SERVICE_ALFRESCO_PORT_8080', project.findProperty('service.alfresco.tcp.8080') ?: '8080:8080'
     environment.put 'SERVICE_ALFRESCO_PORT_8443', project.findProperty('service.alfresco.tcp.8443') ?: '8443:8443'
 }
