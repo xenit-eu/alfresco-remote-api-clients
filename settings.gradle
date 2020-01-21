@@ -4,3 +4,8 @@ include ':alfresco-solrapi-client:alfresco-solrapi-client-spi'
 include ':alfresco-solrapi-client:alfresco-solrapi-client-spring'
 include ':alfresco-solrapi-client:alfresco-solrapi-client-ditto'
 include ':alfresco-solrapi-client:alfresco-solrapi-integration-tests'
+
+include ':alfresco-api-client:alfresco-api-client-spi'
+//include ':alfresco-api-client:alfresco-api-client-spring'
+//include ':alfresco-api-client:alfresco-api-client-ditto'
+//include ':alfresco-api-client:alfresco-api-integration-tests'
