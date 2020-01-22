@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class FakeSolrApiClientTests {
 
-    private AlfrescoDataSet defaultDataSet = AlfrescoDataSet.builder().bootstrapAlfresco().build();
+    private AlfrescoDataSet defaultDataSet = AlfrescoDataSet.bootstrapAlfresco().build();
 
     @Test
     public void testGetMaxTransactionId() {
