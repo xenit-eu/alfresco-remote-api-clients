@@ -1,0 +1,81 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+}
+
+group = rootProject.group
+version = rootProject.version
+
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }
+}
+
+//sourceSets {
+//    integrationTest {
+//        java {
+//            compileClasspath += main.output + test.output
+//            runtimeClasspath += main.output + test.output
+//            srcDir file('src/integration-test/java')
+//        }
+//        resources.srcDir file('src/integration-test/resources')
+//    }
+//}
+//
+//configurations {
+//    integrationTestImplementation.extendsFrom implementation
+//    integrationTestRuntimeOnly.extendsFrom runtimeOnly
+//}
+
+dependencies {
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    api project(':alfresco-webscriptsapi-client:alfresco-webscriptsapi-client-spi')
+
+    implementation 'org.springframework.boot:spring-boot'
+    implementation 'org.springframework:spring-web'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'org.apache.httpcomponents:httpclient'
+    implementation 'org.slf4j:slf4j-api'
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+////    integrationTestRuntimeOnly 'org.slf4j:slf4j-simple'
+//    integrationTestImplementation('org.springframework.boot:spring-boot-starter-test') {
+//        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+//    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:2.2.1.RELEASE"
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+//task integrationTest(type: Test, group: "verification") {
+//    shouldRunAfter(test)
+//
+//    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+//    classpath = sourceSets.integrationTest.runtimeClasspath
+//
+//    useJUnitPlatform()
+//    outputs.upToDateWhen { false }
+//}
+//
+//evaluationDependsOn(':alfresco-solrapi-client:alfresco-solrapi-integration-tests')
+//rootProject.project(':alfresco-solrapi-client:alfresco-solrapi-integration-tests').dockerCompose.isRequiredBy(integrationTest)
+//
+//project.tasks.check.dependsOn(integrationTest)
+
+apply from: "${rootProject.projectDir}/maven-publish.gradle"

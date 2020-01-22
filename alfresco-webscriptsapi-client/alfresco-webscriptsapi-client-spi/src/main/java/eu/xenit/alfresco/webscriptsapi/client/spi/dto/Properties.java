@@ -1,15 +1,16 @@
-package eu.xenit.alfresco.api.client.spi;
+package eu.xenit.alfresco.webscriptsapi.client.spi.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import eu.xenit.alfresco.webscriptsapi.client.spi.dto.utils.ContentUrlUtil;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.text.MessageFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Properties {
     @JsonProperty(value = "{http://www.alfresco.org/model/content/1.0}content")
@@ -58,25 +59,26 @@ public class Properties {
     private String initialVersion = null;//: true,
 
     public String getSize() {
-        return getFromContentUrl(content, "size");
+        return ContentUrlUtil.getSize(content);
     }
 
-    private static String getFromContentUrl(String source, String element) {
-        return isNullOrEmpty(source) || isNullOrEmpty(element)
-                ? null
-                : extractGroupFrom(source, element);
+    public static String getContentUrl(String content) {
+        return ContentUrlUtil.getContentUrl(content);
     }
 
-    private static boolean isNullOrEmpty(String value) {
-        return value != null && value.trim().length() > 0;
+    public static String getMimetype(String content) {
+        return ContentUrlUtil.getMimetype(content);
     }
 
-    private static String extractGroupFrom(String source, String element) {
-        Matcher m = Pattern.compile(assembleContentUrlPattern(element)).matcher(source);
-        return m.matches() ? m.group(element) : null;
+    public static String getEncoding(String content) {
+        return ContentUrlUtil.getEncoding(content);
     }
 
-    private static String assembleContentUrlPattern(String element) {
-        return MessageFormat.format("(.*)({0}=(?<{0}>[^|]*))(.*)",element);
+    public static String getLocale(String content) {
+        return ContentUrlUtil.getLocale(content);
+    }
+
+    public static String getId(String content) {
+        return ContentUrlUtil.getId(content);
     }
 }

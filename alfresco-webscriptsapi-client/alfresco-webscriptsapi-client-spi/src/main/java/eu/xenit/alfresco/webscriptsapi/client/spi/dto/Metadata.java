@@ -1,11 +1,15 @@
-package eu.xenit.alfresco.api.client.spi;
+package eu.xenit.alfresco.webscriptsapi.client.spi.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Metadata {
     private String nodeRef;
