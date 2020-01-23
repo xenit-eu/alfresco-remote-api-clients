@@ -128,6 +128,7 @@ public class FakeSolrApiClient implements SolrApiClient {
 
                 .map(node -> new SolrNodeMetaData()
                         .setId(node.getNodeId())
+                        .setTxnId(node.getTxnId())
                         .setType(node.getType().toPrefixString())
                         .setNodeRef(node.getNodeRef().toString())
                         .setProperties(node.getProperties().stream()
