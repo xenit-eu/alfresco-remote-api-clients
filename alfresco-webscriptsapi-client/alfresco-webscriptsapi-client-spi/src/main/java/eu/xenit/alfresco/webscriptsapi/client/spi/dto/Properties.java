@@ -3,14 +3,15 @@ package eu.xenit.alfresco.webscriptsapi.client.spi.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.xenit.alfresco.webscriptsapi.client.spi.dto.utils.ContentUrlUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true, fluent = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Properties {
     @JsonProperty(value = "{http://www.alfresco.org/model/content/1.0}content")
@@ -57,28 +58,4 @@ public class Properties {
     private String autoVersionOnUpdateProps = null;//: false,
     @JsonProperty(value = "{http://www.alfresco.org/model/content/1.0}initialVersion")
     private String initialVersion = null;//: true,
-
-    public String getSize() {
-        return ContentUrlUtil.getSize(content);
-    }
-
-    public static String getContentUrl(String content) {
-        return ContentUrlUtil.getContentUrl(content);
-    }
-
-    public static String getMimetype(String content) {
-        return ContentUrlUtil.getMimetype(content);
-    }
-
-    public static String getEncoding(String content) {
-        return ContentUrlUtil.getEncoding(content);
-    }
-
-    public static String getLocale(String content) {
-        return ContentUrlUtil.getLocale(content);
-    }
-
-    public static String getId(String content) {
-        return ContentUrlUtil.getId(content);
-    }
 }
