@@ -9,6 +9,7 @@ version = rootProject.version
 sourceCompatibility = '1.8'
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }
 
@@ -24,6 +25,22 @@ repositories {
     }
 }
 
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+            srcDir file('src/integration-test/java')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom implementation
+    integrationTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
 dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -33,7 +50,14 @@ dependencies {
 
     testImplementation "org.assertj:assertj-core:${assertjVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+
+    integrationTestImplementation project(':alfresco-solrapi-client:alfresco-solrapi-integration-tests')
+
+    integrationTestRuntimeOnly "org.assertj:assertj-core:${assertjVersion}"
+    integrationTestRuntimeOnly "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    integrationTestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
 
 test {

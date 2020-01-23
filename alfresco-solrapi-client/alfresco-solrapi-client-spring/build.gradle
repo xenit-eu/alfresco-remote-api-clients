@@ -17,8 +17,8 @@ repositories {
 sourceSets {
     integrationTest {
         java {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
+            compileClasspath += main.output
+            runtimeClasspath += main.output
             srcDir file('src/integration-test/java')
         }
         resources.srcDir file('src/integration-test/resources')
@@ -50,6 +50,7 @@ dependencies {
     integrationTestImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+    integrationTestImplementation project(':alfresco-solrapi-client:alfresco-solrapi-integration-tests')
 }
 
 dependencyManagement {

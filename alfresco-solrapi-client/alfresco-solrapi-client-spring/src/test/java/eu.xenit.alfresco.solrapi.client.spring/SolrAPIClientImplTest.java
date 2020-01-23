@@ -11,11 +11,13 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransaction;
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
+import eu.xenit.alfresco.solrapi.client.tests.spi.SolrApiClient;
+import eu.xenit.alfresco.solrapi.client.tests.spi.dto.SolrNode;
+import eu.xenit.alfresco.solrapi.client.tests.spi.dto.SolrTransaction;
+import eu.xenit.alfresco.solrapi.client.tests.spi.dto.SolrTransactions;
+import eu.xenit.alfresco.solrapi.client.tests.spi.query.NodesQueryParameters;
+import eu.xenit.alfresco.solrapi.client.tests.spring.SolrAPIClientImpl;
+import eu.xenit.alfresco.solrapi.client.tests.spring.SolrApiProperties;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
