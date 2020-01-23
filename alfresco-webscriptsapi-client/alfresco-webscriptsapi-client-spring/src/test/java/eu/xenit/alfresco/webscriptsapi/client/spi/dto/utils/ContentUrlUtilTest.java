@@ -49,7 +49,7 @@ class ContentUrlUtilTest {
                 "\"{http://www.alfresco.org/model/content/1.0}creator\": \"John Doe\"," ,
                 "\"{http://www.alfresco.org/model/system/1.0}node-uuid\": \"b2073987-0ab5-4369-9012-1a62d8017915\"," ,
                 "\"{http://www.alfresco.org/model/content/1.0}name\": \"Ontwerp onderhandse verkoopovereenkomst.docx\"," ,
-                "\"{http://www.alfresco.org/model/content/1.0}content\": \"contentUrl=" + contentUrl + "|mimetype=" + mimetype + "|size=" , size , "|encoding=" + encoding + "|locale=" + locale + "|id=" + id + "\"," ,
+                "\"{http://www.alfresco.org/model/content/1.0}content\": \"contentUrl=" + contentUrl + "|mimetype=" + mimetype + "|size=" + size + "|encoding=" + encoding + "|locale=" + locale + "|id=" + id + "\"," ,
                 "\"{http://www.alfresco.org/model/system/1.0}store-identifier\": \"SpacesStore\"," ,
                 "\"{http://www.agvespa.be/model/vespa}failedTransferStatus\": \"Dimensies onvolledig/ontbrekend\"," ,
                 "\"{http://www.agvespa.be/model/vespa}docstat\": \"Werkversie\"," ,
@@ -68,16 +68,16 @@ class ContentUrlUtilTest {
     void getContentUrlTest() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Metadata metadata = objectMapper.readValue(json, Metadata.class);
-        Properties props = metadata.properties();
-        assertEquals( contentUrl, ContentUrlUtil.getContentUrl(props.content()));
+        Properties props = metadata.getMetadataProperties();
+        assertEquals( contentUrl, ContentUrlUtil.getContentUrl(props.getContent()));
     }
 
     @Test
     void getMimetypeTest() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Metadata metadata = objectMapper.readValue(json, Metadata.class);
-        Properties props = metadata.properties();
-        String propsMimetype = ContentUrlUtil.getMimetype(props.content());
+        Properties props = metadata.getMetadataProperties();
+        String propsMimetype = ContentUrlUtil.getMimetype(props.getContent());
         assertEquals( mimetype, propsMimetype);
         assertNotNull(MimeTypeUtils.parseMimeType(propsMimetype));
     }
@@ -86,8 +86,8 @@ class ContentUrlUtilTest {
     void getSizeTest() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Metadata metadata = objectMapper.readValue(json, Metadata.class);
-        Properties props = metadata.properties();
-        String propsSize = ContentUrlUtil.getSize(props.content());
+        Properties props = metadata.getMetadataProperties();
+        String propsSize = ContentUrlUtil.getSize(props.getContent());
         assertEquals( size, propsSize);
         assertEquals(12345676, Integer.parseInt(propsSize));
     }
@@ -96,8 +96,8 @@ class ContentUrlUtilTest {
     void getEncodingTest() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Metadata metadata = objectMapper.readValue(json, Metadata.class);
-        Properties props = metadata.properties();
-        String propsEncoding = ContentUrlUtil.getEncoding(props.content());
+        Properties props = metadata.getMetadataProperties();
+        String propsEncoding = ContentUrlUtil.getEncoding(props.getContent());
         assertEquals( encoding, propsEncoding);
         assertNotNull(Charset.forName(propsEncoding));
     }
@@ -106,8 +106,8 @@ class ContentUrlUtilTest {
     void getLocaleTest() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Metadata metadata = objectMapper.readValue(json, Metadata.class);
-        Properties props = metadata.properties();
-        String propsLocale = ContentUrlUtil.getLocale(props.content());
+        Properties props = metadata.getMetadataProperties();
+        String propsLocale = ContentUrlUtil.getLocale(props.getContent());
         assertEquals( locale, propsLocale);
         StringUtils.parseLocaleString(propsLocale);
     }
@@ -116,8 +116,8 @@ class ContentUrlUtilTest {
     void getIdTest() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Metadata metadata = objectMapper.readValue(json, Metadata.class);
-        Properties props = metadata.properties();
-        String propsId = ContentUrlUtil.getId(props.content());
+        Properties props = metadata.getMetadataProperties();
+        String propsId = ContentUrlUtil.getId(props.getContent());
         assertEquals( id, propsId);
         assertEquals(651491, Integer.parseInt(propsId));
     }

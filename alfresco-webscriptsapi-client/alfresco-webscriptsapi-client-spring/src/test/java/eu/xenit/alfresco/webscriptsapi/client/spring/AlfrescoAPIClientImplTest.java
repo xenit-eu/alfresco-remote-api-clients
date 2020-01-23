@@ -54,7 +54,7 @@ class AlfrescoAPIClientImplTest {
                 .andExpect(queryParam("nodeRef", nodeRef))
                 .andRespond(withSuccess(String.join(System.lineSeparator(),
                         "{" ,
-                                "\"nodeRef\": \"" , nodeRef , "\"," ,
+                                "\"nodeRef\": \"" + nodeRef + "\"," ,
                                 "\"aspects\": [" ,
                                 "    \"{http://www.agvespa.be/model/vespa}hasTemplateName\"," ,
                                 "    \"{http://www.agvespa.be/model/vespa}hasDocStatus\"," ,
@@ -95,10 +95,10 @@ class AlfrescoAPIClientImplTest {
 
         assertThat(metadata)
                 .isNotNull()
-                .satisfies(meta -> Assertions.assertThat(meta.nodeRef())
+                .satisfies(meta -> Assertions.assertThat(meta.getNodeRef())
                         .as("check node reference")
                         .isEqualTo(nodeRef))
-                .satisfies(meta -> Assertions.assertThat(meta.properties().nodeDbId())
+                .satisfies(meta -> Assertions.assertThat(meta.getMetadataProperties().getNodeDbId())
                         .as("check node reference")
                         .isEqualTo("718584"));
     }

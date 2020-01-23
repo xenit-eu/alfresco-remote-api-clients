@@ -1,7 +1,6 @@
 package eu.xenit.alfresco.webscriptsapi.client.spi.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +10,8 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(chain = true, fluent = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Properties {
+@Accessors(chain = true)
+public class Properties extends CustomPropertiesJsonPOJO {
     @JsonProperty(value = "{http://www.alfresco.org/model/content/1.0}content")
     private String content = null; //"contentUrl=store://2019/9/9/11/37/f4a559c0-8877-487c-b70a-c55adaf885b4.bin|mimetype=application/x-yaml|size=788|encoding=UTF-8|locale=en_US_|id=274",
     @JsonProperty(value = "{http://www.alfresco.org/model/content/1.0}created")
