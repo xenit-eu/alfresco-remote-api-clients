@@ -48,6 +48,9 @@ dependencies {
     api project(':alfresco-solrapi-client:alfresco-solrapi-client-spi')
     api "eu.xenit.testing.ditto:ditto:${dittoVersion}"
 
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
     testImplementation "org.assertj:assertj-core:${assertjVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
