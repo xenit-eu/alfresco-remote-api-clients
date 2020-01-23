@@ -60,7 +60,7 @@ public class GetNodesTests {
         TransactionView txnView = getTxnViewMock();
         FakeSolrApiClient client = new FakeSolrApiClient(txnView, null);
 
-        List<SolrNode> nodes = client.getNodes(new NodesQueryParameters().setToTxnId(2L));
+        List<SolrNode> nodes = client.getNodes(new NodesQueryParameters().setToTxnId(1L));
         assertThat(nodes)
                 .hasOnlyOneElementSatisfying(n -> assertThat(n.getTxnId()).isEqualTo(1L));
     }
@@ -85,7 +85,7 @@ public class GetNodesTests {
         TransactionView txnView = getTxnViewMock();
         FakeSolrApiClient client = new FakeSolrApiClient(txnView, null);
 
-        List<SolrNode> nodes = client.getNodes(new NodesQueryParameters().setToNodeId(5L));
+        List<SolrNode> nodes = client.getNodes(new NodesQueryParameters().setToNodeId(1L));
         assertThat(nodes)
                 .hasOnlyOneElementSatisfying(n -> {
                     assertThat(n.getId()).isEqualTo(1L);
@@ -102,12 +102,12 @@ public class GetNodesTests {
         List<SolrNode> nodes = client.getNodes(new NodesQueryParameters()
                 .setFromTxnId(2L)
                 .setToTxnId(3L)
-                .setFromNodeId(6L)
-                .setToNodeId(7L));
+                .setFromNodeId(7L)
+                .setToNodeId(10L));
 
         assertThat(nodes)
                 .hasOnlyOneElementSatisfying(n -> {
-                    assertThat(n.getId()).isEqualTo(6L);
+                    assertThat(n.getId()).isEqualTo(7L);
                     assertThat(n.getTxnId()).isEqualTo(2L);
                 });
     }
