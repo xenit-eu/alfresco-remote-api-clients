@@ -7,6 +7,8 @@ import eu.xenit.testing.ditto.api.model.NodeReference;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.internal.DefaultNodeProperties;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -32,6 +34,11 @@ public class TestNode implements Node {
 
     public TestNode withProperty(QName key, Serializable value) {
         this.getProperties().put(key, value);
+        return this;
+    }
+
+    public TestNode withAspects(QName... aspects) {
+        this.aspects = new HashSet<>(Arrays.asList(aspects));
         return this;
     }
 }

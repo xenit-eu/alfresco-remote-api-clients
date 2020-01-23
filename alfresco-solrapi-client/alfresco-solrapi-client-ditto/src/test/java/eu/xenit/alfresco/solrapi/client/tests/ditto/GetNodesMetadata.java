@@ -24,7 +24,9 @@ public class GetNodesMetadata {
         when(nodeView.stream()).then((a) -> Stream.of(
                 new TestNode(1L, System.STORE_ROOT).setTxnId(6L),
                 new TestNode(13L, Content.FOLDER)
-                        .withProperty(Content.NAME, "Company Home").setTxnId(6L),
+                        .setTxnId(6L)
+                        .withProperty(Content.NAME, "Company Home")
+                        .withAspects(Content.AUDITABLE),
                 new TestNode(6L, Content.CONTENT).setTxnId(6L),
                 new TestNode(7L, Content.CONTENT).setTxnId(6L),
                 new TestNode(20L, Content.CONTENT).setTxnId(6L))
@@ -46,6 +48,7 @@ public class GetNodesMetadata {
                     assertThat(node.getType()).isEqualTo("cm:folder");
                     assertThat(node.getTxnId()).isEqualTo(6L);
                     assertThat(node.getProperties().get(Content.NAME.toString())).isEqualTo("Company Home");
+                    assertThat(node.getAspects()).contains(Content.AUDITABLE.toPrefixString());
                 });
     }
 }
