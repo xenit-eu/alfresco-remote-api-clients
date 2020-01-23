@@ -36,6 +36,7 @@ public interface GetMetadataIntegrationTests {
                     assertThat(node.getProperties())
                             .containsEntry("{http://www.alfresco.org/model/content/1.0}name", "Company Home");
                     assertThat(node.getAspects()).contains("cm:auditable");
+                    assertThat(node.getOwner()).isEqualTo("System");
                     assertThat(node.getPaths())
                             .hasOnlyOneElementSatisfying(path -> {
                                 assertThat(path.getPath())

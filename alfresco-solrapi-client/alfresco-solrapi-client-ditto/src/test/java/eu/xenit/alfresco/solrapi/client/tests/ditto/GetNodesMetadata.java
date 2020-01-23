@@ -5,12 +5,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import eu.xenit.alfresco.solrapi.client.tests.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.tests.spi.dto.SolrNode;
 import eu.xenit.alfresco.solrapi.client.tests.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.tests.spi.query.NodeMetaDataQueryParameters;
-import eu.xenit.alfresco.solrapi.client.tests.spi.query.NodesQueryParameters;
 import eu.xenit.testing.ditto.api.NodeView;
-import eu.xenit.testing.ditto.api.TransactionView;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.data.ContentModel.System;
 import java.util.List;
@@ -26,6 +23,7 @@ public class GetNodesMetadata {
                 new TestNode(13L, Content.FOLDER)
                         .setTxnId(6L)
                         .withProperty(Content.NAME, "Company Home")
+                        .withProperty(Content.OWNER, "System")
                         .withAspects(Content.AUDITABLE),
                 new TestNode(6L, Content.CONTENT).setTxnId(6L),
                 new TestNode(7L, Content.CONTENT).setTxnId(6L),
@@ -48,6 +46,7 @@ public class GetNodesMetadata {
                     assertThat(node.getType()).isEqualTo("cm:folder");
                     assertThat(node.getTxnId()).isEqualTo(6L);
                     assertThat(node.getProperties().get(Content.NAME.toString())).isEqualTo("Company Home");
+                    assertThat(node.getOwner()).isEqualTo("System");
                     assertThat(node.getAspects()).contains(Content.AUDITABLE.toPrefixString());
                 });
     }

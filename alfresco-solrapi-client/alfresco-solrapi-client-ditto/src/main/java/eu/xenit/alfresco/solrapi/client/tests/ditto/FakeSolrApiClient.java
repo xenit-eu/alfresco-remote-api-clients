@@ -16,6 +16,7 @@ import eu.xenit.alfresco.solrapi.client.tests.spi.query.NodesQueryParameters;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.TransactionView;
+import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.api.model.Transaction;
@@ -141,6 +142,7 @@ public class FakeSolrApiClient implements SolrApiClient {
                         .setAspects(node.getAspects().stream()
                                 .map(QName::toPrefixString)
                                 .collect(Collectors.toList()))
+                        .setOwner((String) node.getProperties().get(Content.OWNER))
                 )
                 .collect(Collectors.toList());
     }
