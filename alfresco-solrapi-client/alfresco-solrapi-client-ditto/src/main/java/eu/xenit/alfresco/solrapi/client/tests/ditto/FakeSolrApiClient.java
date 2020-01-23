@@ -127,24 +127,34 @@ public class FakeSolrApiClient implements SolrApiClient {
                 .filter(Node.Filters.containedIn(params.getNodeIds()))
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
-
-                .map(node -> new SolrNodeMetaData()
-                        .setId(node.getNodeId())
-                        .setTxnId(node.getTxnId())
-                        .setType(node.getType().toPrefixString())
-                        .setNodeRef(node.getNodeRef().toString())
-                        .setProperties(node.getProperties().stream()
-                                .collect(Collectors.toMap(
-                                        entry -> entry.getKey().toString(),
-                                        Entry::getValue
-                                ))
-                        )
-                        .setAspects(node.getAspects().stream()
-                                .map(QName::toPrefixString)
-                                .collect(Collectors.toList()))
-                        .setOwner((String) node.getProperties().get(Content.OWNER))
-                )
+                .map(toSolrModel(params))
                 .collect(Collectors.toList());
+    }
+
+    private Function<Node, SolrNodeMetaData> toSolrModel(NodeMetaDataQueryParameters params) {
+        return node -> {
+            SolrNodeMetaData ret = new SolrNodeMetaData();
+            ret.setId(node.getNodeId());
+            doIfTrue(params.isIncludeTxnId(), () -> ret.setTxnId(node.getTxnId()));
+            doIfTrue(params.isIncludeType(), () -> ret.setType(node.getType().toPrefixString()));
+            doIfTrue(params.isIncludeNodeRef(), () -> ret.setNodeRef(node.getNodeRef().toString()));
+            doIfTrue(params.isIncludeProperties(), () -> ret.setProperties(node.getProperties().stream()
+                    .collect(Collectors.toMap(
+                            entry -> entry.getKey().toString(),
+                            Entry::getValue
+                    ))));
+            doIfTrue(params.isIncludeAspects(), () -> ret.setAspects(node.getAspects().stream()
+                    .map(QName::toPrefixString)
+                    .collect(Collectors.toList())));
+            doIfTrue(params.isIncludeOwner(), () -> ret.setOwner((String) node.getProperties().get(Content.OWNER)));
+            return ret;
+        };
+    }
+
+    private <T, P> void doIfTrue(boolean bool, Runnable runnable) {
+        if (bool) {
+            runnable.run();
+        }
     }
 
     @Override

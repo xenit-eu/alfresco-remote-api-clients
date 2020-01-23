@@ -50,4 +50,42 @@ public class GetNodesMetadata {
                     assertThat(node.getAspects()).contains(Content.AUDITABLE.toPrefixString());
                 });
     }
+
+    @Test
+    void getNodesMetadata_companyHome_filterOutput() {
+
+        SolrApiClient client = new FakeSolrApiClient(null, nodeViewMock());
+        List<SolrNodeMetaData> nodesMetaData = client
+                .getNodesMetaData(
+                        new NodeMetaDataQueryParameters()
+                                .withNodeIds(13L)
+                                .setIncludeTxnId(false)
+                                .setIncludeType(false)
+                                .setIncludeNodeRef(false)
+                                .setIncludeProperties(false)
+                                .setIncludeAspects(false)
+                                .setIncludeOwner(false)
+                                .setIncludeAclId(false)
+                                .setIncludeChildAssociations(false)
+                                .setIncludeChildIds(false)
+                                .setIncludeParentAssociations(false)
+                                .setIncludePaths(false)
+                );
+
+        assertThat(nodesMetaData)
+                .hasOnlyOneElementSatisfying(node -> {
+                    assertThat(node.getId()).isEqualTo(13L);
+                    assertThat(node.getTxnId()).isEqualTo(-1L);
+                    assertThat(node.getType()).isNull();
+                    assertThat(node.getNodeRef()).isNull();
+                    assertThat(node.getProperties()).isEmpty();
+                    assertThat(node.getAspects()).isEmpty();
+                    assertThat(node.getOwner()).isNull();
+                    assertThat(node.getAclId()).isEqualTo(-1L);
+                    assertThat(node.getChildAssocs()).isEmpty();
+                    assertThat(node.getChildIds()).isEmpty();
+                    assertThat(node.getParentAssocs()).isEmpty();
+                    assertThat(node.getPaths()).isEmpty();
+                });
+    }
 }
