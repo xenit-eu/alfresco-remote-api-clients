@@ -67,4 +67,14 @@ test {
     useJUnitPlatform()
 }
 
+task integrationTest(type: Test, group: "verification") {
+    shouldRunAfter(test)
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    useJUnitPlatform()
+    outputs.upToDateWhen { false }
+}
+
 apply from: "${rootProject.projectDir}/maven-publish.gradle"
