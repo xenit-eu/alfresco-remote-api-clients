@@ -9,11 +9,14 @@ import eu.xenit.testing.ditto.internal.DefaultNodeProperties;
 import java.io.Serializable;
 import java.util.Set;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
 public class TestNode implements Node {
 
     private final long nodeId;
+    @Accessors(chain = true)
+    private long txnId;
     private final QName type;
 
     private NodeReference nodeRef = NodeReference.newNodeRef();

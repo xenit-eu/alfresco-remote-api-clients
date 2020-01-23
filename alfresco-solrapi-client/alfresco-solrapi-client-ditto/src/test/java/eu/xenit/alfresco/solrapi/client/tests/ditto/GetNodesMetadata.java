@@ -22,12 +22,12 @@ public class GetNodesMetadata {
     private static NodeView nodeViewMock() {
         NodeView nodeView = mock(NodeView.class);
         when(nodeView.stream()).then((a) -> Stream.of(
-                new TestNode(1L, System.STORE_ROOT),
+                new TestNode(1L, System.STORE_ROOT).setTxnId(6L),
                 new TestNode(13L, Content.FOLDER)
-                        .withProperty(Content.NAME, "Company Home"),
-                new TestNode(6L, Content.CONTENT),
-                new TestNode(7L, Content.CONTENT),
-                new TestNode(20L, Content.CONTENT))
+                        .withProperty(Content.NAME, "Company Home").setTxnId(6L),
+                new TestNode(6L, Content.CONTENT).setTxnId(6L),
+                new TestNode(7L, Content.CONTENT).setTxnId(6L),
+                new TestNode(20L, Content.CONTENT).setTxnId(6L))
         );
 
         return nodeView;
@@ -44,6 +44,7 @@ public class GetNodesMetadata {
                 .hasOnlyOneElementSatisfying(node -> {
                     assertThat(node.getId()).isEqualTo(13L);
                     assertThat(node.getType()).isEqualTo("cm:folder");
+                    assertThat(node.getTxnId()).isEqualTo(6L);
                     assertThat(node.getProperties().get(Content.NAME.toString())).isEqualTo("Company Home");
                 });
     }
