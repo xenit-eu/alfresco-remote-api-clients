@@ -17,10 +17,13 @@ import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.TransactionView;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
+import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.api.model.Transaction;
 import eu.xenit.testing.ditto.api.model.Transaction.Filters;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -141,7 +144,7 @@ public class FakeSolrApiClient implements SolrApiClient {
             doIfTrue(params.isIncludeProperties(), () -> ret.setProperties(node.getProperties().stream()
                     .collect(Collectors.toMap(
                             entry -> entry.getKey().toString(),
-                            Entry::getValue
+                            entry -> convertPropertyValue(entry.getValue())
                     ))));
             doIfTrue(params.isIncludeAspects(), () -> ret.setAspects(node.getAspects().stream()
                     .map(QName::toPrefixString)
@@ -153,6 +156,18 @@ public class FakeSolrApiClient implements SolrApiClient {
             });
             return ret;
         };
+    }
+
+    private static Serializable convertPropertyValue(Serializable propertyValue) {
+        if (propertyValue instanceof MLText) {
+            return (Serializable) ((MLText) propertyValue).entrySet().stream()
+                    .map(e -> new HashMap<String, Serializable>() {{
+                        put("locale", e.getKey());
+                        put("value", e.getValue());
+                    }})
+                    .collect(Collectors.toList());
+        }
+        return propertyValue;
     }
 
     private <T, P> void doIfTrue(boolean bool, Runnable runnable) {
