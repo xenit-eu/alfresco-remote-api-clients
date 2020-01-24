@@ -69,7 +69,7 @@ public interface SolrApiClient {
      * ChangeSets}.
      *
      * @param aclChangeSets the ACL ChangeSets to include
-     * @param minAclId the lowest ACL ID (may be <tt>null</tt>)
+     * @param minAclId the lowest ACL ID (may be {@code null})
      * @param maxResults the maximum number of results to retrieve
      * @return the ACLs (includes ChangeSet ID)
      */

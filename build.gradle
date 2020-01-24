@@ -1,2 +1,10 @@
 group = 'eu.xenit.alfresco.client'
 version = '0.0.2-SNAPSHOT'
+
+subprojects {
+    pluginManager.withPlugin('java-library') {
+
+        sourceCompatibility = '1.8'
+    }
+
+}
