@@ -14,21 +14,21 @@ repositories {
     maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }
 }
 
-//sourceSets {
-//    integrationTest {
-//        java {
-//            compileClasspath += main.output + test.output
-//            runtimeClasspath += main.output + test.output
-//            srcDir file('src/integration-test/java')
-//        }
-//        resources.srcDir file('src/integration-test/resources')
-//    }
-//}
-//
-//configurations {
-//    integrationTestImplementation.extendsFrom implementation
-//    integrationTestRuntimeOnly.extendsFrom runtimeOnly
-//}
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration-test/java')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom implementation
+    integrationTestRuntimeOnly.extendsFrom runtimeOnly
+}
 
 dependencies {
     compileOnly "org.projectlombok:lombok"
@@ -47,10 +47,9 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
-////    integrationTestRuntimeOnly 'org.slf4j:slf4j-simple'
-//    integrationTestImplementation('org.springframework.boot:spring-boot-starter-test') {
-//        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-//    }
+    integrationTestImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }
 
 dependencyManagement {
@@ -63,19 +62,19 @@ test {
     useJUnitPlatform()
 }
 
-//task integrationTest(type: Test, group: "verification") {
-//    shouldRunAfter(test)
-//
-//    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-//    classpath = sourceSets.integrationTest.runtimeClasspath
-//
-//    useJUnitPlatform()
-//    outputs.upToDateWhen { false }
-//}
-//
-//evaluationDependsOn(':alfresco-solrapi-client:alfresco-solrapi-integration-tests')
-//rootProject.project(':alfresco-solrapi-client:alfresco-solrapi-integration-tests').dockerCompose.isRequiredBy(integrationTest)
-//
-//project.tasks.check.dependsOn(integrationTest)
+task integrationTest(type: Test, group: "verification") {
+    shouldRunAfter(test)
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    useJUnitPlatform()
+    outputs.upToDateWhen { false }
+}
+
+evaluationDependsOn(':alfresco-webscriptsapi-client:alfresco-webscriptsapi-integration-tests')
+rootProject.project(':alfresco-webscriptsapi-client:alfresco-webscriptsapi-integration-tests').dockerCompose.isRequiredBy(integrationTest)
+
+project.tasks.check.dependsOn(integrationTest)
 
 apply from: "${rootProject.projectDir}/maven-publish.gradle"

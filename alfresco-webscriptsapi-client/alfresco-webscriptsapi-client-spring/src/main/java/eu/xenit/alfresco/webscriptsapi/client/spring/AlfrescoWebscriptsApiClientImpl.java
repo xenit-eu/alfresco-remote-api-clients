@@ -8,7 +8,6 @@ import org.apache.http.HttpHost;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -24,9 +23,7 @@ public class AlfrescoWebscriptsApiClientImpl implements AlfrescoWebscriptsApiCli
 
     public AlfrescoWebscriptsApiClientImpl(String url, String username, String password) throws URISyntaxException {
         this(url, new HttpBasicAuthRequestFactory(
-                new HttpHost(
-                        new URI(url)
-                                        .getHost())));
+                new HttpHost(new URI(url).getHost())));
         this.restTemplate.getInterceptors()
                 .add(new BasicAuthenticationInterceptor(username, password));
     }
@@ -42,9 +39,6 @@ public class AlfrescoWebscriptsApiClientImpl implements AlfrescoWebscriptsApiCli
         this.restTemplate = restTemplate;
         this.restTemplate.getInterceptors()
                 .add(new LogAsCurlRequestsInterceptor());
-        DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
-        defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
-        this.restTemplate.setUriTemplateHandler(defaultUriBuilderFactory);
     }
 
     @Override

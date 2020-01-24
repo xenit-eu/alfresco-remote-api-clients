@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -35,6 +36,9 @@ class AlfrescoAPIClientImplTest {
     public static class TestConfig {
         @Bean
         public AlfrescoWebscriptsApiClient AlfrescoApiClient(RestTemplate restTemplate) {
+            DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
+            defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+            restTemplate.setUriTemplateHandler(defaultUriBuilderFactory);
             return new AlfrescoWebscriptsApiClientImpl("https://localhost:8443/alfresco/", restTemplate);
         }
     }
@@ -153,14 +157,14 @@ class AlfrescoAPIClientImplTest {
                 .satisfies(r -> Assertions.assertThat(node.getQName().getShortQName())
                         .as("Checking first node qName shortQName")
                         .isEqualTo(shortQName_CompanyHome))
-                .satisfies(r -> Assertions.assertThat(node.getQName().getFullyQuallifiedQName())
-                        .as("Checking first node qName fullyQuallifiedQName")
+                .satisfies(r -> Assertions.assertThat(node.getQName().getFullyQualifiedQName())
+                        .as("Checking first node qName fullyQualifiedQName")
                         .isEqualTo(longQName_CompanyHome))
                 .satisfies(r -> Assertions.assertThat(node.getQNamePath().getShortQName())
                         .as("Checking first node qNamePath shortQName")
                         .isEqualTo("/" + shortQName_CompanyHome))
-                .satisfies(r -> Assertions.assertThat(node.getQNamePath().getFullyQuallifiedQName())
-                        .as("Checking first node qNamePath fullyQuallifiedQName")
+                .satisfies(r -> Assertions.assertThat(node.getQNamePath().getFullyQualifiedQName())
+                        .as("Checking first node qNamePath fullyQualifiedQName")
                         .isEqualTo("/" + longQName_CompanyHome));
     }
 

@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class QName {
     @JsonProperty(value = "name")
-    private String fullyQuallifiedQName;
+    private String fullyQualifiedQName;
     @JsonProperty(value = "prefixedName")
     private String shortQName;
 }

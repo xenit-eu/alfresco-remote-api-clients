@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -11,6 +12,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper=false)
 public class Properties extends CustomPropertiesJsonPOJO {
     @JsonProperty(value = "{http://www.alfresco.org/model/content/1.0}content")
     private String content = null; //"contentUrl=store://2019/9/9/11/37/f4a559c0-8877-487c-b70a-c55adaf885b4.bin|mimetype=application/x-yaml|size=788|encoding=UTF-8|locale=en_US_|id=274",

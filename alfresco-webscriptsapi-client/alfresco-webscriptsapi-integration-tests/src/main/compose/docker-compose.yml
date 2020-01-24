@@ -1,0 +1,33 @@
+version: '2.2'
+
+services:
+  alfresco:
+    image: docker.io/xenit/alfresco-repository-community:5.2.g
+    volumes:
+    - alfresco:/opt/alfresco/alf_data
+    ports:
+    - ${SERVICE_ALFRESCO_PORT_8080:-8080:8080}
+    - ${SERVICE_ALFRESCO_PORT_8443:-8443:8443}
+    environment:
+    - INDEX=solr4
+
+  solr:
+    image: docker.io/xenit/alfresco-solr4:5.2.g
+    volumes:
+      - solr:/opt/alfresco/alf_data
+    environment:
+      - ALFRESCO_HOST=alfresco
+
+  postgresql:
+    image: docker.io/xenit/postgres
+    volumes:
+    - postgres:/var/lib/postgresql/data
+    environment:
+    - POSTGRES_USER=alfresco
+    - POSTGRES_PASSWORD=admin
+    - POSTGRES_DB=alfresco
+
+volumes:
+  alfresco:
+  postgres:
+  solr:
