@@ -1,0 +1,18 @@
+subprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }
+
+        repositories {
+            maven {
+                name 'artifactory.xenit.eu'
+                url 'https://artifactory.xenit.eu/artifactory/libs-snapshot/'
+                credentials {
+                    username property("eu.xenit.artifactory.username")
+                    password property("eu.xenit.artifactory.password")
+                }
+            }
+        }
+    }
+}
