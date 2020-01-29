@@ -3,17 +3,16 @@ package eu.xenit.alfresco.webscripts.client.spring;
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
 import java.util.Collections;
 import java.util.Map;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+
+import eu.xenit.alfresco.webscripts.client.spi.Metadata;
 import org.springframework.web.client.RestTemplate;
 
 public class ApiMetadataSpringClient implements ApiMetadataClient {
 
     private final RestTemplate restClient;
 
-    public ApiMetadataSpringClient(RestTemplateBuilder restTemplateBuilder) {
-
-//        this.restTemplateBuilder = restTemplateBuilder;
-        this.restClient = restTemplateBuilder.build();
+    public ApiMetadataSpringClient(RestTemplate restTemplate) {
+        this.restClient = restTemplate;
     }
 
     @Override
