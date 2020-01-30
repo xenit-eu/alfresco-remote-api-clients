@@ -10,7 +10,7 @@ pipeline {
 
         stage("Build") {
             steps {
-                sh "./gradlew assemble --info --stacktrace"
+                sh "./gradlew assemble --info --stacktrace --refresh-dependencies"
             }
         }
 
