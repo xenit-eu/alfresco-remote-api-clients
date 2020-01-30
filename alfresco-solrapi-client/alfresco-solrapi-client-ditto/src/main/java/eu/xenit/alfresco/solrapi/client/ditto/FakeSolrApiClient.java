@@ -1,3 +1,4 @@
+
 package eu.xenit.alfresco.solrapi.client.ditto;
 
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
@@ -7,6 +8,8 @@ import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSets;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
+import eu.xenit.alfresco.solrapi.client.spi.dto.NodeNamePaths;
+import eu.xenit.alfresco.solrapi.client.spi.dto.NodePathInfo;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransaction;
@@ -19,11 +22,16 @@ import eu.xenit.testing.ditto.api.TransactionView;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
+import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.api.model.Transaction;
 import eu.xenit.testing.ditto.api.model.Transaction.Filters;
+
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -47,7 +55,6 @@ public class FakeSolrApiClient implements SolrApiClient {
         this.txnView = transactionView;
         this.nodeView = nodeView;
     }
-
 
 
     @Override
@@ -153,8 +160,69 @@ public class FakeSolrApiClient implements SolrApiClient {
                         .orElse(node.getProperties().get(Content.CREATOR).map(Object::toString).orElse(null));
                 ret.setOwner(owner);
             });
+            doIfTrue(params.isIncludePaths(), () -> ret.setPaths(this.getParentPaths(node)
+                    .stream()
+                    .map(lineage -> {
+                        String apath = "/" + lineage.stream()
+                                .map(a -> a.getParent().getNodeRef().getUuid())
+                                .collect(Collectors.joining("/"));
+                        String path = "/" + lineage.stream()
+                                .map(a -> a.getChild().getQName().toString())
+                                .collect(Collectors.joining("/"));
+                        return new NodePathInfo(apath, path, null);
+                    })
+                    .collect(Collectors.toList())));
+            doIfTrue(params.isIncludePaths(), () -> {
+                List<NodeNamePaths> namedPaths = this.getParentPaths(node)
+                        .stream()
+                        .map(lineage -> new NodeNamePaths(lineage.stream().map(assoc -> assoc.getChild().getName())))
+                        .collect(Collectors.toList());
+                ret.setNamePaths(namedPaths);
+            });
+            doIfTrue(params.isIncludePaths(), () -> ret.setAncestors(this.getPrimaryPath(node)
+                    .stream()
+                    .map(assoc -> assoc.getParent().getNodeRef().toString())
+                    .collect(Collectors.toList())));
             return ret;
         };
+    }
+
+    private List<List<ParentChildAssoc>> getParentPaths(Node node) {
+        // TODO Get every parent-path - not only the primary parent path
+        // for each parent assoc:
+        ParentChildAssoc parentAssoc = node.getPrimaryParentAssoc();
+        if (parentAssoc == null) {
+            return new ArrayList<>(Collections.emptyList());
+        }
+
+        List<List<ParentChildAssoc>> parentPaths = getParentPaths(parentAssoc.getParent());
+        if (parentPaths.isEmpty()) {
+            // the parent is a root
+            List<ParentChildAssoc> assocsList = Arrays.asList(parentAssoc);
+            return Collections.singletonList(assocsList);
+        } else {
+            // for each path of the parent
+            return parentPaths.stream()
+                    .peek(path -> path.add(parentAssoc))
+                    .collect(Collectors.toList());
+        }
+
+        // end foreach
+        // collect/flatmap all partial-paths
+
+//        return parialResult;
+
+    }
+
+    private List<ParentChildAssoc> getPrimaryPath(Node node) {
+        ParentChildAssoc assoc = node.getPrimaryParentAssoc();
+        if (assoc == null) {
+            return new ArrayList<>();
+        }
+
+        List<ParentChildAssoc> result = this.getPrimaryPath(assoc.getParent());
+        result.add(assoc);
+        return result;
     }
 
     private static Serializable convertPropertyValue(Serializable propertyValue) {
@@ -210,6 +278,7 @@ public class FakeSolrApiClient implements SolrApiClient {
             this.data = dataSet;
             return this;
         }
+
     }
 
     private static Function<Node, SolrNode> mapNodeToSolrNode(long txnId, String status) {
