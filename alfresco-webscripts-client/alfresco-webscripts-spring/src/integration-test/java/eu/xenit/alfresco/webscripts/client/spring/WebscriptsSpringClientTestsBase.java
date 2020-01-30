@@ -2,7 +2,7 @@ package eu.xenit.alfresco.webscripts.client.spring;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 
-public abstract class WebscriptsApiBaseTest {
+public abstract class WebscriptsSpringClientTestsBase {
     protected RestTemplateBuilder restTemplateBuilder() {
         return new RestTemplateBuilder()
                 .basicAuthentication("admin", "admin")

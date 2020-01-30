@@ -1,22 +1,23 @@
 package eu.xenit.alfresco.webscripts.client.spi;
 
-import lombok.Getter;
-
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 public interface NodeLocatorClient {
-    public enum Locator {
+
+    @RequiredArgsConstructor
+    enum Locator {
         COMPANY_HOME("companyhome");
 
         @Getter
         private final String value;
-
-        Locator(String value) {
-            this.value = value;
-        }
     }
 
-    default String getCompanyHomeNodeRef() {
+    default String getCompanyHome() {
         return get(Locator.COMPANY_HOME);
     }
 
@@ -24,10 +25,13 @@ public interface NodeLocatorClient {
         return get(locator.getValue());
     }
 
-    default String get(Locator locator, Map<String, String> params) {
+    default String get(String locator) {
+        return get(locator, Collections.emptyMap());
+    }
+
+    default String get(Locator locator, Map<String, List<String>> params) {
         return get(locator.getValue(), params);
     }
 
-    String get(String locatorName);
-    String get(String locatorName, Map<String, String> params);
+    String get(String locatorName, Map<String, List<String>> params);
 }

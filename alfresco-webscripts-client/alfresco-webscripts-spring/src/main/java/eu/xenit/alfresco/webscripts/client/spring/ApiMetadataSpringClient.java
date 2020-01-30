@@ -4,7 +4,6 @@ import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
 import java.util.Collections;
 import java.util.Map;
 
-import eu.xenit.alfresco.webscripts.client.spi.Metadata;
 import org.springframework.web.client.RestTemplate;
 
 public class ApiMetadataSpringClient implements ApiMetadataClient {

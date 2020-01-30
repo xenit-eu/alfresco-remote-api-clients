@@ -1,13 +1,13 @@
 package eu.xenit.alfresco.webscripst.client.ditto;
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
-import eu.xenit.alfresco.webscripts.client.spi.Metadata;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.model.ContentData;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.QName;
 
+import eu.xenit.testing.ditto.util.MimeTypes;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,16 +34,18 @@ public class ApiMetadataDittoClient implements ApiMetadataClient {
             metadata.setType(node.getType().toString());
             metadata.setNodeRef(node.getNodeRef().toString());
 
-            Optional<ContentData> contentData = node.getProperties().getContentData();
-            contentData.ifPresent(data -> metadata.setMimetype(data.getMimeType()));
+            metadata.setMimetype(node.getProperties().getContentData()
+                    .map(ContentData::getMimeType)
+                    .orElse(MimeTypes.APPLICATION_OCTET_STREAM));
 
-            Set<String> aspects = node.getAspects().stream().map(aspectQName -> aspectQName.toString()).collect(Collectors.toSet());
+            Set<String> aspects = node.getAspects().stream().map(QName::toString)
+                    .collect(Collectors.toSet());
             metadata.setAspects(aspects);
 
-            Map<String, String> props = new HashMap<>();
-            for(QName key : node.getProperties().keySet()) {
-                props.put(key.toString(), node.getProperties().get(key).toString());
-            }
+            Map<String, String> props = new LinkedHashMap<>();
+            node.getProperties().forEach((key, value) -> {
+                props.put(key.toString(), value.toString());
+            });
             metadata.setProperties(props);
 
             return metadata;

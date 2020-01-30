@@ -29,13 +29,14 @@ public class NodeLocatorDittoClient implements NodeLocatorClient {
 
     @Override
     public String get(String locatorName, Map<String, String> params) {
-        if(Objects.equals(locatorName, Locator.COMPANY_HOME.getValue())) {
-            Optional<Node> dittoNode = this.nodeView.stream()
-                                                    .filter(this::filterCompanyHome)
-                                                    .findFirst();
-            return dittoNode.map(node -> node.getNodeRef().toString()).orElse(null);
+
+        switch (locatorName) {
+            case "companyhome":
+                return this.nodeView.getCompanyHome().map(n -> n.getNodeRef().toString()).orElse(null);
+            default:
+                String msg = String.format("Locator %s is not supported", locatorName);
+                throw new RuntimeException(msg);
         }
-        return null;
     }
 
     private boolean filterCompanyHome(Node node) {
