@@ -6,6 +6,7 @@ import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.model.Node;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,19 +29,14 @@ public class NodeLocatorDittoClient implements NodeLocatorClient {
     }
 
     @Override
-    public String get(String locatorName, Map<String, String> params) {
+    public String get(String locatorName, Map<String, List<String>> params) {
 
-        switch (locatorName) {
-            case "companyhome":
-                return this.nodeView.getCompanyHome().map(n -> n.getNodeRef().toString()).orElse(null);
-            default:
-                String msg = String.format("Locator %s is not supported", locatorName);
-                throw new RuntimeException(msg);
+        if (Locator.COMPANY_HOME.getValue().equals(locatorName)) {
+            return this.nodeView.getCompanyHome().map(n -> n.getNodeRef().toString()).orElse(null);
         }
+
+        String msg = String.format("Locator %s is not supported", locatorName);
+        throw new RuntimeException(msg);
     }
 
-    private boolean filterCompanyHome(Node node) {
-        return node.getName().equals("Company Home")
-            && node.getNodeId() == 13L;
-    }
 }

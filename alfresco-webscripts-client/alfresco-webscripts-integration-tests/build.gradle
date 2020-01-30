@@ -1,5 +1,4 @@
 plugins {
-    id 'com.avast.gradle.docker-compose' version '0.9.5'
     id 'java-library'
 }
 
@@ -9,15 +8,4 @@ dependencies {
     api "org.assertj:assertj-core:${assertjVersion}"
     api "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     api "eu.xenit.testing.ditto:ditto:${dittoVersion}"
-    //api "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-
-}
-dockerCompose {
-    dockerComposeWorkingDirectory = 'src/main/compose'
-
-    // For running integration test during local development
-     stopContainers = false
-
-    environment.put 'SERVICE_ALFRESCO_PORT_8080', project.findProperty('service.alfresco.tcp.8080') ?: '8080:8080'
-    environment.put 'SERVICE_ALFRESCO_PORT_8443', project.findProperty('service.alfresco.tcp.8443') ?: '8443:8443'
 }

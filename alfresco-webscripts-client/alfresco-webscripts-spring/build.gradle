@@ -66,9 +66,7 @@ task integrationTest(type: Test, group: "verification") {
     outputs.upToDateWhen { false }
 }
 
-//evaluationDependsOn(':alfresco-solrapi-client:alfresco-solrapi-integration-tests')
-//rootProject.project(':alfresco-solrapi-client:alfresco-solrapi-integration-tests').dockerCompose.isRequiredBy(integrationTest)
-
+rootProject.dockerCompose.isRequiredBy(integrationTest)
 project.tasks.check.dependsOn(integrationTest)
 
 apply from: "${rootProject.projectDir}/maven-publish.gradle"
