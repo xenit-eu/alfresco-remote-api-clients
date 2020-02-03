@@ -160,7 +160,7 @@ public class FakeSolrApiClient implements SolrApiClient {
 
     private static Serializable convertPropertyValue(Serializable propertyValue) {
         if (propertyValue instanceof MLText) {
-            return (Serializable) ((MLText) propertyValue).entrySet().stream()
+            return (Serializable) ((MLText) propertyValue).stream()
                     .map(e -> new HashMap<String, Serializable>() {{
                         put("locale", e.getKey());
                         put("value", e.getValue());
