@@ -9,6 +9,11 @@ subprojects {
     pluginManager.withPlugin('java-library') {
 
         sourceCompatibility = '1.8'
+
+        java {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 

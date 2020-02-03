@@ -1,18 +1,3 @@
-task sourcesJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.allSource
-    archiveClassifier = 'sources'
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    archiveClassifier = 'javadoc'
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
@@ -20,9 +5,6 @@ publishing {
     publications {
         jar(MavenPublication) {
             from components.java
-
-            artifact sourcesJar
-            artifact javadocJar
         }
         all {
             pom {
