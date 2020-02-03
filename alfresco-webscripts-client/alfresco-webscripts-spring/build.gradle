@@ -7,11 +7,6 @@ plugins {
 group = rootProject.group
 version = rootProject.version
 
-repositories {
-    mavenCentral()
-    maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }
-}
-
 sourceSets {
     integrationTest {
         java {
@@ -32,7 +27,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
 
-    api project(':alfresco-solrapi-client:alfresco-solrapi-client-spi')
+    api project(':alfresco-webscripts-client:alfresco-webscripts-spi')
 
     implementation 'org.springframework.boot:spring-boot'
     implementation 'org.springframework:spring-web'
@@ -48,7 +43,7 @@ dependencies {
     integrationTestImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    integrationTestImplementation project(':alfresco-solrapi-client:alfresco-solrapi-integration-tests')
+    integrationTestImplementation project(':alfresco-webscripts-client:alfresco-webscripts-integration-tests')
 }
 
 dependencyManagement {
@@ -71,7 +66,6 @@ task integrationTest(type: Test, group: "verification") {
     outputs.upToDateWhen { false }
 }
 
-//evaluationDependsOn(':alfresco-solrapi-client:alfresco-solrapi-integration-tests')
 rootProject.dockerCompose.isRequiredBy(integrationTest)
 project.tasks.check.dependsOn(integrationTest)
 

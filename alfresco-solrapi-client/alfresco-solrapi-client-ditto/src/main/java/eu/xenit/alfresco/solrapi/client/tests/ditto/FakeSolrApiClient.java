@@ -146,7 +146,11 @@ public class FakeSolrApiClient implements SolrApiClient {
             doIfTrue(params.isIncludeAspects(), () -> ret.setAspects(node.getAspects().stream()
                     .map(QName::toPrefixString)
                     .collect(Collectors.toList())));
-            doIfTrue(params.isIncludeOwner(), () -> ret.setOwner((String) node.getProperties().get(Content.OWNER)));
+            doIfTrue(params.isIncludeOwner(), () -> {
+                String owner = node.getProperties().get(Content.OWNER).map(Object::toString)
+                        .orElse(node.getProperties().get(Content.CREATOR).map(Object::toString).orElse(null));
+                ret.setOwner(owner);
+            });
             return ret;
         };
     }

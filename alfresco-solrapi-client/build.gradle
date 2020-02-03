@@ -1,8 +1,0 @@
-
-ext {
-    lombokVersion = '1.18.10'
-    junitVersion = '5.5.2'
-    assertjVersion = '3.13.2'
-    mockitoVersion = '3.1.0'
-    dittoVersion = '0.3.0-SNAPSHOT'
-}

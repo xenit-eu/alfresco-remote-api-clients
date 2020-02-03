@@ -4,6 +4,8 @@ import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.NodeProperties;
 import eu.xenit.testing.ditto.api.model.NodeReference;
+import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
+import eu.xenit.testing.ditto.api.model.ParentChildNodeCollection;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.internal.DefaultNodeProperties;
 import java.io.Serializable;
@@ -23,13 +25,20 @@ public class TestNode implements Node {
 
     private NodeReference nodeRef = NodeReference.newNodeRef();
 
-    private NodeProperties properties = new DefaultNodeProperties();
+    private DefaultNodeProperties properties = new DefaultNodeProperties();
     private Set<QName> aspects;
+
+    private ParentChildAssoc primaryParentAssoc;
+    private QName qName;
 
     @Override
     public String getName() {
-        String name = (String) this.properties.get(Content.NAME);
-        return name != null ? name : nodeRef.getUuid();
+        return this.properties.get(Content.NAME).map(Object::toString).orElseGet(() -> nodeRef.getUuid());
+    }
+
+    @Override
+    public ParentChildNodeCollection getChildNodeCollection() {
+        return null;
     }
 
     public TestNode withProperty(QName key, Serializable value) {
