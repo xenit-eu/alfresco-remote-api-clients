@@ -2,7 +2,6 @@ package eu.xenit.alfresco.solrapi.client.tests.ditto;
 
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.Node;
-import eu.xenit.testing.ditto.api.model.NodeProperties;
 import eu.xenit.testing.ditto.api.model.NodeReference;
 import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
 import eu.xenit.testing.ditto.api.model.ParentChildNodeCollection;

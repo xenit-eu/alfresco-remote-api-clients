@@ -4,5 +4,7 @@
 /*/*/build/
 /*/*/out/
 
+/build/
+
 /alfresco-solrapi-client/alfresco-client.*
 

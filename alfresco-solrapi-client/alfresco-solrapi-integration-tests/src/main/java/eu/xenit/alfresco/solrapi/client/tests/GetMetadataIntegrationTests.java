@@ -6,6 +6,7 @@ import eu.xenit.alfresco.solrapi.client.tests.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.tests.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.tests.spi.query.NodeMetaDataQueryParameters;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 public interface GetMetadataIntegrationTests {
@@ -33,6 +34,10 @@ public interface GetMetadataIntegrationTests {
                     assertThat(node.getType()).isEqualTo("cm:folder");
                     assertThat(node.getProperties())
                             .containsEntry("{http://www.alfresco.org/model/content/1.0}name", "Company Home");
+                    assertMultiLingualPropertyWithValue(
+                            node.getProperties().get("{http://www.alfresco.org/model/content/1.0}description"),
+                            "The company root space"
+                    );
                     assertThat(node.getAspects()).contains("cm:auditable");
                     assertThat(node.getOwner()).isEqualTo("System");
                     // TODO:
@@ -54,6 +59,18 @@ public interface GetMetadataIntegrationTests {
 //                            );
 
                 });
+    }
+
+    static <T> void assertMultiLingualPropertyWithValue(Object actualValue, T expectedValue) {
+        assertThat(actualValue)
+                .isNotNull()
+                .asList()
+                .isNotEmpty();
+        Map<String, T> descValue = ((List<Map>) actualValue).get(0);
+        assertThat(descValue)
+                .isNotNull()
+                .containsKey("locale")
+                .containsEntry("value", expectedValue);
     }
 
     @Test
