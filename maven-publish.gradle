@@ -1,41 +1,70 @@
-task sourcesJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.allSource
-    archiveClassifier = 'sources'
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    archiveClassifier = 'javadoc'
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 publishing {
     publications {
         jar(MavenPublication) {
             from components.java
+        }
+        all {
+            pom {
+                url = 'https://github.com/xenit-eu/alfresco-remote-api-clients'
+                name = project.name
+                description = project.description
 
-            artifact sourcesJar
-            artifact javadocJar
+                scm {
+                    connection = 'scm:git:git@github.com:xenit-eu/alfresco-remote-api-clients.git'
+                    developerConnection = 'scm:git:git@github.com:xenit-eu/alfresco-remote-api-clients.git'
+                    url = 'https://github.com/xenit-eu/alfresco-remote-api-clients.git'
+                }
+                developers {
+                    developer {
+                        id = "xenit"
+                        name = "Xenit Solutions NV"
+                    }
+                }
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+            }
         }
     }
 
     repositories {
         maven {
-            name = 'xenit'
-            if (version.endsWith('SNAPSHOT')) {
-                url = 'https://artifactory.xenit.eu/artifactory/libs-snapshot-local'
-            } else {
-                url = 'https://artifactory.xenit.eu/artifactory/libs-release-local'
-            }
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
             credentials {
-                username property("eu.xenit.artifactory.username")
-                password property("eu.xenit.artifactory.password")
+                username = project.hasProperty('publish_username') ? project.publish_username : ''
+                password = project.hasProperty('publish_password') ? project.publish_password : ''
             }
         }
+    }
+}
+
+signing {
+    required { !version.endsWith('SNAPSHOT') && gradle.taskGraph.hasTask("publish") }
+    sign publishing.publications
+}
+
+gradle.taskGraph.whenReady { graph ->
+    if (graph.hasTask(publish)) {
+        if (!project.hasProperty('keyId') || !project.hasProperty('secretKeyRingFile') || !project.hasProperty('password')) {
+            throw new GradleException('You need to provide signing params in order to sign artifacts')
+        }
+
+        def id = project.hasProperty('keyId') ? project.keyId : ''
+        def file = project.hasProperty('secretKeyRingFile') ? project.secretKeyRingFile : ''
+        def password = project.hasProperty('password') ? project.password : ''
+
+        ext."signing.keyId" = id
+        ext."signing.secretKeyRingFile" = file
+        ext."signing.password" = password
     }
 }
