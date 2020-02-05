@@ -2,11 +2,9 @@ package eu.xenit.alfresco.solrapi.client.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import eu.xenit.alfresco.solrapi.client.tests.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.tests.spi.dto.SolrNode;
-import eu.xenit.alfresco.solrapi.client.tests.spi.query.NodesQueryParameters;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;

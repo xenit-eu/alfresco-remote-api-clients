@@ -3,11 +3,7 @@ package eu.xenit.alfresco.solrapi.client.spring;
 import eu.xenit.alfresco.solrapi.client.tests.GetMetadataIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetNodesIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetTransactionsIntegrationTests;
-import eu.xenit.alfresco.solrapi.client.tests.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.tests.spring.SolrAPIClientImpl;
-import eu.xenit.alfresco.solrapi.client.tests.spring.SolrApiProperties;
-import eu.xenit.alfresco.solrapi.client.tests.spring.SolrRequestFactory;
-import eu.xenit.alfresco.solrapi.client.tests.spring.SolrSslProperties;
+import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 
 class SolrApiSpringClientIntegrationTest
 {
