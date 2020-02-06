@@ -198,8 +198,7 @@ public class FakeSolrApiClient implements SolrApiClient {
         List<List<ParentChildAssoc>> parentPaths = getParentPaths(parentAssoc.getParent());
         if (parentPaths.isEmpty()) {
             // the parent is a root
-            List<ParentChildAssoc> assocsList = Arrays.asList(parentAssoc);
-            return Collections.singletonList(assocsList);
+            return toList(toList(parentAssoc));
         } else {
             // for each path of the parent
             return parentPaths.stream()
@@ -212,6 +211,16 @@ public class FakeSolrApiClient implements SolrApiClient {
 
 //        return parialResult;
 
+    }
+
+    private <T> List<T> toList(T item) {
+        if (item == null) {
+            return null;
+        }
+
+        List<T> list = new ArrayList<>();
+        list.add(item);
+        return list;
     }
 
     private List<ParentChildAssoc> getPrimaryPath(Node node) {

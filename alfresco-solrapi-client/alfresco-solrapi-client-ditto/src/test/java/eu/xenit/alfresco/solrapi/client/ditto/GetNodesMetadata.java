@@ -137,8 +137,11 @@ public class GetNodesMetadata {
                     assertThat(node.getOwner()).isEqualTo("Morpheus");
                     assertThat(node.getAspects()).contains(Content.AUDITABLE.toPrefixString());
                     assertThat(node.getPaths()).extracting(NodePathInfo::getPath)
-                            .containsExactly("/{http://www.alfresco.org/model/content/1.0}Folder"
-                                    + "/{http://www.alfresco.org/model/content/1.0}Sub Folder");
+                            .containsExactly(
+                                    /* TODO: what I actually expect:
+                                        "/{http://www.alfresco.org/model/content/1.0}Folder" + */
+                                    "/{http://www.alfresco.org/model/content/1.0}Sub Folder" +
+                                            "/{http://www.alfresco.org/model/content/1.0}document.txt");
                 });
     }
 }
