@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 
 public interface GetMetadataIntegrationTests {
 
+    String PATTERN_UUID = "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}";
+    String PATTERN_NODEREF = "workspace://SpacesStore/" + PATTERN_UUID;
+
     SolrApiClient solrApiClient();
 
     @Test
@@ -40,23 +43,24 @@ public interface GetMetadataIntegrationTests {
                     );
                     assertThat(node.getAspects()).contains("cm:auditable");
                     assertThat(node.getOwner()).isEqualTo("System");
-                    // TODO:
-//                    assertThat(node.getPaths())
-//                            .hasOnlyOneElementSatisfying(path -> {
-//                                assertThat(path.getPath())
-//                                        .isEqualTo("/{http://www.alfresco.org/model/application/1.0}company_home");
-//                            });
-//                    assertThat(node.getAncestors())
-//                            .hasOnlyOneElementSatisfying(ancestor ->
-//                                    assertThat(ancestor).startsWith("workspace://SpacesStore/")
-//                            );
-//                    assertThat(node.getNamePaths())
-//                            // There is only a single named path to company home:
-//                            // it has no secondary parents or category-paths
-//                            .hasOnlyOneElementSatisfying(primaryPath ->
-//                                    assertThat(primaryPath.getNamePath())
-//                                            .contains("Company Home")
-//                            );
+
+                    assertThat(node.getPaths())
+                            .as("paths")
+                            .hasOnlyOneElementSatisfying(path -> {
+                                assertThat(path.getPath())
+                                        .isEqualTo("/{http://www.alfresco.org/model/application/1.0}company_home");
+                                assertThat(path.getApath())
+                                        .matches("/" + PATTERN_UUID);
+                            });
+                    assertThat(node.getNamePaths())
+                            .as("namePaths")
+                            .hasOnlyOneElementSatisfying(path -> {
+                                assertThat(path.getNamePath())
+                                        .hasOnlyOneElementSatisfying(p -> assertThat(p).isEqualTo("Company Home"));
+                            });
+                    assertThat(node.getAncestors())
+                            .as("ancestors")
+                            .hasOnlyOneElementSatisfying(ancestor -> assertThat(ancestor).matches(PATTERN_NODEREF));
 
                 });
     }

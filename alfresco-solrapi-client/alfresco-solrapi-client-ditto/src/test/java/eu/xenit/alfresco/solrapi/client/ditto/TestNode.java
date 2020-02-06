@@ -18,6 +18,7 @@ import lombok.experimental.Accessors;
 public class TestNode implements Node {
 
     private final long nodeId;
+
     @Accessors(chain = true)
     private long txnId;
     private final QName type;
@@ -41,7 +42,7 @@ public class TestNode implements Node {
     }
 
     public TestNode withProperty(QName key, Serializable value) {
-        this.getProperties().put(key, value);
+        this.properties.put(key, value);
         return this;
     }
 
