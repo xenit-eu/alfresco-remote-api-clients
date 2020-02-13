@@ -1,7 +1,5 @@
 package eu.xenit.alfresco.solrapi.client.spring;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
@@ -102,19 +100,6 @@ public class SolrAPIClientImpl implements SolrApiClient {
     @Override
     public List<SolrNodeMetaData> getNodesMetaData(NodeMetaDataQueryParameters params) {
         String metadataUri = UriComponentsBuilder.fromHttpUrl(url).path("/metadata").toUriString();
-
-        if (log.isDebugEnabled())
-        {
-            ObjectMapper mapper = new ObjectMapper();
-            log.debug("getNodesMetaData({})", params);
-            try {
-                log.debug("curl -k -H 'Content-Type: application/json' -E alfresco-client.pem {} -d \"{}\"", metadataUri, mapper.writeValueAsString(params));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
-
-
         SolrNodeMetadataList result = restTemplate.postForObject(metadataUri,
                 params, SolrNodeMetadataList.class);
         Assert.notNull(result, "Response for getNodes(" + params + ") should not be null");
