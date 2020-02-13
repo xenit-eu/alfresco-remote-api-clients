@@ -15,15 +15,23 @@ import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import java.io.IOException;
+import java.net.URI;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
@@ -88,22 +96,31 @@ public class SolrAPIClientImpl implements SolrApiClient {
 
     @Override
     public List<SolrNode> getNodes(NodesQueryParameters parameters) {
-        log.debug("getNodes with " + parameters);
+        URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/nodes").build().toUri();
 
-        SolrNodeList solrNodeList = restTemplate.postForObject(
-                UriComponentsBuilder.fromHttpUrl(url).path("/nodes").toUriString(),
-                parameters, SolrNodeList.class);
+        HttpEntity<NodesQueryParameters> request = new HttpEntity<>(parameters, defaultHttpHeaders());
+        ResponseEntity<SolrNodeList> result = restTemplate.exchange(uri, HttpMethod
+                .POST, request, SolrNodeList.class);
+//
+        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP "+result.getStatusCodeValue());
+//        Assert.notNull(result.getBody(), "Response for getNodes(" + params + ") should not be null");
+
+        SolrNodeList solrNodeList = result.getBody();
         Assert.notNull(solrNodeList, "Response for getNodes(" + parameters + ") should not be null");
         return solrNodeList.getNodes();
     }
 
     @Override
     public List<SolrNodeMetaData> getNodesMetaData(NodeMetaDataQueryParameters params) {
-        String metadataUri = UriComponentsBuilder.fromHttpUrl(url).path("/metadata").toUriString();
-        SolrNodeMetadataList result = restTemplate.postForObject(metadataUri,
-                params, SolrNodeMetadataList.class);
-        Assert.notNull(result, "Response for getNodes(" + params + ") should not be null");
-        return result.getNodes();
+        URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/metadata").build().toUri();
+
+        HttpEntity<NodeMetaDataQueryParameters> request = new HttpEntity<>(params, defaultHttpHeaders());
+        ResponseEntity<SolrNodeMetadataList> result = restTemplate.exchange(uri, HttpMethod
+                .POST, request, SolrNodeMetadataList.class);
+
+        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP "+result.getStatusCodeValue());
+        Assert.notNull(result.getBody(), "Response for getNodes(" + params + ") should not be null");
+        return result.getBody().getNodes();
     }
 
     @Override
@@ -128,5 +145,12 @@ public class SolrAPIClientImpl implements SolrApiClient {
         if (condition.test(value)) {
             builder.queryParam(key, value);
         }
+    }
+
+    private static HttpHeaders defaultHttpHeaders() {
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+        requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return requestHeaders;
     }
 }
