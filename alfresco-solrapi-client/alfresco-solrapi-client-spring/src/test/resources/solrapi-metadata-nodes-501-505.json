@@ -1,0 +1,340 @@
+{
+   "nodes" :
+   [
+               {
+         "id": 501
+         , "tenantDomain": ""
+         , "nodeRef": "workspace://SpacesStore/2b97b483-fdf5-475e-ac17-64319df3aa1a"
+         , "type": "act:compositeaction"
+
+         , "aclId": 13
+         , "txnId": 6
+         , "properties": {
+               "{http://www.alfresco.org/model/system/1.0}store-protocol": "workspace",
+               "{http://www.alfresco.org/model/system/1.0}node-dbid": "501",
+               "{http://www.alfresco.org/model/action/1.0}executionEndDate": "2010-08-11T12:06:18.419Z",
+               "{http://www.alfresco.org/model/content/1.0}name": "2b97b483-fdf5-475e-ac17-64319df3aa1a",
+               "{http://www.alfresco.org/model/content/1.0}modified": "2020-02-05T16:10:32.555Z",
+               "{http://www.alfresco.org/model/action/1.0}executionFailureMessage": null,
+               "{http://www.alfresco.org/model/content/1.0}creator": "System",
+               "{http://www.alfresco.org/model/action/1.0}actionTitle": null,
+               "{http://www.alfresco.org/model/action/1.0}executeAsynchronously": "false",
+               "{http://www.alfresco.org/model/action/1.0}definitionName": "composite-action",
+               "{http://www.alfresco.org/model/content/1.0}created": "2020-02-05T16:10:32.555Z",
+               "{http://www.alfresco.org/model/action/1.0}executionStartDate": "2010-08-11T12:06:18.408Z",
+               "{http://www.alfresco.org/model/system/1.0}store-identifier": "SpacesStore",
+               "{http://www.alfresco.org/model/action/1.0}executionActionStatus": "Completed",
+               "{http://www.alfresco.org/model/system/1.0}locale": "en_US_",
+               "{http://www.alfresco.org/model/content/1.0}modifier": "System",
+               "{http://www.alfresco.org/model/action/1.0}actionDescription": null,
+               "{http://www.alfresco.org/model/system/1.0}node-uuid": "2b97b483-fdf5-475e-ac17-64319df3aa1a"
+         }
+         , "aspects": [
+               "act:actions"
+
+,
+               "cm:auditable"
+
+,
+               "sys:referenceable"
+
+,
+               "sys:localized"
+
+
+         ]
+         , "paths": [
+           {
+   "apath": "/caabfc5a-77e7-4bb6-abe6-770f6a16e077/f9e91b2a-114c-4d1a-90ae-3dc3daf82232/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3/6101046b-c514-41d9-aca0-30b3796bdbb5/1cf6e461-50da-4839-88f8-5de4dcee7656/bba72a7a-6407-41b6-a512-12830a76308e/b6759424-19a3-49b5-a14f-858883bc96e3/5b4606aa-979c-4671-9785-96c91d6511a0",
+   "path": "/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/application/1.0}dictionary/{http://www.alfresco.org/model/application/1.0}transfers/{http://www.alfresco.org/model/application/1.0}transfer_groups/{http://www.alfresco.org/model/content/1.0}default/{http://www.alfresco.org/model/rule/1.0}ruleFolder/{http://www.alfresco.org/model/rule/1.0}rules3245de8b-2cfe-42ed-8f8b-44089f99b265/{http://www.alfresco.org/model/rule/1.0}action"
+}
+         ]
+         , "ancestors": [
+           "workspace://SpacesStore/b6759424-19a3-49b5-a14f-858883bc96e3",
+           "workspace://SpacesStore/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3",
+           "workspace://SpacesStore/bba72a7a-6407-41b6-a512-12830a76308e",
+           "workspace://SpacesStore/1cf6e461-50da-4839-88f8-5de4dcee7656",
+           "workspace://SpacesStore/f9e91b2a-114c-4d1a-90ae-3dc3daf82232",
+           "workspace://SpacesStore/6101046b-c514-41d9-aca0-30b3796bdbb5",
+           "workspace://SpacesStore/caabfc5a-77e7-4bb6-abe6-770f6a16e077",
+           "workspace://SpacesStore/5b4606aa-979c-4671-9785-96c91d6511a0"
+         ]
+         , "namePaths": [
+           {"namePath": []}
+         ]
+         , "parentAssocs": [
+           "workspace:\/\/SpacesStore\/5b4606aa-979c-4671-9785-96c91d6511a0|workspace:\/\/SpacesStore\/2b97b483-fdf5-475e-ac17-64319df3aa1a|{http:\/\/www.alfresco.org\/model\/rule\/1.0}action|{http:\/\/www.alfresco.org\/model\/rule\/1.0}action|true|-1"
+         ]
+         ,"parentAssocsCrc": 2931161299
+         , "childAssocs": [
+           "workspace:\/\/SpacesStore\/2b97b483-fdf5-475e-ac17-64319df3aa1a|workspace:\/\/SpacesStore\/45b4b6da-afaa-4258-8d8b-b4093947ae22|{http:\/\/www.alfresco.org\/model\/action\/1.0}actionFolder|{http:\/\/www.alfresco.org\/model\/action\/1.0}actionFolder|true|-1",
+           "workspace:\/\/SpacesStore\/2b97b483-fdf5-475e-ac17-64319df3aa1a|workspace:\/\/SpacesStore\/3c90fa27-c95e-4c08-8607-b8e2a8c4a430|{http:\/\/www.alfresco.org\/model\/action\/1.0}actions|{http:\/\/www.alfresco.org\/model\/action\/1.0}actions|true|-1",
+           "workspace:\/\/SpacesStore\/2b97b483-fdf5-475e-ac17-64319df3aa1a|workspace:\/\/SpacesStore\/0667cd5a-a92f-4164-88ab-8757500128a1|{http:\/\/www.alfresco.org\/model\/action\/1.0}conditions|{http:\/\/www.alfresco.org\/model\/action\/1.0}conditions|true|-1"
+         ]
+         , "childIds": [
+           502,
+           503,
+           505
+         ]
+         , "owner": "System"
+      }
+,
+               {
+         "id": 502
+         , "tenantDomain": ""
+         , "nodeRef": "workspace://SpacesStore/45b4b6da-afaa-4258-8d8b-b4093947ae22"
+         , "type": "cm:systemfolder"
+
+         , "aclId": 13
+         , "txnId": 6
+         , "properties": {
+               "{http://www.alfresco.org/model/system/1.0}store-protocol": "workspace",
+               "{http://www.alfresco.org/model/system/1.0}node-dbid": "502",
+               "{http://www.alfresco.org/model/content/1.0}name": "45b4b6da-afaa-4258-8d8b-b4093947ae22",
+               "{http://www.alfresco.org/model/content/1.0}modified": "2020-02-05T16:10:32.590Z",
+               "{http://www.alfresco.org/model/content/1.0}creator": "System",
+               "{http://www.alfresco.org/model/system/1.0}locale": "en_US_",
+               "{http://www.alfresco.org/model/content/1.0}created": "2020-02-05T16:10:32.590Z",
+               "{http://www.alfresco.org/model/system/1.0}store-identifier": "SpacesStore",
+               "{http://www.alfresco.org/model/content/1.0}modifier": "System",
+               "{http://www.alfresco.org/model/system/1.0}node-uuid": "45b4b6da-afaa-4258-8d8b-b4093947ae22"
+         }
+         , "aspects": [
+               "cm:auditable"
+
+,
+               "sys:referenceable"
+
+,
+               "sys:localized"
+
+
+         ]
+         , "paths": [
+           {
+   "apath": "/caabfc5a-77e7-4bb6-abe6-770f6a16e077/f9e91b2a-114c-4d1a-90ae-3dc3daf82232/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3/6101046b-c514-41d9-aca0-30b3796bdbb5/1cf6e461-50da-4839-88f8-5de4dcee7656/bba72a7a-6407-41b6-a512-12830a76308e/b6759424-19a3-49b5-a14f-858883bc96e3/5b4606aa-979c-4671-9785-96c91d6511a0/2b97b483-fdf5-475e-ac17-64319df3aa1a",
+   "path": "/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/application/1.0}dictionary/{http://www.alfresco.org/model/application/1.0}transfers/{http://www.alfresco.org/model/application/1.0}transfer_groups/{http://www.alfresco.org/model/content/1.0}default/{http://www.alfresco.org/model/rule/1.0}ruleFolder/{http://www.alfresco.org/model/rule/1.0}rules3245de8b-2cfe-42ed-8f8b-44089f99b265/{http://www.alfresco.org/model/rule/1.0}action/{http://www.alfresco.org/model/action/1.0}actionFolder"
+}
+         ]
+         , "ancestors": [
+           "workspace://SpacesStore/b6759424-19a3-49b5-a14f-858883bc96e3",
+           "workspace://SpacesStore/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3",
+           "workspace://SpacesStore/2b97b483-fdf5-475e-ac17-64319df3aa1a",
+           "workspace://SpacesStore/bba72a7a-6407-41b6-a512-12830a76308e",
+           "workspace://SpacesStore/1cf6e461-50da-4839-88f8-5de4dcee7656",
+           "workspace://SpacesStore/f9e91b2a-114c-4d1a-90ae-3dc3daf82232",
+           "workspace://SpacesStore/6101046b-c514-41d9-aca0-30b3796bdbb5",
+           "workspace://SpacesStore/caabfc5a-77e7-4bb6-abe6-770f6a16e077",
+           "workspace://SpacesStore/5b4606aa-979c-4671-9785-96c91d6511a0"
+         ]
+         , "namePaths": [
+           {"namePath": []}
+         ]
+         , "parentAssocs": [
+           "workspace:\/\/SpacesStore\/2b97b483-fdf5-475e-ac17-64319df3aa1a|workspace:\/\/SpacesStore\/45b4b6da-afaa-4258-8d8b-b4093947ae22|{http:\/\/www.alfresco.org\/model\/action\/1.0}actionFolder|{http:\/\/www.alfresco.org\/model\/action\/1.0}actionFolder|true|-1"
+         ]
+         ,"parentAssocsCrc": 3456314424
+         , "owner": "System"
+      }
+,
+               {
+         "id": 503
+         , "tenantDomain": ""
+         , "nodeRef": "workspace://SpacesStore/3c90fa27-c95e-4c08-8607-b8e2a8c4a430"
+         , "type": "act:action"
+
+         , "aclId": 13
+         , "txnId": 6
+         , "properties": {
+               "{http://www.alfresco.org/model/system/1.0}store-protocol": "workspace",
+               "{http://www.alfresco.org/model/system/1.0}node-dbid": "503",
+               "{http://www.alfresco.org/model/action/1.0}executionEndDate": null,
+               "{http://www.alfresco.org/model/content/1.0}name": "3c90fa27-c95e-4c08-8607-b8e2a8c4a430",
+               "{http://www.alfresco.org/model/content/1.0}modified": "2020-02-05T16:10:32.594Z",
+               "{http://www.alfresco.org/model/action/1.0}executionFailureMessage": null,
+               "{http://www.alfresco.org/model/content/1.0}creator": "System",
+               "{http://www.alfresco.org/model/action/1.0}actionTitle": null,
+               "{http://www.alfresco.org/model/action/1.0}executeAsynchronously": "false",
+               "{http://www.alfresco.org/model/action/1.0}definitionName": "specialise-type",
+               "{http://www.alfresco.org/model/content/1.0}created": "2020-02-05T16:10:32.594Z",
+               "{http://www.alfresco.org/model/action/1.0}executionStartDate": null,
+               "{http://www.alfresco.org/model/system/1.0}store-identifier": "SpacesStore",
+               "{http://www.alfresco.org/model/action/1.0}executionActionStatus": "New",
+               "{http://www.alfresco.org/model/system/1.0}locale": "en_US_",
+               "{http://www.alfresco.org/model/content/1.0}modifier": "System",
+               "{http://www.alfresco.org/model/action/1.0}actionDescription": null,
+               "{http://www.alfresco.org/model/system/1.0}node-uuid": "3c90fa27-c95e-4c08-8607-b8e2a8c4a430"
+         }
+         , "aspects": [
+               "cm:auditable"
+
+,
+               "sys:referenceable"
+
+,
+               "sys:localized"
+
+
+         ]
+         , "paths": [
+           {
+   "apath": "/caabfc5a-77e7-4bb6-abe6-770f6a16e077/f9e91b2a-114c-4d1a-90ae-3dc3daf82232/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3/6101046b-c514-41d9-aca0-30b3796bdbb5/1cf6e461-50da-4839-88f8-5de4dcee7656/bba72a7a-6407-41b6-a512-12830a76308e/b6759424-19a3-49b5-a14f-858883bc96e3/5b4606aa-979c-4671-9785-96c91d6511a0/2b97b483-fdf5-475e-ac17-64319df3aa1a",
+   "path": "/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/application/1.0}dictionary/{http://www.alfresco.org/model/application/1.0}transfers/{http://www.alfresco.org/model/application/1.0}transfer_groups/{http://www.alfresco.org/model/content/1.0}default/{http://www.alfresco.org/model/rule/1.0}ruleFolder/{http://www.alfresco.org/model/rule/1.0}rules3245de8b-2cfe-42ed-8f8b-44089f99b265/{http://www.alfresco.org/model/rule/1.0}action/{http://www.alfresco.org/model/action/1.0}actions"
+}
+         ]
+         , "ancestors": [
+           "workspace://SpacesStore/b6759424-19a3-49b5-a14f-858883bc96e3",
+           "workspace://SpacesStore/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3",
+           "workspace://SpacesStore/2b97b483-fdf5-475e-ac17-64319df3aa1a",
+           "workspace://SpacesStore/bba72a7a-6407-41b6-a512-12830a76308e",
+           "workspace://SpacesStore/1cf6e461-50da-4839-88f8-5de4dcee7656",
+           "workspace://SpacesStore/f9e91b2a-114c-4d1a-90ae-3dc3daf82232",
+           "workspace://SpacesStore/6101046b-c514-41d9-aca0-30b3796bdbb5",
+           "workspace://SpacesStore/caabfc5a-77e7-4bb6-abe6-770f6a16e077",
+           "workspace://SpacesStore/5b4606aa-979c-4671-9785-96c91d6511a0"
+         ]
+         , "namePaths": [
+           {"namePath": []}
+         ]
+         , "parentAssocs": [
+           "workspace:\/\/SpacesStore\/2b97b483-fdf5-475e-ac17-64319df3aa1a|workspace:\/\/SpacesStore\/3c90fa27-c95e-4c08-8607-b8e2a8c4a430|{http:\/\/www.alfresco.org\/model\/action\/1.0}actions|{http:\/\/www.alfresco.org\/model\/action\/1.0}actions|true|-1"
+         ]
+         ,"parentAssocsCrc": 4225676490
+         , "childAssocs": [
+           "workspace:\/\/SpacesStore\/3c90fa27-c95e-4c08-8607-b8e2a8c4a430|workspace:\/\/SpacesStore\/d9ce5b26-16a4-4489-8e94-f7eefe5382ac|{http:\/\/www.alfresco.org\/model\/action\/1.0}parameters|{http:\/\/www.alfresco.org\/model\/action\/1.0}parameters|true|-1"
+         ]
+         , "childIds": [
+           504
+         ]
+         , "owner": "System"
+      }
+,
+               {
+         "id": 504
+         , "tenantDomain": ""
+         , "nodeRef": "workspace://SpacesStore/d9ce5b26-16a4-4489-8e94-f7eefe5382ac"
+         , "type": "act:actionparameter"
+
+         , "aclId": 13
+         , "txnId": 6
+         , "properties": {
+               "{http://www.alfresco.org/model/system/1.0}store-protocol": "workspace",
+               "{http://www.alfresco.org/model/system/1.0}node-dbid": "504",
+               "{http://www.alfresco.org/model/content/1.0}name": "d9ce5b26-16a4-4489-8e94-f7eefe5382ac",
+               "{http://www.alfresco.org/model/content/1.0}modified": "2020-02-05T16:10:32.600Z",
+               "{http://www.alfresco.org/model/content/1.0}creator": "System",
+               "{http://www.alfresco.org/model/action/1.0}parameterValue": "{http://www.alfresco.org/model/transfer/1.0}transferTarget",
+               "{http://www.alfresco.org/model/content/1.0}created": "2020-02-05T16:10:32.600Z",
+               "{http://www.alfresco.org/model/system/1.0}store-identifier": "SpacesStore",
+               "{http://www.alfresco.org/model/system/1.0}locale": "en_US_",
+               "{http://www.alfresco.org/model/action/1.0}parameterName": "type-name",
+               "{http://www.alfresco.org/model/content/1.0}modifier": "System",
+               "{http://www.alfresco.org/model/system/1.0}node-uuid": "d9ce5b26-16a4-4489-8e94-f7eefe5382ac"
+         }
+         , "aspects": [
+               "cm:auditable"
+
+,
+               "sys:referenceable"
+
+,
+               "sys:localized"
+
+
+         ]
+         , "paths": [
+           {
+   "apath": "/caabfc5a-77e7-4bb6-abe6-770f6a16e077/f9e91b2a-114c-4d1a-90ae-3dc3daf82232/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3/6101046b-c514-41d9-aca0-30b3796bdbb5/1cf6e461-50da-4839-88f8-5de4dcee7656/bba72a7a-6407-41b6-a512-12830a76308e/b6759424-19a3-49b5-a14f-858883bc96e3/5b4606aa-979c-4671-9785-96c91d6511a0/2b97b483-fdf5-475e-ac17-64319df3aa1a/3c90fa27-c95e-4c08-8607-b8e2a8c4a430",
+   "path": "/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/application/1.0}dictionary/{http://www.alfresco.org/model/application/1.0}transfers/{http://www.alfresco.org/model/application/1.0}transfer_groups/{http://www.alfresco.org/model/content/1.0}default/{http://www.alfresco.org/model/rule/1.0}ruleFolder/{http://www.alfresco.org/model/rule/1.0}rules3245de8b-2cfe-42ed-8f8b-44089f99b265/{http://www.alfresco.org/model/rule/1.0}action/{http://www.alfresco.org/model/action/1.0}actions/{http://www.alfresco.org/model/action/1.0}parameters"
+}
+         ]
+         , "ancestors": [
+           "workspace://SpacesStore/b6759424-19a3-49b5-a14f-858883bc96e3",
+           "workspace://SpacesStore/3c90fa27-c95e-4c08-8607-b8e2a8c4a430",
+           "workspace://SpacesStore/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3",
+           "workspace://SpacesStore/2b97b483-fdf5-475e-ac17-64319df3aa1a",
+           "workspace://SpacesStore/bba72a7a-6407-41b6-a512-12830a76308e",
+           "workspace://SpacesStore/1cf6e461-50da-4839-88f8-5de4dcee7656",
+           "workspace://SpacesStore/f9e91b2a-114c-4d1a-90ae-3dc3daf82232",
+           "workspace://SpacesStore/6101046b-c514-41d9-aca0-30b3796bdbb5",
+           "workspace://SpacesStore/caabfc5a-77e7-4bb6-abe6-770f6a16e077",
+           "workspace://SpacesStore/5b4606aa-979c-4671-9785-96c91d6511a0"
+         ]
+         , "namePaths": [
+           {"namePath": []}
+         ]
+         , "parentAssocs": [
+           "workspace:\/\/SpacesStore\/3c90fa27-c95e-4c08-8607-b8e2a8c4a430|workspace:\/\/SpacesStore\/d9ce5b26-16a4-4489-8e94-f7eefe5382ac|{http:\/\/www.alfresco.org\/model\/action\/1.0}parameters|{http:\/\/www.alfresco.org\/model\/action\/1.0}parameters|true|-1"
+         ]
+         ,"parentAssocsCrc": 2725938255
+         , "owner": "System"
+      }
+,
+               {
+         "id": 505
+         , "tenantDomain": ""
+         , "nodeRef": "workspace://SpacesStore/0667cd5a-a92f-4164-88ab-8757500128a1"
+         , "type": "act:actioncondition"
+
+         , "aclId": 13
+         , "txnId": 6
+         , "properties": {
+               "{http://www.alfresco.org/model/system/1.0}store-protocol": "workspace",
+               "{http://www.alfresco.org/model/system/1.0}node-dbid": "505",
+               "{http://www.alfresco.org/model/content/1.0}name": "0667cd5a-a92f-4164-88ab-8757500128a1",
+               "{http://www.alfresco.org/model/content/1.0}modified": "2020-02-05T16:10:32.604Z",
+               "{http://www.alfresco.org/model/content/1.0}creator": "System",
+               "{http://www.alfresco.org/model/action/1.0}invert": "false",
+               "{http://www.alfresco.org/model/action/1.0}definitionName": "is-subtype",
+               "{http://www.alfresco.org/model/content/1.0}created": "2020-02-05T16:10:32.604Z",
+               "{http://www.alfresco.org/model/system/1.0}store-identifier": "SpacesStore",
+               "{http://www.alfresco.org/model/system/1.0}locale": "en_US_",
+               "{http://www.alfresco.org/model/content/1.0}modifier": "System",
+               "{http://www.alfresco.org/model/system/1.0}node-uuid": "0667cd5a-a92f-4164-88ab-8757500128a1"
+         }
+         , "aspects": [
+               "cm:auditable"
+
+,
+               "sys:referenceable"
+
+,
+               "sys:localized"
+
+
+         ]
+         , "paths": [
+           {
+   "apath": "/caabfc5a-77e7-4bb6-abe6-770f6a16e077/f9e91b2a-114c-4d1a-90ae-3dc3daf82232/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3/6101046b-c514-41d9-aca0-30b3796bdbb5/1cf6e461-50da-4839-88f8-5de4dcee7656/bba72a7a-6407-41b6-a512-12830a76308e/b6759424-19a3-49b5-a14f-858883bc96e3/5b4606aa-979c-4671-9785-96c91d6511a0/2b97b483-fdf5-475e-ac17-64319df3aa1a",
+   "path": "/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/application/1.0}dictionary/{http://www.alfresco.org/model/application/1.0}transfers/{http://www.alfresco.org/model/application/1.0}transfer_groups/{http://www.alfresco.org/model/content/1.0}default/{http://www.alfresco.org/model/rule/1.0}ruleFolder/{http://www.alfresco.org/model/rule/1.0}rules3245de8b-2cfe-42ed-8f8b-44089f99b265/{http://www.alfresco.org/model/rule/1.0}action/{http://www.alfresco.org/model/action/1.0}conditions"
+}
+         ]
+         , "ancestors": [
+           "workspace://SpacesStore/b6759424-19a3-49b5-a14f-858883bc96e3",
+           "workspace://SpacesStore/3cbda2d7-9a17-442f-a4cf-a4aa3f1a1ab3",
+           "workspace://SpacesStore/2b97b483-fdf5-475e-ac17-64319df3aa1a",
+           "workspace://SpacesStore/bba72a7a-6407-41b6-a512-12830a76308e",
+           "workspace://SpacesStore/1cf6e461-50da-4839-88f8-5de4dcee7656",
+           "workspace://SpacesStore/f9e91b2a-114c-4d1a-90ae-3dc3daf82232",
+           "workspace://SpacesStore/6101046b-c514-41d9-aca0-30b3796bdbb5",
+           "workspace://SpacesStore/caabfc5a-77e7-4bb6-abe6-770f6a16e077",
+           "workspace://SpacesStore/5b4606aa-979c-4671-9785-96c91d6511a0"
+         ]
+         , "namePaths": [
+           {"namePath": []}
+         ]
+         , "parentAssocs": [
+           "workspace:\/\/SpacesStore\/2b97b483-fdf5-475e-ac17-64319df3aa1a|workspace:\/\/SpacesStore\/0667cd5a-a92f-4164-88ab-8757500128a1|{http:\/\/www.alfresco.org\/model\/action\/1.0}conditions|{http:\/\/www.alfresco.org\/model\/action\/1.0}conditions|true|-1"
+         ]
+         ,"parentAssocsCrc": 2162753908
+         , "childAssocs": [
+           "workspace:\/\/SpacesStore\/0667cd5a-a92f-4164-88ab-8757500128a1|workspace:\/\/SpacesStore\/7fd0f488-dc36-4c70-bbed-27ac0a8e43c9|{http:\/\/www.alfresco.org\/model\/action\/1.0}parameters|{http:\/\/www.alfresco.org\/model\/action\/1.0}parameters|true|-1"
+         ]
+         , "childIds": [
+           506
+         ]
+         , "owner": "System"
+      }
+
+   ]
+}

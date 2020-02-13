@@ -11,19 +11,16 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransaction;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
+import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -35,27 +32,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-@RestClientTest
-@AutoConfigureWebClient(registerRestTemplate = true)
 class SolrAPIClientImplTest {
-
-    @Configuration
-    public static class TestConfig {
-
-        @Bean
-        public SolrApiClient solrApiClient(RestTemplate restTemplate) {
-            return new SolrAPIClientImpl(new SolrApiProperties(), restTemplate);
-        }
-    }
-
-    @Autowired
-    private SolrApiClient client;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Test
     void getTransactions() {
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        SolrAPIClientImpl client = new SolrAPIClientImpl(new SolrApiProperties(), restTemplate);
+
         MockRestServiceServer.createServer(restTemplate)
                 .expect(requestUriPath("/alfresco/service/api/solr/transactions"))
                 .andExpect(method(HttpMethod.GET))
@@ -79,7 +62,7 @@ class SolrAPIClientImplTest {
                         "  \"maxTxnId\": 16",
                         "}"), MediaType.APPLICATION_JSON));
 
-        SolrTransactions result = this.client.getTransactions(null, 1L, null, 10L, 1);
+        SolrTransactions result = client.getTransactions(null, 1L, null, 10L, 1);
         assertThat(result)
                 .isNotNull()
                 .satisfies(txn -> assertThat(txn.getMaxTxnCommitTime())
@@ -94,6 +77,10 @@ class SolrAPIClientImplTest {
 
     @Test
     void getNodes() {
+
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        SolrAPIClientImpl client = new SolrAPIClientImpl(new SolrApiProperties(), restTemplate);
+
         MockRestServiceServer.createServer(restTemplate)
                 .expect(requestUriPath("/alfresco/service/api/solr/nodes"))
                 .andExpect(method(HttpMethod.POST))
@@ -113,7 +100,7 @@ class SolrAPIClientImplTest {
                 .andRespond(withSuccess(new ClassPathResource("solrapi-nodes-txn-6-nodes-501-505.json"),
                         MediaType.APPLICATION_JSON));
 
-        List<SolrNode> nodes = this.client.getNodes(
+        List<SolrNode> nodes = client.getNodes(
                 new NodesQueryParameters()
                         .setTxnIds(Arrays.asList(1L, 2L, 3L))
                         .setFromNodeId(501L)
@@ -129,6 +116,31 @@ class SolrAPIClientImplTest {
                         new SolrNode(504, "workspace://SpacesStore/fc522f04-2270-4717-8453-9252cd8fce9c", 6, "u", 13),
                         new SolrNode(505, "workspace://SpacesStore/6ed0f4cf-c7fb-481d-b8aa-d01676cb8c50", 6, "u", 13)
                 );
+    }
+
+    @Test
+    void getNodesMetaData() {
+
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        SolrAPIClientImpl client = new SolrAPIClientImpl(new SolrApiProperties(), restTemplate);
+
+        MockRestServiceServer.createServer(restTemplate)
+                .expect(requestUriPath("/alfresco/service/api/solr/metadata"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentType("application/json"))
+                .andRespond(withSuccess(new ClassPathResource("solrapi-metadata-nodes-501-505.json"),
+                        MediaType.APPLICATION_JSON));
+
+        List<SolrNodeMetaData> nodesMetaData = client.getNodesMetaData(
+                new NodeMetaDataQueryParameters()
+                        .setFromNodeId(501L)
+                        .setToNodeId(505L)
+                        .setMaxResults(5));
+
+        assertThat(nodesMetaData)
+                .isNotNull()
+                .hasSize(5);
+
     }
 
     private static RequestMatcher requestUriPath(String expectedPath) {
@@ -150,6 +162,4 @@ class SolrAPIClientImplTest {
     private static MultiValueMap<String, String> getQueryParams(ClientHttpRequest request) {
         return UriComponentsBuilder.fromUri(request.getURI()).build().getQueryParams();
     }
-
-
 }
