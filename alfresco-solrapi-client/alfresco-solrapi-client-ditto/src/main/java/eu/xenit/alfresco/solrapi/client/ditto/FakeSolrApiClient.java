@@ -23,6 +23,7 @@ import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
+import eu.xenit.testing.ditto.api.model.ParentChildNodeCollection;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.api.model.Transaction;
 import eu.xenit.testing.ditto.api.model.Transaction.Filters;
@@ -183,6 +184,20 @@ public class FakeSolrApiClient implements SolrApiClient {
                     .stream()
                     .map(assoc -> assoc.getParent().getNodeRef().toString())
                     .collect(Collectors.toList())));
+            doIfTrue(params.isIncludeChildAssociations() && node.getChildNodeCollection() != null, () -> {
+                ret.setChildAssocs(node.getChildNodeCollection()
+                        .getAssociations()
+                        .map(this::toAssocString)
+                        .collect(Collectors.toList())
+                );
+            });
+            doIfTrue(params.isIncludeParentAssociations() && node.getParentNodeCollection() != null, () -> {
+                ret.setParentAssocs(node.getParentNodeCollection()
+                        .getAssociations()
+                        .map(this::toAssocString)
+                        .collect(Collectors.toList())
+                );
+            });
             return ret;
         };
     }
@@ -298,5 +313,17 @@ public class FakeSolrApiClient implements SolrApiClient {
                 "",
                 -1,
                 "");
+    }
+
+    private String toAssocString(ParentChildAssoc assoc) {
+        List<String> objects = Arrays.asList(
+                assoc.getParent().getNodeRef().toString(),
+                assoc.getChild().getNodeRef().toString(),
+                assoc.getAssocTypeQName().toString(),
+                assoc.getChild().getQName().toString(),
+                String.valueOf(assoc.isPrimary()),
+                "-1" // TODO association index, currently no way of getting it, usually -1 anyway
+        );
+        return String.join("|", objects);
     }
 }

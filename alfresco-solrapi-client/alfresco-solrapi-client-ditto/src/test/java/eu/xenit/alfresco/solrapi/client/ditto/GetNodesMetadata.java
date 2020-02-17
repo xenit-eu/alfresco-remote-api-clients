@@ -142,6 +142,14 @@ public class GetNodesMetadata {
                                         "/{http://www.alfresco.org/model/content/1.0}Folder" + */
                                     "/{http://www.alfresco.org/model/content/1.0}Sub Folder" +
                                             "/{http://www.alfresco.org/model/content/1.0}document.txt");
+                    assertThat(node.getParentAssocs()).isNotEmpty();
+                    assertThat(node.getParentAssocs().get(0)).contains(
+                            node.getNodeRef(),
+                            "contains",
+                            (String) node.getProperties().get(Content.NAME.toString()),
+                            "|true|",
+                            "-1"
+                    );
                 });
     }
 }
