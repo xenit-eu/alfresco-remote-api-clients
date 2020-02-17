@@ -41,6 +41,11 @@ public class TestNode implements Node {
         return null;
     }
 
+    @Override
+    public ParentChildNodeCollection getParentNodeCollection() {
+        return null;
+    }
+
     public TestNode withProperty(QName key, Serializable value) {
         this.properties.put(key, value);
         return this;
