@@ -1,6 +1,5 @@
 package eu.xenit.alfresco.solrapi.client.spring;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
