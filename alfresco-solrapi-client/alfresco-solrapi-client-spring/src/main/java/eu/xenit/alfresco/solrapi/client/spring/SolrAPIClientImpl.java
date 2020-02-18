@@ -1,5 +1,6 @@
 package eu.xenit.alfresco.solrapi.client.spring;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
@@ -17,6 +18,7 @@ import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +31,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -46,10 +49,7 @@ public class SolrAPIClientImpl implements SolrApiClient {
     }
 
     public SolrAPIClientImpl(SolrApiProperties solrProperties, ClientHttpRequestFactory requestFactory) {
-        this(solrProperties,
-                new RestTemplateBuilder()
-                        .requestFactory(() -> requestFactory)
-                        .build());
+        this(solrProperties, buildRestTemplate(requestFactory));
     }
 
     public SolrAPIClientImpl(SolrApiProperties solrProperties, RestTemplate restTemplate) {
@@ -61,6 +61,18 @@ public class SolrAPIClientImpl implements SolrApiClient {
         restTemplate.getInterceptors().add(new LogAsCurlRequestsInterceptor());
 
         this.restTemplate = restTemplate;
+    }
+
+    /**
+     * Build a RestTemplate, but side-step all features that use classpath-detection. That gives superfluous errors when
+     * used in environments with a special classloader (e.g. Fusion connector)
+     */
+    private static RestTemplate buildRestTemplate(ClientHttpRequestFactory requestFactory) {
+        RestTemplate client = new RestTemplate(Collections.singletonList(
+                new MappingJackson2HttpMessageConverter(new ObjectMapper()))
+        );
+        client.setRequestFactory(requestFactory);
+        return client;
     }
 
     @Override
