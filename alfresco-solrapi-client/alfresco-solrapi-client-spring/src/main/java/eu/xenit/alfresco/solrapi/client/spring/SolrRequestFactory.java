@@ -1,8 +1,10 @@
 package eu.xenit.alfresco.solrapi.client.spring;
 
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -10,10 +12,12 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Objects;
 import javax.net.ssl.SSLContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.ResourceUtils;
@@ -32,10 +36,10 @@ public class SolrRequestFactory extends HttpComponentsClientHttpRequestFactory i
 
         if (StringUtils.hasText(keyStoreType)
                 && StringUtils.hasText(keyStorePath)
-                && StringUtils.hasText(truststorePath))
-        {
+                && StringUtils.hasText(truststorePath)) {
             setHttpClient(HttpClients.custom()
-                    .setSSLContext(sslContext(keyStoreType, keyStorePath, keystorePassword, truststorePath, truststorePassword))
+                    .setSSLContext(sslContext(keyStoreType, keyStorePath, keystorePassword, truststorePath,
+                            truststorePassword))
                     .setSSLHostnameVerifier(new NoopHostnameVerifier())
                     .build());
         }
@@ -55,8 +59,7 @@ public class SolrRequestFactory extends HttpComponentsClientHttpRequestFactory i
                                 keystorePassword.toCharArray()),
                         keystorePassword.toCharArray())
                 .loadTrustMaterial(
-                        ResourceUtils
-                                .getFile(truststorePath),
+                        getResourceURL(truststorePath),
                         truststorePassword.toCharArray())
                 .build();
     }
@@ -65,9 +68,35 @@ public class SolrRequestFactory extends HttpComponentsClientHttpRequestFactory i
             throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
 
         KeyStore keyStore = KeyStore.getInstance(keystoreType);
-        try (InputStream in = new FileInputStream(ResourceUtils.getFile(file))) {
+        try (InputStream in = getResourceURL(file).openStream()) {
             keyStore.load(in, password);
         }
         return keyStore;
+    }
+
+    private static URL getResourceURL(String resource) {
+        Objects.requireNonNull(resource, "Argument 'resource' is required");
+
+        // This should resolve the issue where the embedded keystore & truststore are
+        // not found on the classpath using ResourceUtils.getFile(), because the current thread has a different classloader
+
+        if (resource.startsWith("classpath:")) {
+            String path = resource.substring("classpath:".length());
+            ClassPathResource cpResource = new ClassPathResource(path, SolrRequestFactory.class.getClassLoader());
+            if (cpResource.exists()) {
+                try {
+                    return cpResource.getURL();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        }
+
+        // Fallback to normal ResourceUtils.getUrl(resource)
+        try {
+            return ResourceUtils.getURL(resource);
+        } catch (FileNotFoundException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
