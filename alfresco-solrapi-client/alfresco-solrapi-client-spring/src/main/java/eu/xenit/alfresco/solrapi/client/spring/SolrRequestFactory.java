@@ -81,16 +81,16 @@ public class SolrRequestFactory extends HttpComponentsClientHttpRequestFactory i
         // This should resolve the issue where the embedded keystore & truststore are
         // not found on the classpath using ResourceUtils.getFile(), because the current thread has a different classloader
 
-        try {
-            if (resource.startsWith("classpath:")) {
-                String path = resource.substring("classpath:".length());
-                ClassPathResource cpResource = new ClassPathResource(path, SolrRequestFactory.class.getClassLoader());
-                if (cpResource.exists()) {
+        if (resource.startsWith("classpath:")) {
+            String path = resource.substring("classpath:".length());
+            ClassPathResource cpResource = new ClassPathResource(path, SolrRequestFactory.class.getClassLoader());
+            if (cpResource.exists()) {
+                try {
                     return cpResource.getURL();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
                 }
             }
-        } catch (IOException e) {
-
         }
 
         // Fallback to normal ResourceUtils.getUrl(resource)
