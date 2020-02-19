@@ -1,7 +1,9 @@
 package eu.xenit.alfresco.webscripts.client.spi;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public interface SlingshotClient {
 
@@ -31,6 +33,7 @@ public interface SlingshotClient {
     }
 
     @Data
+    @AllArgsConstructor
     class Property {
         NameContainer name;
         ValueContainer value;
@@ -40,6 +43,8 @@ public interface SlingshotClient {
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     class ValueContainer {
         String dataType;
         String value;
@@ -55,6 +60,7 @@ public interface SlingshotClient {
         NameContainer type;
         NameContainer assocType;
         boolean primary;
+        int index;
     }
 
     @Data
