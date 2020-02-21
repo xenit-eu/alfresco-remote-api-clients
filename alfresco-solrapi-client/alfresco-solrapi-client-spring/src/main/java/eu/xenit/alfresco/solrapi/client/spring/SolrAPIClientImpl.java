@@ -18,13 +18,11 @@ import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,7 +32,6 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
@@ -114,7 +111,7 @@ public class SolrAPIClientImpl implements SolrApiClient {
         ResponseEntity<SolrNodeList> result = restTemplate.exchange(uri, HttpMethod
                 .POST, request, SolrNodeList.class);
 //
-        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP "+result.getStatusCodeValue());
+        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
 //        Assert.notNull(result.getBody(), "Response for getNodes(" + params + ") should not be null");
 
         SolrNodeList solrNodeList = result.getBody();
@@ -130,7 +127,7 @@ public class SolrAPIClientImpl implements SolrApiClient {
         ResponseEntity<SolrNodeMetadataList> result = restTemplate.exchange(uri, HttpMethod
                 .POST, request, SolrNodeMetadataList.class);
 
-        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP "+result.getStatusCodeValue());
+        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
         Assert.notNull(result.getBody(), "Response for getNodes(" + params + ") should not be null");
         return result.getBody().getNodes();
     }
