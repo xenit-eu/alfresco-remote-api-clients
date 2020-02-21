@@ -5,6 +5,7 @@ import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.NodeReference;
 import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
 import eu.xenit.testing.ditto.api.model.ParentChildNodeCollection;
+import eu.xenit.testing.ditto.api.model.PeerAssocCollection;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.internal.DefaultNodeProperties;
 import java.io.Serializable;
@@ -43,6 +44,16 @@ public class TestNode implements Node {
 
     @Override
     public ParentChildNodeCollection getParentNodeCollection() {
+        return null;
+    }
+
+    @Override
+    public PeerAssocCollection getSourceAssociationCollection() {
+        return null;
+    }
+
+    @Override
+    public PeerAssocCollection getTargetAssociationCollection() {
         return null;
     }
 
