@@ -35,7 +35,7 @@ public class GetNodesTests {
     void testTxnIdsFilter() {
 
         TransactionView txnView = getTxnViewMock();
-        FakeSolrApiClient client = new FakeSolrApiClient(txnView, null);
+        SolrApiFakeClient client = new SolrApiFakeClient(txnView, null);
 
         List<SolrNode> nodes = client.getNodes(new NodesQueryParameters().withTxnIds(2L));
         assertThat(nodes)
@@ -47,7 +47,7 @@ public class GetNodesTests {
     void testTxnFromFilter() {
 
         TransactionView txnView = getTxnViewMock();
-        FakeSolrApiClient client = new FakeSolrApiClient(txnView, null);
+        SolrApiFakeClient client = new SolrApiFakeClient(txnView, null);
 
         List<SolrNode> nodes = client.getNodes(new NodesQueryParameters().setFromTxnId(3L));
         assertThat(nodes)
@@ -58,7 +58,7 @@ public class GetNodesTests {
     void testTxnToFilter() {
 
         TransactionView txnView = getTxnViewMock();
-        FakeSolrApiClient client = new FakeSolrApiClient(txnView, null);
+        SolrApiFakeClient client = new SolrApiFakeClient(txnView, null);
 
         List<SolrNode> nodes = client.getNodes(new NodesQueryParameters().setToTxnId(1L));
         assertThat(nodes)
@@ -69,7 +69,7 @@ public class GetNodesTests {
     void testNodeIdFromFilter() {
 
         TransactionView txnView = getTxnViewMock();
-        FakeSolrApiClient client = new FakeSolrApiClient(txnView, null);
+        SolrApiFakeClient client = new SolrApiFakeClient(txnView, null);
 
         List<SolrNode> nodes = client.getNodes(new NodesQueryParameters().setFromNodeId(8L));
         assertThat(nodes)
@@ -83,7 +83,7 @@ public class GetNodesTests {
     void testNodeIdToFilter() {
 
         TransactionView txnView = getTxnViewMock();
-        FakeSolrApiClient client = new FakeSolrApiClient(txnView, null);
+        SolrApiFakeClient client = new SolrApiFakeClient(txnView, null);
 
         List<SolrNode> nodes = client.getNodes(new NodesQueryParameters().setToNodeId(1L));
         assertThat(nodes)
@@ -97,7 +97,7 @@ public class GetNodesTests {
     void testCombinedFilter() {
 
         TransactionView txnView = getTxnViewMock();
-        FakeSolrApiClient client = new FakeSolrApiClient(txnView, null);
+        SolrApiFakeClient client = new SolrApiFakeClient(txnView, null);
 
         List<SolrNode> nodes = client.getNodes(new NodesQueryParameters()
                 .setFromTxnId(2L)

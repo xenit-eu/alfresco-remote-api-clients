@@ -14,7 +14,7 @@ public class GetTransactionTests {
     public void testGetMaxTransactionId() {
         long maxTxnId = defaultDataSet.getTransactionView().getLastTxnId();
 
-        FakeSolrApiClient solrApiClient = new FakeSolrApiClient(defaultDataSet);
+        SolrApiFakeClient solrApiClient = new SolrApiFakeClient(defaultDataSet);
         SolrTransactions result = solrApiClient.getTransactions(null, null, null, null, 0);
 
         assertThat(result)
