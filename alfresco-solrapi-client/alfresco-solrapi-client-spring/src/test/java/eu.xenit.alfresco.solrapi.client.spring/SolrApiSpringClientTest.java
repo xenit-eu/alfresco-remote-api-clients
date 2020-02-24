@@ -32,12 +32,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-class SolrAPIClientImplTest {
+class SolrApiSpringClientTest {
 
     @Test
     void getTransactions() {
         RestTemplate restTemplate = new RestTemplateBuilder().build();
-        SolrAPIClientImpl client = new SolrAPIClientImpl(new SolrApiProperties(), restTemplate);
+        SolrApiSpringClient client = new SolrApiSpringClient(new SolrApiProperties(), restTemplate);
 
         MockRestServiceServer.createServer(restTemplate)
                 .expect(requestUriPath("/alfresco/service/api/solr/transactions"))
@@ -79,7 +79,7 @@ class SolrAPIClientImplTest {
     void getNodes() {
 
         RestTemplate restTemplate = new RestTemplateBuilder().build();
-        SolrAPIClientImpl client = new SolrAPIClientImpl(new SolrApiProperties(), restTemplate);
+        SolrApiSpringClient client = new SolrApiSpringClient(new SolrApiProperties(), restTemplate);
 
         MockRestServiceServer.createServer(restTemplate)
                 .expect(requestUriPath("/alfresco/service/api/solr/nodes"))
@@ -122,7 +122,7 @@ class SolrAPIClientImplTest {
     void getNodesMetaData() {
 
         RestTemplate restTemplate = new RestTemplateBuilder().build();
-        SolrAPIClientImpl client = new SolrAPIClientImpl(new SolrApiProperties(), restTemplate);
+        SolrApiSpringClient client = new SolrApiSpringClient(new SolrApiProperties(), restTemplate);
 
         MockRestServiceServer.createServer(restTemplate)
                 .expect(requestUriPath("/alfresco/service/api/solr/metadata"))

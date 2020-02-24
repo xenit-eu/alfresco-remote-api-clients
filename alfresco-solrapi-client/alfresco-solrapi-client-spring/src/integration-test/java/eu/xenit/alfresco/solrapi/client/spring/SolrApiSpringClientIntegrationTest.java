@@ -17,7 +17,7 @@ class SolrApiSpringClientIntegrationTest {
     public SolrApiClient solrApiClient() {
         try {
             SolrRequestFactory solrRequestFactory = new SolrRequestFactory(new SolrSslProperties());
-            return new SolrAPIClientImpl(solrApiProperties(), solrRequestFactory);
+            return new SolrApiSpringClient(solrApiProperties(), solrRequestFactory);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
