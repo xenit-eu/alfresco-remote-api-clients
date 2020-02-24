@@ -30,17 +30,18 @@ class ApiMetadataSpringClientTest {
         final String nodeRef = UUID.randomUUID().toString();
 
         RestTemplate restTemplate = new RestTemplateBuilder().build();
-        ApiMetadataClient client = new ApiMetadataSpringClient(restTemplate);
+        ApiMetadataClient client = new ApiMetadataSpringClient(new MetadataApiProperties(), restTemplate);
 
         MockRestServiceServer.createServer(restTemplate)
-                .expect(requestUriPath("/api/metadata"))
+                .expect(requestUriPath("/alfresco/service/api/metadata"))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(queryParam("nodeRef", nodeRef))
 
                 .andRespond(withSuccess(
                         "{" +
                                 "\"nodeRef\": \"" + nodeRef + "\"" +
-                        "}", MediaType.APPLICATION_JSON));
+                                // TODO expand
+                                "}", MediaType.APPLICATION_JSON));
 
         Metadata result = client.get(nodeRef);
         assertThat(result)
