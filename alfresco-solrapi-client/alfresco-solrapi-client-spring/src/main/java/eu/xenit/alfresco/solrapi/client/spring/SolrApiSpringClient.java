@@ -35,21 +35,21 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
-public class SolrAPIClientImpl implements SolrApiClient {
+public class SolrApiSpringClient implements SolrApiClient {
 
     private final RestTemplate restTemplate;
     private final String url;
 
-    public SolrAPIClientImpl(SolrApiProperties solrApiProperties, SolrSslProperties solrSslProperties)
+    public SolrApiSpringClient(SolrApiProperties solrApiProperties, SolrSslProperties solrSslProperties)
             throws GeneralSecurityException, IOException {
         this(solrApiProperties, new SolrRequestFactory(solrSslProperties));
     }
 
-    public SolrAPIClientImpl(SolrApiProperties solrProperties, ClientHttpRequestFactory requestFactory) {
+    public SolrApiSpringClient(SolrApiProperties solrProperties, ClientHttpRequestFactory requestFactory) {
         this(solrProperties, buildRestTemplate(requestFactory));
     }
 
-    public SolrAPIClientImpl(SolrApiProperties solrProperties, RestTemplate restTemplate) {
+    public SolrApiSpringClient(SolrApiProperties solrProperties, RestTemplate restTemplate) {
         this.url = UriComponentsBuilder.fromHttpUrl(solrProperties.getUrl())
                 .path("/service/api/solr")
                 .toUriString();

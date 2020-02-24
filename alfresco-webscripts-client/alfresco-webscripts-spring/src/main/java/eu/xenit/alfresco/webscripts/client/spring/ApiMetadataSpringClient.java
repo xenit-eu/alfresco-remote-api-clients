@@ -1,24 +1,34 @@
 package eu.xenit.alfresco.webscripts.client.spring;
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
-import java.util.Collections;
-import java.util.Map;
-
+import java.net.URI;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 public class ApiMetadataSpringClient implements ApiMetadataClient {
 
     private final RestTemplate restClient;
+    private final String url;
 
-    public ApiMetadataSpringClient(RestTemplate restTemplate) {
+    public ApiMetadataSpringClient(AlfrescoProperties alfrescoProperties) {
+        this(alfrescoProperties, RestTemplateHelper.buildRestTemplate(alfrescoProperties));
+    }
+
+    public ApiMetadataSpringClient(AlfrescoProperties alfrescoProperties, RestTemplate restTemplate) {
+        this.url = UriComponentsBuilder.fromHttpUrl(alfrescoProperties.getUrl())
+                .path("/service/api/metadata")
+                .toUriString();
+
         this.restClient = restTemplate;
     }
 
     @Override
     public Metadata get(String nodeRef) {
+        URI uri = UriComponentsBuilder
+                .fromHttpUrl(url)
+                .queryParam("nodeRef", nodeRef)
+                .build().toUri();
 
-        Map<String, String> params = Collections.singletonMap("nodeRef", nodeRef);
-
-        return this.restClient.getForObject("/api/metadata?nodeRef={nodeRef}", Metadata.class, params);
+        return this.restClient.getForObject(uri, Metadata.class);
     }
 }

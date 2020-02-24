@@ -1,12 +1,11 @@
 package eu.xenit.alfresco.solrapi.client.spring;
 
+import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.tests.GetMetadataIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetNodesIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetTransactionsIntegrationTests;
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 
-class SolrApiSpringClientIntegrationTest
-{
+class SolrApiSpringClientIntegrationTest {
 
     SolrApiProperties solrApiProperties() {
         return SolrApiProperties.builder()
@@ -18,7 +17,7 @@ class SolrApiSpringClientIntegrationTest
     public SolrApiClient solrApiClient() {
         try {
             SolrRequestFactory solrRequestFactory = new SolrRequestFactory(new SolrSslProperties());
-            return new SolrAPIClientImpl(solrApiProperties(), solrRequestFactory);
+            return new SolrApiSpringClient(solrApiProperties(), solrRequestFactory);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

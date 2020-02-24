@@ -23,36 +23,34 @@ import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
-import eu.xenit.testing.ditto.api.model.ParentChildNodeCollection;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.api.model.Transaction;
 import eu.xenit.testing.ditto.api.model.Transaction.Filters;
-
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Data;
 
-public class FakeSolrApiClient implements SolrApiClient {
+public class SolrApiFakeClient implements SolrApiClient {
 
     private final TransactionView txnView;
     private final NodeView nodeView;
 
-    private FakeSolrApiClient(Builder builder) {
+    private SolrApiFakeClient(Builder builder) {
         this(builder.data);
     }
 
-    FakeSolrApiClient(AlfrescoDataSet dataSet) {
+    SolrApiFakeClient(AlfrescoDataSet dataSet) {
         this(dataSet.getTransactionView(), dataSet.getNodeView());
     }
 
-    FakeSolrApiClient(TransactionView transactionView, NodeView nodeView) {
+    SolrApiFakeClient(TransactionView transactionView, NodeView nodeView) {
         this.txnView = transactionView;
         this.nodeView = nodeView;
     }
@@ -294,8 +292,8 @@ public class FakeSolrApiClient implements SolrApiClient {
 
         }
 
-        public FakeSolrApiClient build() {
-            return new FakeSolrApiClient(this);
+        public SolrApiFakeClient build() {
+            return new SolrApiFakeClient(this);
         }
 
         public Builder withDataSet(AlfrescoDataSet dataSet) {

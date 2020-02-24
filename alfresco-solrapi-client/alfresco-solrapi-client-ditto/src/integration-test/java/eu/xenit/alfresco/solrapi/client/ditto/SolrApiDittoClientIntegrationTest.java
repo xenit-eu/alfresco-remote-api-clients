@@ -1,16 +1,15 @@
 package eu.xenit.alfresco.solrapi.client.ditto;
 
+import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.tests.GetMetadataIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetNodesIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetTransactionsIntegrationTests;
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 
-class SolrApiDittoClientIntegrationTest
-{
+class SolrApiDittoClientIntegrationTest {
 
     public SolrApiClient solrApiClient() {
-        return FakeSolrApiClient.builder()
+        return SolrApiFakeClient.builder()
                 .withDataSet(AlfrescoDataSet.bootstrapAlfresco().build())
                 .build();
     }

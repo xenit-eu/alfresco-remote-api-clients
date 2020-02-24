@@ -45,7 +45,7 @@ public class GetNodesMetadata {
     @Test
     void getNodesMetadata_companyHome() {
 
-        SolrApiClient client = new FakeSolrApiClient(null, nodeViewMock());
+        SolrApiClient client = new SolrApiFakeClient(null, nodeViewMock());
         List<SolrNodeMetaData> nodesMetaData = client
                 .getNodesMetaData(new NodeMetaDataQueryParameters().withNodeIds(13L));
 
@@ -63,7 +63,7 @@ public class GetNodesMetadata {
     @Test
     void getNodesMetadata_companyHome_filterOutput() {
 
-        SolrApiClient client = new FakeSolrApiClient(null, nodeViewMock());
+        SolrApiClient client = new SolrApiFakeClient(null, nodeViewMock());
         List<SolrNodeMetaData> nodesMetaData = client
                 .getNodesMetaData(
                         new NodeMetaDataQueryParameters()
@@ -124,7 +124,7 @@ public class GetNodesMetadata {
                 })
                 .build();
 
-        SolrApiClient client = new FakeSolrApiClient(dataSet);
+        SolrApiClient client = new SolrApiFakeClient(dataSet);
         List<SolrNodeMetaData> nodesMetaData = client
                 .getNodesMetaData(new NodeMetaDataQueryParameters().withNodeIds(90L));
 
