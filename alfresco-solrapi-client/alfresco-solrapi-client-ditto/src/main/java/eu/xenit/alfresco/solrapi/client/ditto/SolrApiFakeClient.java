@@ -20,6 +20,7 @@ import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.TransactionView;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
+import eu.xenit.testing.ditto.api.model.ContentData;
 import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -255,6 +257,15 @@ public class SolrApiFakeClient implements SolrApiClient {
                         put("value", e.getValue());
                     }})
                     .collect(Collectors.toList());
+        }
+        if (propertyValue instanceof ContentData) {
+            Map<String, String> retVal = new HashMap<>();
+            retVal.put("contentId", "-1");
+            retVal.put("encoding", ((ContentData) propertyValue).getEncoding());
+            retVal.put("locale", ((ContentData) propertyValue).getLocale());
+            retVal.put("mimetype", ((ContentData) propertyValue).getMimeType());
+            retVal.put("size", Long.toString(((ContentData) propertyValue).getSize()));
+            return (Serializable) retVal;
         }
         return propertyValue;
     }

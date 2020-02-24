@@ -10,7 +10,16 @@ class SolrApiDittoClientIntegrationTest {
 
     public SolrApiClient solrApiClient() {
         return SolrApiFakeClient.builder()
-                .withDataSet(AlfrescoDataSet.bootstrapAlfresco().build())
+                .withDataSet(
+                        AlfrescoDataSet.bootstrapAlfresco()
+                                .addTransaction(t -> {
+                                    t.addNode(n -> {
+                                        n.name("node-with-content.txt");
+                                        n.type("cm:content");
+                                        n.content("I have content");
+                                    });
+                                })
+                                .build())
                 .build();
     }
 
