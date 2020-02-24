@@ -32,13 +32,11 @@ public interface SlingShotClientTests {
 
         assertThat(metadata.getNodeRef()).isEqualTo(companyHomeNodeRef);
 
-        // TODO currently not implemented
-//        assertThat(metadata.getQnamePath().getName()).startsWith("/{http://www.alfresco.org/model/application/1.0}company_home");
+        assertThat(metadata.getQnamePath().getName()).startsWith("/{http://www.alfresco.org/model/application/1.0}company_home");
         assertThat(metadata.getQnamePath().getPrefixedName()).isEqualTo("/app:company_home");
 
-        // TODO currently not implemented
-//        assertThat(metadata.getName().getName()).startsWith("abc");
-        assertThat(metadata.getName().getPrefixedName()).isEqualTo("Company Home");
+        assertThat(metadata.getName().getName()).startsWith("{http://www.alfresco.org/model/application/1.0}company_home");
+        assertThat(metadata.getName().getPrefixedName()).isEqualTo("app:company_home");
 
         assertThat(metadata.getParentNodeRef()).startsWith("workspace://SpacesStore/");
 

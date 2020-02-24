@@ -1,8 +1,8 @@
 package eu.xenit.alfresco.webscripst.client.ditto;
 
 import eu.xenit.alfresco.webscripts.client.spi.SlingshotClient;
-import eu.xenit.alfresco.webscripts.client.spi.model.DefaultPropertyModelSupplier;
-import eu.xenit.alfresco.webscripts.client.spi.model.PropertyModel;
+import eu.xenit.alfresco.webscripts.client.spi.model.ModelHelper;
+import eu.xenit.alfresco.webscripts.client.spi.model.ModelInfo;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata.Association;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata.NameContainer;
@@ -11,6 +11,7 @@ import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata.Property
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata.ValueContainer;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
+import eu.xenit.testing.ditto.api.model.Namespace;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.NodeProperties;
 import eu.xenit.testing.ditto.api.model.NodeReference;
@@ -19,8 +20,12 @@ import eu.xenit.testing.ditto.api.model.PeerAssoc;
 import eu.xenit.testing.ditto.api.model.PeerAssocCollection;
 import eu.xenit.testing.ditto.api.model.PeerAssocCollection.Type;
 import eu.xenit.testing.ditto.api.model.QName;
+import eu.xenit.testing.ditto.util.StringUtils;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,7 +33,7 @@ import java.util.stream.Collectors;
 public class SlingShotDittoClient implements SlingshotClient {
 
     private final NodeView nodeView;
-    private final DefaultPropertyModelSupplier propertyModelSupplier = new DefaultPropertyModelSupplier();
+    private final ModelHelper modelHelper = new ModelHelper();
 
     public SlingShotDittoClient(AlfrescoDataSet dataSet) {
         this(dataSet.getNodeView());
@@ -45,8 +50,8 @@ public class SlingShotDittoClient implements SlingshotClient {
         return dittoNode.map(node -> {
             Metadata metadata = new Metadata();
             metadata.setNodeRef(node.getNodeRef().toString());
-            metadata.setQnamePath(new NameContainer(null, node.getQNamePath())); // TODO want to autofill?
-            metadata.setName(new NameContainer(null, node.getName())); // TODO want to autofill?
+            metadata.setQnamePath(new NameContainer(toFullyQualifiedQNamePath(node.getQNamePath()), node.getQNamePath()));
+            metadata.setName(new NameContainer(node.getQName().toString(), node.getQName().toPrefixString()));
             metadata.setParentNodeRef(node.getParent().getNodeRef().toString());
             metadata.setType(toNameContainer(node.getType()));
             metadata.setId(node.getNodeRef().getUuid());
@@ -74,17 +79,17 @@ public class SlingShotDittoClient implements SlingshotClient {
     private List<Property> toProperties(NodeProperties nodeProperties) {
         List<Property> ret = new ArrayList<>();
         nodeProperties.forEach((qName, serializable) -> {
-                    PropertyModel model = propertyModelSupplier.getByQName(qName);
-                    NameContainer name = toNameContainer(qName);
-                    NameContainer type = new NameContainer(model.getType().toString(),
-                            model.getType().toPrefixString());
-                    ValueContainer value = new ValueContainer(model.getDataType(), model.getDeserializer().apply(serializable),
-                            model.isContent(), model.isNodeRef(),false); // TODO
-                    boolean multiple = model.isMultiple();
-                    boolean residual = model.isResidual();
-                    ret.add(new Property(name, value, type, multiple, residual));
-                }
-        );
+            ModelInfo model = modelHelper.getByQName(qName);
+            NameContainer name = toNameContainer(qName);
+            NameContainer type = new NameContainer(model.getType().toString(),
+                    model.getType().toPrefixString());
+            String value = model.getDeserializer().apply(serializable);
+            ValueContainer valueContainer = new ValueContainer(model.getDataType(), value,
+                    model.isContent(), model.isNodeRef(), StringUtils.nullOrEmpty(value));
+            boolean multiple = isMultiple(serializable);
+            boolean residual = model.isResidual();
+            ret.add(new Property(name, valueContainer, type, multiple, residual));
+        });
         return ret;
     }
 
@@ -135,6 +140,18 @@ public class SlingShotDittoClient implements SlingshotClient {
 
         return new Association(toNameContainer(sourceOrTargetType), sourceRef.toString(), targetRef.toString(),
                 toNameContainer(assocTypeQName));
+    }
+
+    private String toFullyQualifiedQNamePath(String prefixedQNamePath) {
+        String ret = prefixedQNamePath;
+        for (Entry<String, Namespace> entry : modelHelper.getPrefixToNamespaceMap().entrySet()) {
+            ret = ret.replaceAll("/" + entry.getKey() + ":","/{" + entry.getValue().getNamespace() + "}");
+        }
+        return ret;
+    }
+
+    private boolean isMultiple(Serializable value) {
+        return value instanceof Collection;
     }
 
 }

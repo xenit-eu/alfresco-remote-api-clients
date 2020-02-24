@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PropertyModel {
+public class ModelInfo {
 
     private QName qName;
     private QName type;
@@ -17,6 +17,5 @@ public class PropertyModel {
     private boolean isContent;
     private boolean isNodeRef;
     private boolean isResidual;
-    private boolean isMultiple;
 
 }
