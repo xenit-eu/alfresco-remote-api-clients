@@ -65,7 +65,7 @@ public interface ApiMetadataClientTests {
                         entry(Content.NAME.toString(), "Company Home"),
                         entry(System.STORE_PROTOCOL.toString(), "workspace"),
                         entry(System.STORE_IDENTIFIER.toString(), "SpacesStore"),
-                        entry(System.NODE_DBID.toString(), "13"),
+                        entry(System.NODE_DBID.toString(), 13),
                         entry(System.LOCALE.toString(), "en_US"),
                         entry(Content.MODIFIER.toString(), "System")
                 )
@@ -78,9 +78,13 @@ public interface ApiMetadataClientTests {
         ;
     }
 
-    static Predicate<String> iso8601DateFormat() {
-        return dateString -> {
-            if (dateString == null || dateString.trim().equals("")) {
+    static Predicate<Object> iso8601DateFormat() {
+        return date -> {
+            if (!(date instanceof String)) {
+                return false;
+            }
+            String dateString = (String) date;
+            if (dateString.trim().equals("")) {
                 return false;
             }
 

@@ -9,6 +9,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient.Metadata;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -67,6 +68,60 @@ class ApiMetadataSpringClientTest {
                 ))
                 .satisfies(m -> assertThat(m.getProperties())
                         .containsEntry("{http://www.alfresco.org/model/content/1.0}title", "Company Home"));
+    }
+
+    @Test
+    void getMetadata_multiValueProperty() {
+        final String nodeRef = UUID.randomUUID().toString();
+
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        ApiMetadataClient client = new ApiMetadataSpringClient(new AlfrescoProperties(), restTemplate);
+
+        MockRestServiceServer.createServer(restTemplate)
+                .expect(requestUriPath("/alfresco/service/api/metadata"))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(queryParam("nodeRef", nodeRef))
+
+                .andRespond(withSuccess(
+                        "{" +
+                                "\"nodeRef\":\"" + nodeRef + "\"," +
+                                "\"aspects\":[" +
+                                "\"{http://www.alfresco.org/model/content/1.0}titled\"," +
+                                "\"{http://www.alfresco.org/model/content/1.0}auditable\"," +
+                                "\"{http://www.alfresco.org/model/system/1.0}referenceable\"" +
+                                "]," +
+                                "\"mimetype\":\"application/octet-stream\"," +
+                                "\"type\":\"{http://www.alfresco.org/model/rule/1.0}rule\"," +
+                                "\"properties\":{" +
+                                "\"{http://www.alfresco.org/model/content/1.0}created\":\"2020-02-20T14:49:14.517Z\"," +
+                                "\"{http://www.alfresco.org/model/content/1.0}title\":\"Specialise Type to Dictionary Model\","
+                                +
+                                "\"{http://www.alfresco.org/model/rule/1.0}disabled\":\"false\"," +
+                                "\"{http://www.alfresco.org/model/content/1.0}description\":\"Specialise Type to Dictionary Model\","
+                                +
+                                "\"{http://www.alfresco.org/model/rule/1.0}ruleType\":[\"inbound\"]"
+                                + "}" +
+                                "}", MediaType.APPLICATION_JSON));
+
+        Metadata result = client.get(nodeRef);
+        assertThat(result)
+                .isNotNull()
+                .satisfies(m -> assertThat(m.getNodeRef()).isEqualTo(nodeRef))
+                .satisfies(m -> assertThat(m.getMimetype()).isEqualTo("application/octet-stream"))
+                .satisfies(m -> assertThat(m.getType()).isEqualTo("{http://www.alfresco.org/model/rule/1.0}rule"))
+                .satisfies(m -> assertThat(m.getAspects()).contains(
+                        "{http://www.alfresco.org/model/content/1.0}titled",
+                        "{http://www.alfresco.org/model/content/1.0}auditable",
+                        "{http://www.alfresco.org/model/system/1.0}referenceable"
+                ))
+                .satisfies(m -> assertThat(m.getProperties())
+                        .containsEntry("{http://www.alfresco.org/model/content/1.0}title",
+                                "Specialise Type to Dictionary Model")
+                        .hasEntrySatisfying("{http://www.alfresco.org/model/rule/1.0}ruleType",
+                                v -> {
+                                    assertThat(v).isInstanceOf(Collection.class);
+                                    assertThat((Collection<String>) v).hasSize(1).contains("inbound");
+                                }));
     }
 
     private static RequestMatcher requestUriPath(String expectedPath) {
