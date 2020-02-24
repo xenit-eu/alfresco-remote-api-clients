@@ -79,7 +79,7 @@ public class ModelHelper {
         return defaults;
     }
 
-    public ModelInfo getByQName(QName qName) {
+    public ModelInfo getModelInfoByQName(QName qName) {
         List<ModelInfo> models = defaults.stream()
                 .filter(modelInfo -> hasQName(modelInfo, qName))
                 .collect(Collectors.toList());

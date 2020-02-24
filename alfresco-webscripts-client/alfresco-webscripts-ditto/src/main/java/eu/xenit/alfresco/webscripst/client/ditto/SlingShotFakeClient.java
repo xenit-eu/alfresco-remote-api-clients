@@ -30,16 +30,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SlingShotDittoClient implements SlingshotClient {
+public class SlingShotFakeClient implements SlingshotClient {
 
     private final NodeView nodeView;
     private final ModelHelper modelHelper = new ModelHelper();
 
-    public SlingShotDittoClient(AlfrescoDataSet dataSet) {
+    public SlingShotFakeClient(AlfrescoDataSet dataSet) {
         this(dataSet.getNodeView());
     }
 
-    public SlingShotDittoClient(NodeView nodeView) {
+    public SlingShotFakeClient(NodeView nodeView) {
         this.nodeView = nodeView;
     }
 
@@ -50,8 +50,9 @@ public class SlingShotDittoClient implements SlingshotClient {
         return dittoNode.map(node -> {
             Metadata metadata = new Metadata();
             metadata.setNodeRef(node.getNodeRef().toString());
-            metadata.setQnamePath(new NameContainer(toFullyQualifiedQNamePath(node.getQNamePath()), node.getQNamePath()));
-            metadata.setName(new NameContainer(node.getQName().toString(), node.getQName().toPrefixString()));
+            metadata.setQnamePath(
+                    new NameContainer(toFullyQualifiedQNamePath(node.getQNamePath()), node.getQNamePath()));
+            metadata.setName(toNameContainer(node.getQName()));
             metadata.setParentNodeRef(node.getParent().getNodeRef().toString());
             metadata.setType(toNameContainer(node.getType()));
             metadata.setId(node.getNodeRef().getUuid());
@@ -59,8 +60,8 @@ public class SlingShotDittoClient implements SlingshotClient {
             metadata.setProperties(toProperties(node.getProperties()));
             metadata.setChildren(toParentsFromChildCollection(node.getChildNodeCollection()));
             metadata.setParents(toParentsFromParentCollection(node.getParentNodeCollection()));
-            metadata.setAssocs(toAssociations(Type.TARGET,node.getTargetAssociationCollection()));
-            metadata.setSourceAssocs(toAssociations(Type.SOURCE,node.getSourceAssociationCollection()));
+            metadata.setAssocs(toAssociations(Type.TARGET, node.getTargetAssociationCollection()));
+            metadata.setSourceAssocs(toAssociations(Type.SOURCE, node.getSourceAssociationCollection()));
             metadata.setPermissions(null); // TODO not yet in ditto
             return metadata;
         }).orElse(null);
@@ -72,22 +73,21 @@ public class SlingShotDittoClient implements SlingshotClient {
 
     private List<NameContainer> toNameContainers(Set<QName> qnames) {
         return qnames.stream()
-                .map(qName -> new NameContainer(qName.toString(), qName.toPrefixString()))
+                .map(this::toNameContainer)
                 .collect(Collectors.toList());
     }
 
     private List<Property> toProperties(NodeProperties nodeProperties) {
         List<Property> ret = new ArrayList<>();
         nodeProperties.forEach((qName, serializable) -> {
-            ModelInfo model = modelHelper.getByQName(qName);
+            ModelInfo info = modelHelper.getModelInfoByQName(qName);
             NameContainer name = toNameContainer(qName);
-            NameContainer type = new NameContainer(model.getType().toString(),
-                    model.getType().toPrefixString());
-            String value = model.getDeserializer().apply(serializable);
-            ValueContainer valueContainer = new ValueContainer(model.getDataType(), value,
-                    model.isContent(), model.isNodeRef(), StringUtils.nullOrEmpty(value));
+            NameContainer type = new NameContainer(info.getType().toString(), info.getType().toPrefixString());
+            String value = info.getDeserializer().apply(serializable);
+            ValueContainer valueContainer = new ValueContainer(info.getDataType(), value, info.isContent(),
+                    info.isNodeRef(), StringUtils.nullOrEmpty(value));
             boolean multiple = isMultiple(serializable);
-            boolean residual = model.isResidual();
+            boolean residual = info.isResidual();
             ret.add(new Property(name, valueContainer, type, multiple, residual));
         });
         return ret;
@@ -109,7 +109,7 @@ public class SlingShotDittoClient implements SlingshotClient {
                     Node parentNode = parentChildAssoc.getParent();
 
                     parent.setName(new NameContainer(childNode.getName(), null));
-                    NodeReference nodeRef = child ? childNode.getNodeRef(): parentNode.getNodeRef();
+                    NodeReference nodeRef = child ? childNode.getNodeRef() : parentNode.getNodeRef();
                     parent.setNodeRef(nodeRef.toString());
                     QName type = child ? childNode.getType() : parentNode.getType();
                     parent.setType(toNameContainer(type));
@@ -121,7 +121,7 @@ public class SlingShotDittoClient implements SlingshotClient {
                     parent.setIndex(-1); // TODO how to determine
 
                     return parent;
-        }).collect(Collectors.toList());
+                }).collect(Collectors.toList());
     }
 
     private List<Association> toAssociations(Type type, PeerAssocCollection peerAssocCollection) {
@@ -132,7 +132,7 @@ public class SlingShotDittoClient implements SlingshotClient {
 
     private Association toAssociation(Type type, PeerAssoc peerAssoc) {
         QName sourceOrTargetType = type == Type.TARGET ?
-                peerAssoc.getTargetNode().getType():
+                peerAssoc.getTargetNode().getType() :
                 peerAssoc.getSourceNode().getType();
         NodeReference sourceRef = peerAssoc.getSourceNode().getNodeRef();
         NodeReference targetRef = peerAssoc.getTargetNode().getNodeRef();
@@ -145,7 +145,7 @@ public class SlingShotDittoClient implements SlingshotClient {
     private String toFullyQualifiedQNamePath(String prefixedQNamePath) {
         String ret = prefixedQNamePath;
         for (Entry<String, Namespace> entry : modelHelper.getPrefixToNamespaceMap().entrySet()) {
-            ret = ret.replaceAll("/" + entry.getKey() + ":","/{" + entry.getValue().getNamespace() + "}");
+            ret = ret.replaceAll("/" + entry.getKey() + ":", "/{" + entry.getValue().getNamespace() + "}");
         }
         return ret;
     }
