@@ -1,4 +1,4 @@
-package eu.xenit.alfresco.webscripts.client.spi.model;
+package eu.xenit.alfresco.webscripst.client.ditto.model;
 
 import static eu.xenit.testing.ditto.api.model.Namespace.createNamespace;
 import static eu.xenit.testing.ditto.api.model.QName.createQName;
