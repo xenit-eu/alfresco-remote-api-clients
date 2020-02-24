@@ -1,8 +1,8 @@
-package eu.xenit.alfresco.webscripst.client.ditto;
+package eu.xenit.alfresco.webscripts.client.ditto;
 
+import eu.xenit.alfresco.webscripts.client.ditto.model.ModelHelper;
+import eu.xenit.alfresco.webscripts.client.ditto.model.ModelInfo;
 import eu.xenit.alfresco.webscripts.client.spi.SlingshotClient;
-import eu.xenit.alfresco.webscripst.client.ditto.model.ModelHelper;
-import eu.xenit.alfresco.webscripst.client.ditto.model.ModelInfo;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata.Association;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata.NameContainer;

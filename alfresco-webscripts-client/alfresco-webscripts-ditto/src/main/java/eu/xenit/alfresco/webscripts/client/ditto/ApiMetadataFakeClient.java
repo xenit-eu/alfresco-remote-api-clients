@@ -1,4 +1,4 @@
-package eu.xenit.alfresco.webscripst.client.ditto;
+package eu.xenit.alfresco.webscripts.client.ditto;
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;

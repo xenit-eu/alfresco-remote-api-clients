@@ -1,4 +1,4 @@
-package eu.xenit.alfresco.webscripst.client.ditto.model;
+package eu.xenit.alfresco.webscripts.client.ditto.model;
 
 import eu.xenit.testing.ditto.api.model.QName;
 import java.io.Serializable;

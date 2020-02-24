@@ -1,7 +1,5 @@
 package eu.xenit.alfresco.webscripts.client.ditto;
 
-import eu.xenit.alfresco.webscripst.client.ditto.NodeLocatorFakeClient;
-import eu.xenit.alfresco.webscripst.client.ditto.SlingShotFakeClient;
 import eu.xenit.alfresco.webscripts.client.spi.NodeLocatorClient;
 import eu.xenit.alfresco.webscripts.client.spi.SlingshotClient;
 import eu.xenit.alfresco.webscripts.tests.SlingShotClientTests;
