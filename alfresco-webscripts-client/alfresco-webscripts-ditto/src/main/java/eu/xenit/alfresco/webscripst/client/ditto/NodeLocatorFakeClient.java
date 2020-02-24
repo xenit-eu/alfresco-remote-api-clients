@@ -3,23 +3,19 @@ package eu.xenit.alfresco.webscripst.client.ditto;
 import eu.xenit.alfresco.webscripts.client.spi.NodeLocatorClient;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
-import eu.xenit.testing.ditto.api.model.Node;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
-public class NodeLocatorDittoClient implements NodeLocatorClient {
+public class NodeLocatorFakeClient implements NodeLocatorClient {
 
     private final NodeView nodeView;
 
-    public NodeLocatorDittoClient(AlfrescoDataSet dataSet) {
+    public NodeLocatorFakeClient(AlfrescoDataSet dataSet) {
         this(dataSet.getNodeView());
     }
 
-    public NodeLocatorDittoClient(NodeView nodeView) {
+    public NodeLocatorFakeClient(NodeView nodeView) {
         this.nodeView = nodeView;
     }
 

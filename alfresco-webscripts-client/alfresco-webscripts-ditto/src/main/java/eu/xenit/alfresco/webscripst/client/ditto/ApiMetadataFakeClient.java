@@ -6,20 +6,22 @@ import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.model.ContentData;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.QName;
-
 import eu.xenit.testing.ditto.util.MimeTypes;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ApiMetadataDittoClient implements ApiMetadataClient {
+public class ApiMetadataFakeClient implements ApiMetadataClient {
 
     private final NodeView nodeView;
 
-    public ApiMetadataDittoClient(AlfrescoDataSet dataSet) {
+    public ApiMetadataFakeClient(AlfrescoDataSet dataSet) {
         this(dataSet.getNodeView());
     }
 
-    public ApiMetadataDittoClient(NodeView nodeView) {
+    public ApiMetadataFakeClient(NodeView nodeView) {
         this.nodeView = nodeView;
     }
 

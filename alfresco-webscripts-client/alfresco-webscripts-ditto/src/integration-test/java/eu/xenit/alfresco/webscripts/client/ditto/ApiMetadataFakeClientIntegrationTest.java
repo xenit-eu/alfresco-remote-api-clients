@@ -1,23 +1,23 @@
 package eu.xenit.alfresco.webscripts.client.ditto;
 
-import eu.xenit.alfresco.webscripst.client.ditto.ApiMetadataDittoClient;
-import eu.xenit.alfresco.webscripst.client.ditto.NodeLocatorDittoClient;
+import eu.xenit.alfresco.webscripst.client.ditto.ApiMetadataFakeClient;
+import eu.xenit.alfresco.webscripst.client.ditto.NodeLocatorFakeClient;
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
 import eu.xenit.alfresco.webscripts.client.spi.NodeLocatorClient;
 import eu.xenit.alfresco.webscripts.tests.ApiMetadataClientTests;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 
-class ApiMetadataDittoClientIntegrationTest implements ApiMetadataClientTests
-{
+class ApiMetadataFakeClientIntegrationTest implements ApiMetadataClientTests {
+
     private final AlfrescoDataSet dataSet = AlfrescoDataSet.bootstrapAlfresco().build();
 
     @Override
     public ApiMetadataClient apiMetadataClient() {
-        return new ApiMetadataDittoClient(dataSet);
+        return new ApiMetadataFakeClient(dataSet);
     }
 
     @Override
     public NodeLocatorClient nodeLocatorClient() {
-        return new NodeLocatorDittoClient(dataSet);
+        return new NodeLocatorFakeClient(dataSet);
     }
 }
