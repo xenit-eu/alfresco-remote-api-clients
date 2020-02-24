@@ -9,6 +9,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient.Metadata;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -107,7 +108,7 @@ class ApiMetadataSpringClientTest {
                 .isNotNull()
                 .satisfies(m -> assertThat(m.getNodeRef()).isEqualTo(nodeRef))
                 .satisfies(m -> assertThat(m.getMimetype()).isEqualTo("application/octet-stream"))
-                .satisfies(m -> assertThat(m.getType()).isEqualTo("{http://www.alfresco.org/model/content/1.0}folder"))
+                .satisfies(m -> assertThat(m.getType()).isEqualTo("{http://www.alfresco.org/model/rule/1.0}rule"))
                 .satisfies(m -> assertThat(m.getAspects()).contains(
                         "{http://www.alfresco.org/model/content/1.0}titled",
                         "{http://www.alfresco.org/model/content/1.0}auditable",
@@ -115,7 +116,12 @@ class ApiMetadataSpringClientTest {
                 ))
                 .satisfies(m -> assertThat(m.getProperties())
                         .containsEntry("{http://www.alfresco.org/model/content/1.0}title",
-                                "Specialise Type to Dictionary Model"));
+                                "Specialise Type to Dictionary Model")
+                        .hasEntrySatisfying("{http://www.alfresco.org/model/rule/1.0}ruleType",
+                                v -> {
+                                    assertThat(v).isInstanceOf(Collection.class);
+                                    assertThat((Collection<String>) v).hasSize(1).contains("inbound");
+                                }));
     }
 
     private static RequestMatcher requestUriPath(String expectedPath) {

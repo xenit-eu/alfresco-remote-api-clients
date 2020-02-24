@@ -4,9 +4,11 @@ import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.model.ContentData;
+import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.util.MimeTypes;
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -44,13 +46,22 @@ public class ApiMetadataFakeClient implements ApiMetadataClient {
                     .collect(Collectors.toSet());
             metadata.setAspects(aspects);
 
-            Map<String, String> props = new LinkedHashMap<>();
-            node.getProperties().forEach((key, value) -> {
-                props.put(key.toString(), value.toString());
-            });
+            Map<String, Object> props = new LinkedHashMap<>();
+            node.getProperties().forEach((key, value) -> props.put(key.toString(), convertPropertyValue(value)));
             metadata.setProperties(props);
 
             return metadata;
         }).orElse(null);
+    }
+
+    private Object convertPropertyValue(final Serializable dittoValue) {
+        if (dittoValue instanceof MLText) {
+            return ((MLText) dittoValue).get();
+        }
+        if (dittoValue instanceof Long) {
+            return Math.toIntExact((Long) dittoValue);
+        }
+
+        return dittoValue;
     }
 }
