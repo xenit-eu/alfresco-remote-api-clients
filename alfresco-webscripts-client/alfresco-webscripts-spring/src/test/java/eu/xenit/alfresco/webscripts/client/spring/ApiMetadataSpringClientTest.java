@@ -39,15 +39,34 @@ class ApiMetadataSpringClientTest {
 
                 .andRespond(withSuccess(
                         "{" +
-                                "\"nodeRef\": \"" + nodeRef + "\"" +
-                                // TODO expand
+                                "\"nodeRef\":\"" + nodeRef + "\"," +
+                                "\"aspects\":[" +
+                                "\"{http://www.alfresco.org/model/content/1.0}titled\"," +
+                                "\"{http://www.alfresco.org/model/content/1.0}auditable\"," +
+                                "\"{http://www.alfresco.org/model/system/1.0}referenceable\"" +
+                                "]," +
+                                "\"mimetype\":\"application/octet-stream\"," +
+                                "\"type\":\"{http://www.alfresco.org/model/content/1.0}folder\"," +
+                                "\"properties\":{" +
+                                "\"{http://www.alfresco.org/model/content/1.0}created\":\"2020-02-24T08:04:36.613Z\"," +
+                                "\"{http://www.alfresco.org/model/content/1.0}title\":\"Company Home\"," +
+                                "\"{http://www.alfresco.org/model/content/1.0}description\":\"The company root space\""
+                                + "}" +
                                 "}", MediaType.APPLICATION_JSON));
 
         Metadata result = client.get(nodeRef);
         assertThat(result)
                 .isNotNull()
-                .satisfies(metadata -> assertThat(metadata.getNodeRef())
-                        .isEqualTo(nodeRef));
+                .satisfies(m -> assertThat(m.getNodeRef()).isEqualTo(nodeRef))
+                .satisfies(m -> assertThat(m.getMimetype()).isEqualTo("application/octet-stream"))
+                .satisfies(m -> assertThat(m.getType()).isEqualTo("{http://www.alfresco.org/model/content/1.0}folder"))
+                .satisfies(m -> assertThat(m.getAspects()).contains(
+                        "{http://www.alfresco.org/model/content/1.0}titled",
+                        "{http://www.alfresco.org/model/content/1.0}auditable",
+                        "{http://www.alfresco.org/model/system/1.0}referenceable"
+                ))
+                .satisfies(m -> assertThat(m.getProperties())
+                        .containsEntry("{http://www.alfresco.org/model/content/1.0}title", "Company Home"));
     }
 
     private static RequestMatcher requestUriPath(String expectedPath) {
