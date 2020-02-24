@@ -10,7 +10,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 @AllArgsConstructor
 public class AlfrescoProperties {
 
-    String url = "http://localhost:8080/alfresco/";
+    private String url = "http://localhost:8080/alfresco/";
+
+    private String user = "admin";
+    private String password = "admin";
 
     public static Builder builder() {
         return new Builder();
@@ -19,6 +22,8 @@ public class AlfrescoProperties {
     public static class Builder {
 
         private UriComponentsBuilder inner = UriComponentsBuilder.fromHttpUrl("http://localhost:8080/alfresco/");
+        private String user = "admin";
+        private String password = "admin";
 
         public Builder scheme(String scheme) {
             this.inner.scheme(scheme);
@@ -39,8 +44,18 @@ public class AlfrescoProperties {
             return this;
         }
 
+        public Builder user(String user) {
+            this.user = user;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
         public AlfrescoProperties build() {
-            return new AlfrescoProperties(this.inner.build().toString());
+            return new AlfrescoProperties(this.inner.build().toString(), this.user, this.password);
         }
     }
 

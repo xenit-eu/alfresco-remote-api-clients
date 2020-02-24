@@ -20,6 +20,10 @@ public class NodeLocatorSpringClient implements NodeLocatorClient {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String url;
 
+    public NodeLocatorSpringClient(AlfrescoProperties alfrescoProperties) {
+        this(alfrescoProperties, RestTemplateHelper.buildRestTemplate(alfrescoProperties));
+    }
+
     public NodeLocatorSpringClient(AlfrescoProperties alfrescoProperties, RestTemplate restTemplate) {
         this.url = UriComponentsBuilder.fromHttpUrl(alfrescoProperties.getUrl())
                 .path("/service/api/nodelocator")
