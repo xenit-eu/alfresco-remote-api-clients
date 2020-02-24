@@ -7,20 +7,13 @@ import eu.xenit.alfresco.webscripts.tests.ApiMetadataClientTests;
 
 class ApiMetadataClientIntegrationTests extends WebscriptsSpringClientTestsBase implements ApiMetadataClientTests {
 
-    MetadataApiProperties metadataApiProperties() {
-        return MetadataApiProperties.builder()
-                .host(System.getProperty("alfresco.host", "localhost"))
-                .port(Integer.parseInt(System.getProperty("alfresco.tcp.8080", "8080")))
-                .build();
-    }
-
     @Override
     public ApiMetadataClient apiMetadataClient() {
-        return new ApiMetadataSpringClient(metadataApiProperties(), restTemplateBuilder().build());
+        return new ApiMetadataSpringClient(alfrescoProperties(), restTemplateBuilder().build());
     }
 
     @Override
     public NodeLocatorClient nodeLocatorClient() {
-        return new NodeLocatorSpringClient(restTemplateBuilder().build());
+        return new NodeLocatorSpringClient(alfrescoProperties(), restTemplateBuilder().build());
     }
 }

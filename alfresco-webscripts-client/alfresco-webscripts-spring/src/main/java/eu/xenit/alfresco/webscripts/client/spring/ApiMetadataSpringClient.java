@@ -10,8 +10,8 @@ public class ApiMetadataSpringClient implements ApiMetadataClient {
     private final RestTemplate restClient;
     private final String url;
 
-    public ApiMetadataSpringClient(MetadataApiProperties metadataApiProperties, RestTemplate restTemplate) {
-        this.url = UriComponentsBuilder.fromHttpUrl(metadataApiProperties.getUrl())
+    public ApiMetadataSpringClient(AlfrescoProperties alfrescoProperties, RestTemplate restTemplate) {
+        this.url = UriComponentsBuilder.fromHttpUrl(alfrescoProperties.getUrl())
                 .path("/service/api/metadata")
                 .toUriString();
 

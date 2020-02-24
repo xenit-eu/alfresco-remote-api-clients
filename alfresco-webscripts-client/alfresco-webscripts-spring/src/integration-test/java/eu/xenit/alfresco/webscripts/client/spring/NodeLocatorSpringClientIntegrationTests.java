@@ -9,6 +9,6 @@ class NodeLocatorSpringClientIntegrationTests extends WebscriptsSpringClientTest
 
     @Override
     public NodeLocatorClient nodeLocatorClient() {
-        return new NodeLocatorSpringClient(restTemplateBuilder().build());
+        return new NodeLocatorSpringClient(alfrescoProperties(), restTemplateBuilder().build());
     }
 }

@@ -30,7 +30,7 @@ class ApiMetadataSpringClientTest {
         final String nodeRef = UUID.randomUUID().toString();
 
         RestTemplate restTemplate = new RestTemplateBuilder().build();
-        ApiMetadataClient client = new ApiMetadataSpringClient(new MetadataApiProperties(), restTemplate);
+        ApiMetadataClient client = new ApiMetadataSpringClient(new AlfrescoProperties(), restTemplate);
 
         MockRestServiceServer.createServer(restTemplate)
                 .expect(requestUriPath("/alfresco/service/api/metadata"))

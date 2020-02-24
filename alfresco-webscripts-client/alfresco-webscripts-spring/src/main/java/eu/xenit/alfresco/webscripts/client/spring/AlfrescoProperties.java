@@ -8,7 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MetadataApiProperties {
+public class AlfrescoProperties {
 
     String url = "http://localhost:8080/alfresco/";
 
@@ -39,8 +39,8 @@ public class MetadataApiProperties {
             return this;
         }
 
-        public MetadataApiProperties build() {
-            return new MetadataApiProperties(this.inner.build().toString());
+        public AlfrescoProperties build() {
+            return new AlfrescoProperties(this.inner.build().toString());
         }
     }
 

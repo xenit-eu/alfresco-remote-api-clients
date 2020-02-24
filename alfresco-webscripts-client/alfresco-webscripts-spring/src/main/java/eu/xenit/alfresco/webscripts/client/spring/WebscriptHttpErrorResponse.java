@@ -14,11 +14,11 @@ public class WebscriptHttpErrorResponse {
 
     @Data
     class Status {
+
         private int code;
         private String name;
         private String description;
     }
-
 
 
 }

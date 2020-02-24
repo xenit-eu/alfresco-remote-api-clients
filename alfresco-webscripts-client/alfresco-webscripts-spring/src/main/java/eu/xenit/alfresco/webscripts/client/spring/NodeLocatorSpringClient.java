@@ -4,36 +4,38 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.alfresco.webscripts.client.spi.NodeLocatorClient;
 import java.io.UncheckedIOException;
-import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class NodeLocatorSpringClient implements NodeLocatorClient {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final String url;
 
-    public NodeLocatorSpringClient(RestTemplate restTemplate) {
+    public NodeLocatorSpringClient(AlfrescoProperties alfrescoProperties, RestTemplate restTemplate) {
+        this.url = UriComponentsBuilder.fromHttpUrl(alfrescoProperties.getUrl())
+                .path("/service/api/nodelocator")
+                .toUriString();
         this.restTemplate = restTemplate;
     }
 
     @Override
     public String get(String locatorName, Map<String, List<String>> params) {
 
-        return this.execute(UriComponentsBuilder.fromPath("/api/nodelocator/")
-                .path(locatorName)
+        UriComponents uri = UriComponentsBuilder.fromHttpUrl(url)
+                .path("/" + locatorName)
                 .queryParams(CollectionUtils.toMultiValueMap(params))
-                .toUriString());
+                .build();
+
+        return this.execute(uri.toUriString());
 
     }
 
@@ -57,18 +59,6 @@ public class NodeLocatorSpringClient implements NodeLocatorClient {
                 throw new UncheckedIOException(e);
             }
         }
-    }
-
-    private String addParamsToUrl(String url, Map<String, String> params) {
-        StringBuilder urlBuilder = new StringBuilder(url);
-        if (params.size() > 0) {
-            urlBuilder.append("?");
-            for (String key : params.keySet()) {
-                urlBuilder.append(key).append("={").append(key).append("}").append("&");
-            }
-            urlBuilder.setLength(urlBuilder.length() - 1);
-        }
-        return urlBuilder.toString();
     }
 
     @Data
