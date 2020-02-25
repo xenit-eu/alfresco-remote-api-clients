@@ -1,5 +1,6 @@
 package eu.xenit.alfresco.webscripts.client.spi.model.slingshot;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class Metadata {
 
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class NameContainer {
         String name;
@@ -31,10 +33,11 @@ public class Metadata {
     }
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Property {
         NameContainer name;
-        ValueContainer value;
+        List<ValueContainer> values;
         NameContainer type;
         boolean multiple;
         boolean residual;
@@ -45,13 +48,19 @@ public class Metadata {
     @AllArgsConstructor
     public static class ValueContainer {
         String dataType;
-        String value;
+        String value; // TODO Serializable instead maybe?
+        @JsonSetter("isContent")
         boolean isContent;
+        @JsonSetter("isNodeRef")
         boolean isNodeRef;
+        @JsonSetter("isNullValue")
         boolean isNullValue;
+
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Parent {
         NameContainer name;
         String nodeRef;
@@ -62,6 +71,7 @@ public class Metadata {
     }
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Association {
         NameContainer type; // child type | target type
@@ -71,7 +81,9 @@ public class Metadata {
     }
 
     @Data
-    public class Permissions {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Permissions {
         List<Permission> entries;
         List<Permission> masks;
         boolean inherit;
@@ -79,7 +91,9 @@ public class Metadata {
     }
 
     @Data
-    public class Permission {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Permission {
         String permission;
         String authority;
         String rel;

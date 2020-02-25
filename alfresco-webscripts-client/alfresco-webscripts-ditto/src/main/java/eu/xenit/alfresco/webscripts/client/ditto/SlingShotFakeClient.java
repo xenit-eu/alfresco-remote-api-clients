@@ -1,8 +1,8 @@
 package eu.xenit.alfresco.webscripts.client.ditto;
 
+import eu.xenit.alfresco.webscripts.client.spi.SlingShotClient;
 import eu.xenit.alfresco.webscripts.client.ditto.model.ModelHelper;
 import eu.xenit.alfresco.webscripts.client.ditto.model.ModelInfo;
-import eu.xenit.alfresco.webscripts.client.spi.SlingshotClient;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata.Association;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata.NameContainer;
@@ -24,13 +24,14 @@ import eu.xenit.testing.ditto.util.StringUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SlingShotFakeClient implements SlingshotClient {
+public class SlingShotFakeClient implements SlingShotClient {
 
     private final NodeView nodeView;
     private final ModelHelper modelHelper = new ModelHelper();
@@ -83,12 +84,24 @@ public class SlingShotFakeClient implements SlingshotClient {
             ModelInfo info = modelHelper.getModelInfoByQName(qName);
             NameContainer name = toNameContainer(qName);
             NameContainer type = new NameContainer(info.getType().toString(), info.getType().toPrefixString());
-            String value = info.getDeserializer().apply(serializable);
-            ValueContainer valueContainer = new ValueContainer(info.getDataType(), value, info.isContent(),
-                    info.isNodeRef(), StringUtils.nullOrEmpty(value));
             boolean multiple = isMultiple(serializable);
             boolean residual = info.isResidual();
-            ret.add(new Property(name, valueContainer, type, multiple, residual));
+            if (!multiple) {
+                String value = info.getDeserializer().apply(serializable);
+                ValueContainer valueContainer = new ValueContainer(info.getDataType(), value, info.isContent(),
+                    info.isNodeRef(), StringUtils.nullOrEmpty(value));
+                ret.add(new Property(name, Collections.singletonList(valueContainer), type, multiple, residual));
+            }
+            else {
+                List<ValueContainer> valueContainers = new ArrayList<>();
+                ((Collection<Serializable>) serializable)
+                        .forEach(element -> {
+                            String value = info.getDeserializer().apply(element);
+                            valueContainers.add(new ValueContainer(info.getDataType(), value, info.isContent(),
+                                    info.isNodeRef(), StringUtils.nullOrEmpty(value)));
+                        });
+                ret.add(new Property(name, valueContainers, type, multiple, residual));
+            }
         });
         return ret;
     }

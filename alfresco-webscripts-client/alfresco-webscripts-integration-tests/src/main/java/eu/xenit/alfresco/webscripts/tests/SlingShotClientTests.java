@@ -1,11 +1,10 @@
 package eu.xenit.alfresco.webscripts.tests;
 
-import static eu.xenit.alfresco.webscripts.tests.ApiMetadataClientTests.iso8601DateFormat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 import eu.xenit.alfresco.webscripts.client.spi.NodeLocatorClient;
-import eu.xenit.alfresco.webscripts.client.spi.SlingshotClient;
+import eu.xenit.alfresco.webscripts.client.spi.SlingShotClient;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata;
 import eu.xenit.testing.ditto.api.data.ContentModel.Application;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 public interface SlingShotClientTests {
 
-    SlingshotClient slingShotClient();
+    SlingShotClient slingShotClient();
 
     NodeLocatorClient nodeLocatorClient();
 
@@ -53,7 +52,7 @@ public interface SlingShotClientTests {
         assertThat(metadata.getType().getPrefixedName()).isEqualTo(Content.FOLDER.toPrefixString());
 
         assertThat(metadata.getProperties().stream()
-                .collect(Collectors.toMap(p -> p.getName().getName(), property -> property.getValue().getValue())))
+                .collect(Collectors.toMap(p -> p.getName().getName(), property -> property.getValues().get(0).getValue())))
                 .isNotEmpty()
                 .containsOnlyKeys(
                         Content.CREATOR.toString(),
@@ -84,14 +83,7 @@ public interface SlingShotClientTests {
                         entry(System.NODE_DBID.toString(), "13"),
                         entry(System.LOCALE.toString(), "en_US"),
                         entry(Content.MODIFIER.toString(), "System")
-                )
-                .hasEntrySatisfying(
-                        Content.CREATED.toString(),
-                        created -> assertThat(created).isNotNull().matches(iso8601DateFormat()))
-                .hasEntrySatisfying(
-                        Content.MODIFIED.toString(),
-                        modified -> assertThat(modified).isNotNull().matches(iso8601DateFormat()));
-
+                );
         assertThat(metadata.getParents())
                 .isNotEmpty()
                 .hasSize(1)
