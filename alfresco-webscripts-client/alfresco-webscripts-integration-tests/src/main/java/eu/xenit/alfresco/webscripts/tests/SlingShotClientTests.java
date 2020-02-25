@@ -31,10 +31,12 @@ public interface SlingShotClientTests {
 
         assertThat(metadata.getNodeRef()).isEqualTo(companyHomeNodeRef);
 
-        assertThat(metadata.getQnamePath().getName()).startsWith("/{http://www.alfresco.org/model/application/1.0}company_home");
+        assertThat(metadata.getQnamePath().getName())
+                .startsWith("/{http://www.alfresco.org/model/application/1.0}company_home");
         assertThat(metadata.getQnamePath().getPrefixedName()).isEqualTo("/app:company_home");
 
-        assertThat(metadata.getName().getName()).startsWith("{http://www.alfresco.org/model/application/1.0}company_home");
+        assertThat(metadata.getName().getName())
+                .startsWith("{http://www.alfresco.org/model/application/1.0}company_home");
         assertThat(metadata.getName().getPrefixedName()).isEqualTo("app:company_home");
 
         assertThat(metadata.getParentNodeRef()).startsWith("workspace://SpacesStore/");
@@ -52,7 +54,8 @@ public interface SlingShotClientTests {
         assertThat(metadata.getType().getPrefixedName()).isEqualTo(Content.FOLDER.toPrefixString());
 
         assertThat(metadata.getProperties().stream()
-                .collect(Collectors.toMap(p -> p.getName().getName(), property -> property.getValues().get(0).getValue())))
+                .collect(Collectors
+                        .toMap(p -> p.getName().getName(), property -> property.getValues().get(0).getValue())))
                 .isNotEmpty()
                 .containsOnlyKeys(
                         Content.CREATOR.toString(),

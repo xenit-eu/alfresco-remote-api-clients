@@ -62,7 +62,8 @@ public class SlingShotSpringClientIntegrationTests extends WebscriptsSpringClien
             Entry entry = searchResponse.getList().getEntries().get(0).getEntry();
             String uuid = entry.getId();
 
-            SlingShotClient slingShotClient = new SlingShotSpringClient(alfrescoProperties(), restTemplateBuilder().build());
+            SlingShotClient slingShotClient = new SlingShotSpringClient(alfrescoProperties(),
+                    restTemplateBuilder().build());
             Metadata metadata = slingShotClient.get("workspace://SpacesStore/" + uuid);
 
             assertThat(metadata.getAssocs().size()).isEqualTo(1);

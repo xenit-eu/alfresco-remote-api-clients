@@ -1,6 +1,5 @@
 package eu.xenit.alfresco.webscripts.client.spring.model;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
 import java.util.List;
 import lombok.Data;
 
@@ -11,12 +10,14 @@ public class SearchResponse {
 
     @Data
     public static class ResponseList {
+
         private Pagination pagination;
         private List<EntryContainer> entries;
     }
 
     @Data
     public static class Pagination {
+
         Long count;
         boolean hasMoreItems;
         Long totalItems;
@@ -26,12 +27,13 @@ public class SearchResponse {
 
     @Data
     public static class EntryContainer {
+
         Entry entry;
     }
 
-
     @Data
     public static class Entry {
+
         String createdAt;
         boolean isFolder;
         Search search;
@@ -48,11 +50,13 @@ public class SearchResponse {
 
     @Data
     public static class Search {
+
         Long score;
     }
 
     @Data
     public static class User {
+
         String id;
         String displayName;
     }
