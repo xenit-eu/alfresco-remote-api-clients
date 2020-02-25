@@ -54,7 +54,7 @@ public class SlingShotFakeClient implements SlingShotClient {
             metadata.setQnamePath(
                     new NameContainer(toFullyQualifiedQNamePath(node.getQNamePath()), node.getQNamePath()));
             metadata.setName(toNameContainer(node.getQName()));
-            metadata.setParentNodeRef(node.getParent().getNodeRef().toString());
+            metadata.setParentNodeRef(node.getParent() == null ? null : node.getParent().getNodeRef().toString());
             metadata.setType(toNameContainer(node.getType()));
             metadata.setId(node.getNodeRef().getUuid());
             metadata.setAspects(toNameContainers(node.getAspects()));
@@ -115,6 +115,9 @@ public class SlingShotFakeClient implements SlingShotClient {
     }
 
     private List<Parent> toParents(ParentChildNodeCollection collection, boolean child) {
+        if (collection == null) {
+            return Collections.emptyList();
+        }
         return collection.getAssociations()
                 .map(parentChildAssoc -> {
                     Parent parent = new Parent();
