@@ -61,6 +61,9 @@ public class ApiMetadataFakeClient implements ApiMetadataClient {
         if (dittoValue instanceof Long) {
             return Math.toIntExact((Long) dittoValue);
         }
+        if (dittoValue instanceof ContentData) {
+            return dittoValue.toString();
+        }
 
         return dittoValue;
     }

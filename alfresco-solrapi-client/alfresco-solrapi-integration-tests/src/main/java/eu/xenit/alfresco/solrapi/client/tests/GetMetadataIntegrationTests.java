@@ -7,6 +7,7 @@ import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public interface GetMetadataIntegrationTests {
@@ -115,4 +116,44 @@ public interface GetMetadataIntegrationTests {
 //                    assertThat(node.getChildAssocs()).isEmpty();
                 });
     }
+
+    @Test
+    default void getMetadata_nodeWithContent() {
+        SolrApiClient client = solrApiClient();
+
+        SolrNodeMetaData nodesMetaData = findAnyNodeWithContent(client);
+
+        assertThat(nodesMetaData).isNotNull();
+        assertThat(nodesMetaData.getProperties()).containsKey("{http://www.alfresco.org/model/content/1.0}content");
+        assertThat(nodesMetaData.getProperties().get("{http://www.alfresco.org/model/content/1.0}content"))
+                .isNotNull()
+                .isInstanceOf(Map.class);
+        assertThat((Map<String, String>) nodesMetaData.getProperties()
+                .get("{http://www.alfresco.org/model/content/1.0}content"))
+                .containsOnlyKeys("contentId", "encoding", "locale", "mimetype", "size");
+
+    }
+
+    static SolrNodeMetaData findAnyNodeWithContent(SolrApiClient client) {
+
+        final int transactionBatchSize = 100;
+        for (long i = 0; i < 1000; i = i + transactionBatchSize) {
+            List<SolrNodeMetaData> nodesMetaData = client.getNodesMetaData(
+                    new NodeMetaDataQueryParameters()
+                            .setFromNodeId(i)
+                            .setToNodeId(i + transactionBatchSize)
+                            .setMaxResults(transactionBatchSize));
+
+            Optional<SolrNodeMetaData> metadataWithContent = nodesMetaData.stream()
+                    .filter(m -> m.getProperties().containsKey("{http://www.alfresco.org/model/content/1.0}content"))
+                    .findAny();
+
+            if (metadataWithContent.isPresent()) {
+                return metadataWithContent.get();
+            }
+        }
+
+        throw new RuntimeException("I need a node with content");
+    }
+
 }
