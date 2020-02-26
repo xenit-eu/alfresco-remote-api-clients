@@ -1,6 +1,5 @@
 package eu.xenit.alfresco.webscripts.client.spi.model.slingshot;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,8 +38,8 @@ public class Metadata {
         NameContainer name;
         List<ValueContainer> values;
         NameContainer type;
-        boolean multiple;
-        boolean residual;
+        Boolean multiple;
+        Boolean residual;
     }
 
     @Data
@@ -49,12 +48,9 @@ public class Metadata {
     public static class ValueContainer {
         String dataType;
         String value; // TODO Serializable instead maybe?
-        @JsonSetter("isContent")
-        boolean isContent;
-        @JsonSetter("isNodeRef")
-        boolean isNodeRef;
-        @JsonSetter("isNullValue")
-        boolean isNullValue;
+        Boolean isContent;
+        Boolean isNodeRef;
+        Boolean isNullValue;
 
     }
 
@@ -66,7 +62,7 @@ public class Metadata {
         String nodeRef;
         NameContainer type;
         NameContainer assocType;
-        boolean primary;
+        Boolean primary;
         int index;
     }
 
@@ -86,7 +82,7 @@ public class Metadata {
     public static class Permissions {
         List<Permission> entries;
         List<Permission> masks;
-        boolean inherit;
+        Boolean inherit;
         String owner;
     }
 
