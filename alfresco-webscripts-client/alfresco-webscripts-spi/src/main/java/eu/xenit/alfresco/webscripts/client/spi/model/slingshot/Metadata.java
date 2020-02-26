@@ -24,6 +24,7 @@ public class Metadata {
 
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class NameContainer {
         String name;
@@ -31,13 +32,14 @@ public class Metadata {
     }
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Property {
         NameContainer name;
-        ValueContainer value;
+        List<ValueContainer> values;
         NameContainer type;
-        boolean multiple;
-        boolean residual;
+        Boolean multiple;
+        Boolean residual;
     }
 
     @Data
@@ -45,23 +47,27 @@ public class Metadata {
     @AllArgsConstructor
     public static class ValueContainer {
         String dataType;
-        String value;
-        boolean isContent;
-        boolean isNodeRef;
-        boolean isNullValue;
+        String value; // TODO Serializable instead maybe?
+        Boolean isContent;
+        Boolean isNodeRef;
+        Boolean isNullValue;
+
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Parent {
         NameContainer name;
         String nodeRef;
         NameContainer type;
         NameContainer assocType;
-        boolean primary;
+        Boolean primary;
         int index;
     }
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Association {
         NameContainer type; // child type | target type
@@ -71,15 +77,19 @@ public class Metadata {
     }
 
     @Data
-    public class Permissions {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Permissions {
         List<Permission> entries;
         List<Permission> masks;
-        boolean inherit;
+        Boolean inherit;
         String owner;
     }
 
     @Data
-    public class Permission {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Permission {
         String permission;
         String authority;
         String rel;

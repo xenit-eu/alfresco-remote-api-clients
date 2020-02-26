@@ -20,11 +20,13 @@ sourceSets {
 configurations {
     integrationTestImplementation.extendsFrom implementation
     integrationTestRuntimeOnly.extendsFrom runtimeOnly
+    integrationTestAnnotationProcessor.extendsFrom annotationProcessor
 }
 
 dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
+    implementation "org.projectlombok:lombok"
 
     api project(':alfresco-webscripts-client:alfresco-webscripts-spi')
 
