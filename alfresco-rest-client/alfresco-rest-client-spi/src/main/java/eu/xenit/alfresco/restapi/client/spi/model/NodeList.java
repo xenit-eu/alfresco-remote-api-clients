@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class NodeChildAssociationsList {
+public class NodeList {
 
     private NodeChildAssociations list;
 
