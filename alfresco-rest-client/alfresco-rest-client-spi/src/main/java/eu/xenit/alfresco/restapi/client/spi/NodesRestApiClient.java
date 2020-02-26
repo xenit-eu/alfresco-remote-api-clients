@@ -1,10 +1,11 @@
 package eu.xenit.alfresco.restapi.client.spi;
 
-import eu.xenit.alfresco.restapi.client.spi.model.Node;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeChildAssociationsList;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeEntry;
+import eu.xenit.alfresco.restapi.client.spi.query.CreateNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.GetNodeQueryParameters;
+import eu.xenit.alfresco.restapi.client.spi.query.NodeCreateBody;
 import eu.xenit.alfresco.restapi.client.spi.query.PaginationQueryParameters;
 
 /**
@@ -18,20 +19,11 @@ public interface NodesRestApiClient {
 
     void delete(String nodeId, DeleteNodeQueryParameters queryParameters);
 
-    default Node get(String nodeId) {
+    default NodeEntry get(String nodeId) {
         return get(nodeId, new GetNodeQueryParameters());
     }
 
-    default Node get(String nodeId, GetNodeQueryParameters queryParameters) {
-        NodeEntry entry = getNodeEntry(nodeId, queryParameters);
-        return entry == null ? null : entry.getEntry();
-    }
-
-    default NodeEntry getNodeEntry(String nodeId) {
-        return getNodeEntry(nodeId, new GetNodeQueryParameters());
-    }
-
-    NodeEntry getNodeEntry(String nodeId, GetNodeQueryParameters queryParameters);
+    NodeEntry get(String nodeId, GetNodeQueryParameters queryParameters);
 
     default NodeChildAssociationsList getChildren(String nodeId) {
         return getChildren(nodeId, new PaginationQueryParameters(), new GetNodeQueryParameters());
@@ -39,5 +31,11 @@ public interface NodesRestApiClient {
 
     NodeChildAssociationsList getChildren(String nodeId, PaginationQueryParameters paginationQueryParameters,
             GetNodeQueryParameters nodeQueryParameters);
+
+    default NodeEntry createChild(String nodeId, NodeCreateBody nodeCreateBody) {
+        return createChild(nodeId, nodeCreateBody, new CreateNodeQueryParameters());
+    }
+
+    NodeEntry createChild(String nodeId, NodeCreateBody nodeCreateBody, CreateNodeQueryParameters queryParameters);
 
 }

@@ -31,13 +31,22 @@ public class GetNodeQueryParameters implements QueryParameters {
         return this;
     }
 
+    public GetNodeQueryParameters withAllIncludes() {
+        for (Include value : Include.values()) {
+            withInclude(value);
+        }
+        return this;
+    }
+
     public enum Include {
         ALLOWED_OPERATIONS("allowableOperations"),
+        ASPECT_NAMES("aspectNames"),
         ASSOCIATION("association"),
         IS_LINK("isLink"),
         IS_FAVORITE("isFavorite"),
         IS_LOCKED("isLocked"),
         PATH("path"),
+        PROPERTIES("properties"),
         PERMISSIONS("permissions");
 
         Include(String key) {

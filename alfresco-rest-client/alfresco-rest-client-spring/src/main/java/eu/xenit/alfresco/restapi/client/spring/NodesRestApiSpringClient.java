@@ -3,8 +3,10 @@ package eu.xenit.alfresco.restapi.client.spring;
 import eu.xenit.alfresco.restapi.client.spi.NodesRestApiClient;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeChildAssociationsList;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeEntry;
+import eu.xenit.alfresco.restapi.client.spi.query.CreateNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.GetNodeQueryParameters;
+import eu.xenit.alfresco.restapi.client.spi.query.NodeCreateBody;
 import eu.xenit.alfresco.restapi.client.spi.query.PaginationQueryParameters;
 import java.net.URI;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -30,7 +32,7 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
     }
 
     @Override
-    public NodeEntry getNodeEntry(String nodeId, GetNodeQueryParameters queryParameters) {
+    public NodeEntry get(String nodeId, GetNodeQueryParameters queryParameters) {
         URI uri = withQueryParameters(UriComponentsBuilder
                 .fromHttpUrl(url).path("/" + nodeId), queryParameters)
                 .build().toUri();
@@ -47,4 +49,15 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
 
         return restTemplate.getForObject(uriBuilder.build().toUri(), NodeChildAssociationsList.class);
     }
+
+    @Override
+    public NodeEntry createChild(String nodeId, NodeCreateBody nodeCreateBody,
+            CreateNodeQueryParameters queryParameters) {
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url).path("/" + nodeId + "/children");
+        withQueryParameters(uriBuilder, queryParameters);
+
+        return restTemplate.postForObject(uriBuilder.build().toUri(), nodeCreateBody, NodeEntry.class);
+    }
+
+
 }
