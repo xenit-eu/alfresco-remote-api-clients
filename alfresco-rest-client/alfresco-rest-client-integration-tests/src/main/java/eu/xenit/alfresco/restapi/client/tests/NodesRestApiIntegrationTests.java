@@ -1,11 +1,14 @@
 package eu.xenit.alfresco.restapi.client.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import eu.xenit.alfresco.restapi.client.spi.Constants;
 import eu.xenit.alfresco.restapi.client.spi.NodesRestApiClient;
+import eu.xenit.alfresco.restapi.client.spi.model.Node;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeChildAssociationsList;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeEntry;
+import eu.xenit.alfresco.restapi.client.spi.model.exceptions.NotFoundException;
 import eu.xenit.alfresco.restapi.client.spi.query.CreateNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.GetNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.NodeCreateBody;
@@ -25,10 +28,8 @@ public interface NodesRestApiIntegrationTests {
 
     @Test
     default void getNode_companyHome() {
-
         NodeEntry nodeEntry = nodesRestApiClient().get(Constants.Node.ROOT, new GetNodeQueryParameters());
         companyHomeValidator.accept(nodeEntry);
-
     }
 
     @Test
@@ -41,8 +42,27 @@ public interface NodesRestApiIntegrationTests {
         assertThat(childAssocs.getList().getEntries()).isNotEmpty();
     }
 
-    default void deleteNode() {
+    @Test
+    default void deleteNode_nonExisting() {
+        assertThrows(NotFoundException.class, () -> nodesRestApiClient().delete("id-do-not-exist"));
+    }
 
+    @Test
+    default void deleteNode() {
+        NodeCreateBody nodeCreateBody = new NodeCreateBody("At the end of this test, I should be gone", "cm:content");
+
+        NodeEntry created = nodesRestApiClient().createChild(Constants.Node.ROOT, nodeCreateBody,
+                new CreateNodeQueryParameters().setAutoRename(true));
+        assertThat(created).isNotNull()
+                .extracting(NodeEntry::getEntry).isNotNull()
+                .extracting(Node::getId).isNotNull();
+        String createdId = created.getEntry().getId();
+
+        assertThat(nodesRestApiClient().get(createdId).getEntry().getId()).isEqualTo(createdId);
+
+        nodesRestApiClient().delete(createdId);
+
+        assertThrows(NotFoundException.class, () -> nodesRestApiClient().get(createdId));
     }
 
     @Test

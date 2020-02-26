@@ -3,12 +3,23 @@ package eu.xenit.alfresco.restapi.client.spring;
 import eu.xenit.alfresco.restapi.client.spi.NodesRestApiClient;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeChildAssociationsList;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeEntry;
+import eu.xenit.alfresco.restapi.client.spi.model.exceptions.ApiException;
+import eu.xenit.alfresco.restapi.client.spi.model.exceptions.InvalidArgumentException;
+import eu.xenit.alfresco.restapi.client.spi.model.exceptions.NotFoundException;
+import eu.xenit.alfresco.restapi.client.spi.model.exceptions.PermissionDeniedException;
 import eu.xenit.alfresco.restapi.client.spi.query.CreateNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.GetNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.NodeCreateBody;
 import eu.xenit.alfresco.restapi.client.spi.query.PaginationQueryParameters;
 import java.net.URI;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
+import org.springframework.web.client.HttpClientErrorException.Forbidden;
+import org.springframework.web.client.HttpClientErrorException.NotFound;
+import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class NodesRestApiSpringClient extends RestApiSpringClient implements NodesRestApiClient {
@@ -28,7 +39,8 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
                 .fromHttpUrl(url).path("/" + nodeId), queryParameters)
                 .build().toUri();
 
-        restTemplate.delete(uri);
+        RequestEntity<Void> requestEntity = RequestEntity.delete(uri).build();
+        execute(nodeId, requestEntity);
     }
 
     @Override
@@ -37,7 +49,8 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
                 .fromHttpUrl(url).path("/" + nodeId), queryParameters)
                 .build().toUri();
 
-        return restTemplate.getForObject(uri, NodeEntry.class);
+        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
+        return execute(nodeId, requestEntity, NodeEntry.class);
     }
 
     @Override
@@ -47,7 +60,8 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
         withQueryParameters(uriBuilder, paginationQueryParameters);
         withQueryParameters(uriBuilder, nodeQueryParameters);
 
-        return restTemplate.getForObject(uriBuilder.build().toUri(), NodeChildAssociationsList.class);
+        RequestEntity<Void> requestEntity = RequestEntity.get(uriBuilder.build().toUri()).build();
+        return execute(nodeId, requestEntity, NodeChildAssociationsList.class);
     }
 
     @Override
@@ -56,7 +70,30 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url).path("/" + nodeId + "/children");
         withQueryParameters(uriBuilder, queryParameters);
 
-        return restTemplate.postForObject(uriBuilder.build().toUri(), nodeCreateBody, NodeEntry.class);
+        RequestEntity<NodeCreateBody> requestEntity =
+                RequestEntity.post(uriBuilder.build().toUri()).body(nodeCreateBody);
+
+        return execute(nodeId, requestEntity, NodeEntry.class);
+    }
+
+    private <T> void execute(String nodeId, RequestEntity<T> requestEntity) {
+        execute(nodeId, requestEntity, Void.class);
+    }
+
+    private <T, R> R execute(String nodeId, RequestEntity<T> requestEntity, Class<R> responseClass) {
+
+        try {
+            ResponseEntity<R> responseEntity = restTemplate.exchange(requestEntity, responseClass);
+            return responseEntity.getBody();
+        } catch (BadRequest e) {
+            throw new InvalidArgumentException(nodeId);
+        } catch (Unauthorized | Forbidden e) {
+            throw new PermissionDeniedException(nodeId);
+        } catch (NotFound e) {
+            throw new NotFoundException(nodeId);
+        } catch (HttpClientErrorException e) {
+            throw new ApiException(e);
+        }
     }
 
 
