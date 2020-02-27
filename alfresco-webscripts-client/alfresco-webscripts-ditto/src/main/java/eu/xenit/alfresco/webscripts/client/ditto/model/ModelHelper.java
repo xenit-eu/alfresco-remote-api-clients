@@ -7,6 +7,7 @@ import eu.xenit.testing.ditto.api.model.Namespace;
 import eu.xenit.testing.ditto.api.model.QName;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,16 +17,16 @@ import java.util.stream.Collectors;
 
 public class ModelHelper {
 
-    private final List<ModelInfo> defaults = new ArrayList<>();
+    private List<ModelInfo> defaultModelInfos = new ArrayList<>();
 
-    private final Map<String, Namespace> prefixToNamespace = new HashMap<String, Namespace>() {{
+    private Map<String, Namespace> prefixToNamespace = new HashMap<String, Namespace>() {{
         put("cm", createNamespace("http://www.alfresco.org/model/content/1.0", "cm"));
         put("app", createNamespace("http://www.alfresco.org/model/application/1.0", "app"));
         put("sys", createNamespace("http://www.alfresco.org/model/system/1.0", "sys"));
         put("d",   createNamespace("http://www.alfresco.org/model/dictionary/1.0", "d"));
     }};
 
-    private final Map<String, Function<Serializable, String>> typeToDeserializer = new HashMap<String, Function<Serializable, String>>() {{
+    private Map<String, Function<Serializable, String>> typeToDeserializer = new HashMap<String, Function<Serializable, String>>() {{
         put("d:text", serializable -> (String) serializable);
         put("d:mltext", Object::toString);
         put("d:datetime", serializable -> (String) serializable);
@@ -44,19 +45,21 @@ public class ModelHelper {
         Namespace sys = getPrefixToNamespaceMap().get("sys");
         Namespace d = getPrefixToNamespaceMap().get("d");
 
-        defaults.add(createModel(createQName(cm, "description"), createQName(d, "mltext")));
-        defaults.add(createModel(createQName(cm, "name"), createQName(d, "text")));
-        defaults.add(createModel(createQName(cm, "title"), createQName(d, "mltext")));
-        defaults.add(createModel(createQName(cm, "creator"), createQName(d, "text")));
-        defaults.add(createModel(createQName(cm, "created"), createQName(d, "datetime")));
-        defaults.add(createModel(createQName(cm, "modifier"), createQName(d, "text")));
-        defaults.add(createModel(createQName(cm, "modified"), createQName(d, "datetime")));
-        defaults.add(createModel(createQName(app, "icon"), createQName(d, "text")));
-        defaults.add(createModel(createQName(sys, "node-dbid"), createQName(d, "long")));
-        defaults.add(createModel(createQName(sys, "node-uuid"), createQName(d, "text")));
-        defaults.add(createModel(createQName(sys, "store-protocol"), createQName(d, "text")));
-        defaults.add(createModel(createQName(sys, "store-identifier"), createQName(d, "text")));
-        defaults.add(createModel(createQName(sys, "locale"), createQName(d, "locale")));
+        setDefaultModelInfos(Arrays.asList(
+                createModel(createQName(cm, "description"), createQName(d, "mltext")),
+                createModel(createQName(cm, "name"), createQName(d, "text")),
+                createModel(createQName(cm, "title"), createQName(d, "mltext")),
+                createModel(createQName(cm, "creator"), createQName(d, "text")),
+                createModel(createQName(cm, "created"), createQName(d, "datetime")),
+                createModel(createQName(cm, "modifier"), createQName(d, "text")),
+                createModel(createQName(cm, "modified"), createQName(d, "datetime")),
+                createModel(createQName(app, "icon"), createQName(d, "text")),
+                createModel(createQName(sys, "node-dbid"), createQName(d, "long")),
+                createModel(createQName(sys, "node-uuid"), createQName(d, "text")),
+                createModel(createQName(sys, "store-protocol"), createQName(d, "text")),
+                createModel(createQName(sys, "store-identifier"), createQName(d, "text")),
+                createModel(createQName(sys, "locale"), createQName(d, "locale"))
+        ));
     }
 
     private ModelInfo createModel(QName qName, QName type) {
@@ -75,12 +78,20 @@ public class ModelHelper {
 
     }
 
-    public List<ModelInfo> getDefaults() {
-        return defaults;
+    public List<ModelInfo> getDefaultModelInfos() {
+        return defaultModelInfos;
+    }
+
+    public void addDefaultModelInfo(ModelInfo modelInfo) {
+        defaultModelInfos.add(modelInfo);
+    }
+
+    public void setDefaultModelInfos(List<ModelInfo> modelInfos) {
+        this.defaultModelInfos = modelInfos;
     }
 
     public ModelInfo getModelInfoByQName(QName qName) {
-        List<ModelInfo> models = defaults.stream()
+        List<ModelInfo> models = getDefaultModelInfos().stream()
                 .filter(modelInfo -> hasQName(modelInfo, qName))
                 .collect(Collectors.toList());
         if (models.size() < 1) {
@@ -99,6 +110,18 @@ public class ModelHelper {
 
     public Map<String, Namespace> getPrefixToNamespaceMap() {
         return prefixToNamespace;
+    }
+
+    public void setPrefixToNamespaceMap(Map<String, Namespace> map) {
+        this.prefixToNamespace = map;
+    }
+
+    public Map<String, Function<Serializable, String>> getTypeToDeserializerMap() {
+        return typeToDeserializer;
+    }
+
+    public void setTypeToDeserializerMap(Map<String, Function<Serializable, String>> typeToDeserializer) {
+        this.typeToDeserializer = typeToDeserializer;
     }
 
 }
