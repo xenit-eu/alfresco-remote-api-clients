@@ -92,7 +92,7 @@ public interface SolrApiClient {
      * @param minTxnId minimum transaction id (inclusive) - can be {@code null}
      * @param toCommitTime commit time in ms exclusive upper bound restriction - can be {@code null}
      * @param maxTxnId maximum transaction id (exclusive) - can be {@code null}
-     * @param maxResults maximum number of results - can be {@code null}
+     * @param maxResults maximum number of results - use {@code 0} or {@code Integer.MAX_VALUE} in order to omit
      * @return a collection of transactions plus max commit time and transaction id
      */
     SolrTransactions getTransactions(Long fromCommitTime, Long minTxnId, Long toCommitTime, Long maxTxnId, int maxResults);
