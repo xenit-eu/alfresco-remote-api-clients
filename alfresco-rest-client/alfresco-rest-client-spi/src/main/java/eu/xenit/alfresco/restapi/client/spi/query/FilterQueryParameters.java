@@ -46,7 +46,7 @@ public class FilterQueryParameters implements QueryParameters {
         return new Params().putIfNonEmpty("where", calculateWhereString());
     }
 
-    private String calculateWhereString() {
+    String calculateWhereString() {
         if (whereClauses == null || whereClauses.isEmpty()) {
             return null;
         }
