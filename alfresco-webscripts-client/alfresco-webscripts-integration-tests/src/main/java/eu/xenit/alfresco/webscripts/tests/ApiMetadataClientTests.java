@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
+import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient.BulkMetadata;
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient.Metadata;
 import eu.xenit.alfresco.webscripts.client.spi.NodeLocatorClient;
 import eu.xenit.testing.ditto.api.data.ContentModel;
@@ -13,6 +14,8 @@ import eu.xenit.testing.ditto.api.data.ContentModel.System;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 
@@ -76,6 +79,45 @@ public interface ApiMetadataClientTests {
                         Content.MODIFIED.toString(),
                         modified -> assertThat(modified).isNotNull().matches(iso8601DateFormat()))
         ;
+    }
+
+    @Test
+    default void testGetMetadataBulked_companyHome() {
+
+        String companyHomeNodeRef = nodeLocatorClient().getCompanyHome();
+
+        List<BulkMetadata> bulkMetadata = apiMetadataClient().get(Collections.singletonList(companyHomeNodeRef));
+        assertThat(bulkMetadata).hasOnlyOneElementSatisfying(metadata -> {
+            assertThat(metadata.getNodeRef()).isEqualTo(companyHomeNodeRef);
+            assertThat(metadata.getParentNodeRef()).isNotNull();
+            assertThat(metadata.getType()).isEqualTo(Content.FOLDER.toString());
+            assertThat(metadata.getShortType()).isEqualTo(Content.FOLDER.toPrefixString());
+//            assertThat(metadata.getTypeTitle()).isEqualTo("Folder"); not yet supported in fake implementation
+            assertThat(metadata.getName()).isEqualTo("Company Home");
+            assertThat(metadata.getTitle()).isEqualTo("Company Home");
+            assertThat(metadata.getMimeType()).isEqualTo("");
+            assertThat(metadata.getHasWritePermission()).isTrue();
+            assertThat(metadata.getHasDeletePermission()).isTrue();
+        });
+    }
+
+    @Test
+    default void testGetMetadataBulked_nonExistingUuid() {
+        final String nonExistingUuid = "workspace://SpacesStore/123-ik-denk-het-nie";
+
+        List<BulkMetadata> bulkMetadata = apiMetadataClient().get(Collections.singletonList(nonExistingUuid));
+        assertThat(bulkMetadata).hasOnlyOneElementSatisfying(metadata -> {
+            assertThat(metadata.getNodeRef()).isNotNull().isEqualTo(nonExistingUuid);
+            assertThat(metadata.getError()).isEqualTo("true");
+            assertThat(metadata.getErrorCode()).isEqualTo("invalidNodeRef");
+            assertThat(metadata.getErrorText()).isEqualTo("");
+        });
+    }
+
+    @Test
+    default void testGetMetadataBulked_emptyList() {
+        List<BulkMetadata> bulkMetadata = apiMetadataClient().get(Collections.emptyList());
+        assertThat(bulkMetadata).isEmpty();
     }
 
     static Predicate<Object> iso8601DateFormat() {

@@ -3,13 +3,16 @@ package eu.xenit.alfresco.webscripts.client.ditto;
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
+import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.ContentData;
 import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
 import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.util.MimeTypes;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -52,6 +55,46 @@ public class ApiMetadataFakeClient implements ApiMetadataClient {
 
             return metadata;
         }).orElse(null);
+    }
+
+    @Override
+    public List<BulkMetadata> get(List<String> nodeRefs) {
+        if (nodeRefs == null || nodeRefs.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return nodeRefs.stream().map(this::getBulkMetadata).collect(Collectors.toList());
+    }
+
+    private BulkMetadata getBulkMetadata(String nodeRef) {
+
+        BulkMetadata ret = new BulkMetadata();
+        ret.setNodeRef(nodeRef);
+
+        Optional<Node> dittoNode =
+                this.nodeView.stream().filter(n -> nodeRef.equals(n.getNodeRef().toString())).findAny();
+
+        if (!dittoNode.isPresent()) {
+            ret.setError("true");
+            ret.setErrorCode("invalidNodeRef");
+            ret.setErrorText("");
+            return ret;
+        }
+
+        return dittoNode.map(node -> {
+            ret.setParentNodeRef(node.getParent().getNodeRef().toString());
+            ret.setType(node.getType().toString());
+            ret.setShortType(node.getType().toPrefixString());
+//            ret.setTypeTitle(); not yet supported
+            ret.setName(node.getName());
+            node.getProperties().get(Content.TITLE).ifPresent(v -> ret.setTitle(((MLText) v).get()));
+            ret.setMimeType("");
+            node.getProperties().get(Content.CONTENT).ifPresent(v -> ret.setMimeType(((ContentData) v).getMimeType()));
+            ret.setHasWritePermission(true);
+            ret.setHasDeletePermission(true);
+            return ret;
+        }).orElse(null);
+
     }
 
     private Object convertPropertyValue(final Serializable dittoValue) {
