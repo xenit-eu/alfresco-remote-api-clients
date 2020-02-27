@@ -1,6 +1,5 @@
-package eu.xenit.alfresco.restapi.client.spi.query;
+package eu.xenit.alfresco.restapi.client.spi.model;
 
-import eu.xenit.alfresco.restapi.client.spi.model.Permissions;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

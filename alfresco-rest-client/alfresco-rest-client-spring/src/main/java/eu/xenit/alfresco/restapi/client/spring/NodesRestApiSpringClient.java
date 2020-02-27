@@ -1,6 +1,7 @@
 package eu.xenit.alfresco.restapi.client.spring;
 
 import eu.xenit.alfresco.restapi.client.spi.NodesRestApiClient;
+import eu.xenit.alfresco.restapi.client.spi.model.NodeCreateBody;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeEntry;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeList;
 import eu.xenit.alfresco.restapi.client.spi.model.TargetAssociation;
@@ -13,9 +14,9 @@ import eu.xenit.alfresco.restapi.client.spi.model.exceptions.PermissionDeniedExc
 import eu.xenit.alfresco.restapi.client.spi.query.CreateNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteTargetQueryParameters;
-import eu.xenit.alfresco.restapi.client.spi.query.GetAssociationsQueryParameters;
+import eu.xenit.alfresco.restapi.client.spi.query.FilterQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.GetNodeQueryParameters;
-import eu.xenit.alfresco.restapi.client.spi.query.NodeCreateBody;
+import eu.xenit.alfresco.restapi.client.spi.query.NodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.PaginationQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.QueryParameters;
 import java.net.URI;
@@ -62,8 +63,8 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
 
     @Override
     public NodeList getChildren(String nodeId, PaginationQueryParameters paginationQueryParameters,
-            GetNodeQueryParameters nodeQueryParameters) {
-        URI uri = children(nodeId, paginationQueryParameters, nodeQueryParameters);
+            FilterQueryParameters filterQueryParameters, NodeQueryParameters nodeQueryParameters) {
+        URI uri = children(nodeId, paginationQueryParameters, filterQueryParameters, nodeQueryParameters);
 
         RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
         return execute(nodeId, requestEntity, NodeList.class);
@@ -79,14 +80,18 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
     }
 
     @Override
-    public NodeList getSources(String nodeId, GetAssociationsQueryParameters queryParameters) {
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri(nodeId, "/sources", queryParameters)).build();
+    public NodeList getSources(String nodeId, FilterQueryParameters filterQueryParameters,
+            NodeQueryParameters nodeQueryParameters) {
+        RequestEntity<Void> requestEntity = RequestEntity
+                .get(uri(nodeId, "/sources", filterQueryParameters, nodeQueryParameters)).build();
         return execute(nodeId, requestEntity, NodeList.class);
     }
 
     @Override
-    public NodeList getTargets(String nodeId, GetAssociationsQueryParameters queryParameters) {
-        RequestEntity<Void> requestEntity = RequestEntity.get(targets(nodeId, queryParameters)).build();
+    public NodeList getTargets(String nodeId, FilterQueryParameters filterQueryParameters,
+            NodeQueryParameters nodeQueryParameters) {
+        RequestEntity<Void> requestEntity = RequestEntity
+                .get(targets(nodeId, filterQueryParameters, nodeQueryParameters)).build();
         return execute(nodeId, requestEntity, NodeList.class);
     }
 

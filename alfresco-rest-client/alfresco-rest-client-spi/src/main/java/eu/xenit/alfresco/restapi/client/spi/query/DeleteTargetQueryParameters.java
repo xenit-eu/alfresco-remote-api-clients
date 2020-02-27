@@ -12,8 +12,6 @@ public class DeleteTargetQueryParameters implements QueryParameters {
 
     @Override
     public Params queryParameters() {
-        Params ret = new Params();
-        ret.putIfNonEmpty("assocType", assocType);
-        return ret;
+        return new Params().putIfNonEmpty("assocType", assocType);
     }
 }

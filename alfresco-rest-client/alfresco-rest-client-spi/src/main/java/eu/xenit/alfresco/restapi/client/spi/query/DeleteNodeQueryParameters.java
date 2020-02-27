@@ -12,9 +12,7 @@ public class DeleteNodeQueryParameters implements QueryParameters {
 
     @Override
     public Params queryParameters() {
-        Params queryParameters = new Params();
-        queryParameters.put("permanent", Boolean.toString(permanent));
-        return queryParameters;
+        return new Params().putIfNonEmpty("permanent", Boolean.toString(permanent));
     }
 
 }
