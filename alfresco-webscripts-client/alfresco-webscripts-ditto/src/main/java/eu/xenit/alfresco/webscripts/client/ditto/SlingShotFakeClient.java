@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class SlingShotFakeClient implements SlingShotClient {
 
     private final NodeView nodeView;
-    private final ModelHelper modelHelper = new ModelHelper();
+    private ModelHelper modelHelper = new ModelHelper();
 
     public SlingShotFakeClient(AlfrescoDataSet dataSet) {
         this(dataSet.getNodeView());
@@ -168,6 +168,14 @@ public class SlingShotFakeClient implements SlingShotClient {
 
     private boolean isMultiple(Serializable value) {
         return value instanceof Collection;
+    }
+
+    public ModelHelper modelHelper() {
+        return this.modelHelper;
+    }
+
+    public void setModelHelper(ModelHelper modelHelper) {
+        this.modelHelper = modelHelper;
     }
 
 }
