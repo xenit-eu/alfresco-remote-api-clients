@@ -11,15 +11,12 @@ public class PaginationQueryParameters implements QueryParameters {
     private int skipCount = 0;
     private int maxItems = 100;
     private List<String> orderBy;
-    private String where;
 
     @Override
     public Params queryParameters() {
-        Params ret = new Params();
-        ret.put("skipCount", Integer.toString(skipCount));
-        ret.put("maxItems", Integer.toString(maxItems));
-        ret.putIfNonEmpty("orderBy", orderBy);
-        ret.putIfNonEmpty("where", where);
-        return ret;
+        return new Params()
+                .putIfNonEmpty("skipCount", Integer.toString(skipCount))
+                .putIfNonEmpty("maxItems", Integer.toString(maxItems))
+                .putIfNonEmpty("orderBy", orderBy);
     }
 }

@@ -1,7 +1,6 @@
 package eu.xenit.alfresco.webscripts.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 
 import eu.xenit.alfresco.webscripts.client.spi.NodeLocatorClient;
 import eu.xenit.alfresco.webscripts.client.spi.SlingShotClient;
@@ -72,21 +71,17 @@ public interface SlingShotClientTests {
                         System.NODE_DBID.toString(),
                         System.LOCALE.toString()
                 )
-                .contains(
-                        entry(Application.ICON.toString(), "space-icon-default"),
-
-                        entry(Content.TITLE.toString(), "Company Home"),
-                        entry(Content.DESCRIPTION.toString(), "The company root space"),
-
-                        entry(Content.CREATOR.toString(), "System"),
-                        entry(System.NODE_UUID.toString(), companyHomeUuid),
-                        entry(Content.NAME.toString(), "Company Home"),
-                        entry(System.STORE_PROTOCOL.toString(), "workspace"),
-                        entry(System.STORE_IDENTIFIER.toString(), "SpacesStore"),
-                        entry(System.NODE_DBID.toString(), "13"),
-                        entry(System.LOCALE.toString(), "en_US"),
-                        entry(Content.MODIFIER.toString(), "System")
-                );
+                .containsEntry(Application.ICON.toString(), "space-icon-default")
+                .containsEntry(Content.TITLE.toString(), "Company Home")
+                .containsEntry(Content.DESCRIPTION.toString(), "The company root space")
+                .containsEntry(Content.CREATOR.toString(), "System")
+                .containsEntry(System.NODE_UUID.toString(), companyHomeUuid)
+                .containsEntry(Content.NAME.toString(), "Company Home")
+                .containsEntry(System.STORE_PROTOCOL.toString(), "workspace")
+                .containsEntry(System.STORE_IDENTIFIER.toString(), "SpacesStore")
+                .containsEntry(System.NODE_DBID.toString(), "13")
+                .containsEntry(System.LOCALE.toString(), "en_US")
+                .hasEntrySatisfying(Content.MODIFIER.toString(), s -> assertThat(s).isNotBlank());
         assertThat(metadata.getParents())
                 .isNotEmpty()
                 .hasSize(1)

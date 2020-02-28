@@ -1,5 +1,6 @@
 package eu.xenit.alfresco.restapi.client.spi;
 
+import eu.xenit.alfresco.restapi.client.spi.model.NodeCreateBody;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeEntry;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeList;
 import eu.xenit.alfresco.restapi.client.spi.model.TargetAssociation;
@@ -7,9 +8,9 @@ import eu.xenit.alfresco.restapi.client.spi.model.TargetAssociationEntry;
 import eu.xenit.alfresco.restapi.client.spi.query.CreateNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteTargetQueryParameters;
-import eu.xenit.alfresco.restapi.client.spi.query.GetAssociationsQueryParameters;
+import eu.xenit.alfresco.restapi.client.spi.query.FilterQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.GetNodeQueryParameters;
-import eu.xenit.alfresco.restapi.client.spi.query.NodeCreateBody;
+import eu.xenit.alfresco.restapi.client.spi.query.NodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.PaginationQueryParameters;
 
 /**
@@ -30,11 +31,12 @@ public interface NodesRestApiClient {
     NodeEntry get(String nodeId, GetNodeQueryParameters queryParameters);
 
     default NodeList getChildren(String nodeId) {
-        return getChildren(nodeId, new PaginationQueryParameters(), new GetNodeQueryParameters());
+        return getChildren(nodeId, new PaginationQueryParameters(), new FilterQueryParameters(),
+                new NodeQueryParameters());
     }
 
     NodeList getChildren(String nodeId, PaginationQueryParameters paginationQueryParameters,
-            GetNodeQueryParameters nodeQueryParameters);
+            FilterQueryParameters filterQueryParameters, NodeQueryParameters nodeQueryParameters);
 
     default NodeEntry createChild(String nodeId, NodeCreateBody nodeCreateBody) {
         return createChild(nodeId, nodeCreateBody, new CreateNodeQueryParameters());
@@ -43,16 +45,18 @@ public interface NodesRestApiClient {
     NodeEntry createChild(String nodeId, NodeCreateBody nodeCreateBody, CreateNodeQueryParameters queryParameters);
 
     default NodeList getSources(String sourceNodeId) {
-        return getSources(sourceNodeId, new GetAssociationsQueryParameters());
+        return getSources(sourceNodeId, new FilterQueryParameters(), new NodeQueryParameters());
     }
 
-    NodeList getSources(String nodeId, GetAssociationsQueryParameters queryParameters);
+    NodeList getSources(String nodeId, FilterQueryParameters filterQueryParameters,
+            NodeQueryParameters nodeQueryParameters);
 
     default NodeList getTargets(String nodeId) {
-        return getTargets(nodeId, new GetAssociationsQueryParameters());
+        return getTargets(nodeId, new FilterQueryParameters(), new NodeQueryParameters());
     }
 
-    NodeList getTargets(String nodeId, GetAssociationsQueryParameters queryParameters);
+    NodeList getTargets(String nodeId, FilterQueryParameters filterQueryParameters,
+            NodeQueryParameters nodeQueryParameters);
 
     TargetAssociationEntry createTargetAssociation(String nodeId, TargetAssociation targetAssociation);
 

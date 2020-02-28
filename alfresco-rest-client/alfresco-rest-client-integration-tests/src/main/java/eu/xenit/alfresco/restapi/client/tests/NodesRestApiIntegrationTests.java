@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import eu.xenit.alfresco.restapi.client.spi.Constants;
 import eu.xenit.alfresco.restapi.client.spi.NodesRestApiClient;
 import eu.xenit.alfresco.restapi.client.spi.model.Node;
+import eu.xenit.alfresco.restapi.client.spi.model.NodeCreateBody;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeEntry;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeList;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeList.NodeChildAssociations;
@@ -15,9 +16,8 @@ import eu.xenit.alfresco.restapi.client.spi.model.exceptions.InvalidArgumentExce
 import eu.xenit.alfresco.restapi.client.spi.model.exceptions.NotFoundException;
 import eu.xenit.alfresco.restapi.client.spi.query.CreateNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteTargetQueryParameters;
-import eu.xenit.alfresco.restapi.client.spi.query.GetAssociationsQueryParameters;
-import eu.xenit.alfresco.restapi.client.spi.query.GetNodeQueryParameters;
-import eu.xenit.alfresco.restapi.client.spi.query.NodeCreateBody;
+import eu.xenit.alfresco.restapi.client.spi.query.FilterQueryParameters;
+import eu.xenit.alfresco.restapi.client.spi.query.NodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.PaginationQueryParameters;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
@@ -34,15 +34,14 @@ public interface NodesRestApiIntegrationTests {
 
     @Test
     default void getNode_companyHome() {
-        NodeEntry nodeEntry = nodesRestApiClient().get(Constants.Node.ROOT, new GetNodeQueryParameters());
+        NodeEntry nodeEntry = nodesRestApiClient().get(Constants.Node.ROOT);
         companyHomeValidator.accept(nodeEntry);
     }
 
     @Test
     default void getChildren_root() {
 
-        NodeList childAssocs = nodesRestApiClient().getChildren(Constants.Node.ROOT,
-                new PaginationQueryParameters(), new GetNodeQueryParameters());
+        NodeList childAssocs = nodesRestApiClient().getChildren(Constants.Node.ROOT);
 
         assertThat(childAssocs).isNotNull();
         assertThat(childAssocs.getList().getEntries()).isNotEmpty();
@@ -99,7 +98,8 @@ public interface NodesRestApiIntegrationTests {
 
         NodeList nodeList =
                 nodesRestApiClient().getChildren(Constants.Node.ROOT, new PaginationQueryParameters(),
-                        new GetNodeQueryParameters().withAllIncludes());
+                        new FilterQueryParameters(),
+                        new NodeQueryParameters().withAllIncludes());
 
         assertThat(nodeList).isNotNull();
         assertThat(nodeList.getList()).isNotNull();
@@ -131,7 +131,7 @@ public interface NodesRestApiIntegrationTests {
         };
         targetAssocNodeListValidator.accept(nodesRestApiClient().getTargets(sourceNode.getId()));
         targetAssocNodeListValidator.accept(nodesRestApiClient().getTargets(sourceNode.getId(),
-                new GetAssociationsQueryParameters().filterOnAssocType(assocType)));
+                new FilterQueryParameters().whereAssocType(assocType), new NodeQueryParameters()));
 
         Consumer<NodeList> sourceAssocNodeListValidator = nodeList -> {
             assertThat(nodeList).isNotNull()
@@ -142,7 +142,7 @@ public interface NodesRestApiIntegrationTests {
         };
         sourceAssocNodeListValidator.accept(nodesRestApiClient().getSources(targetNode.getId()));
         sourceAssocNodeListValidator.accept(nodesRestApiClient().getSources(targetNode.getId(),
-                new GetAssociationsQueryParameters().filterOnAssocType(assocType)));
+                new FilterQueryParameters().whereAssocType(assocType), new NodeQueryParameters()));
 
         assertThrows(InvalidArgumentException.class,
                 () -> nodesRestApiClient().deleteTargetAssociation(sourceNode.getId(), targetNode.getId(),

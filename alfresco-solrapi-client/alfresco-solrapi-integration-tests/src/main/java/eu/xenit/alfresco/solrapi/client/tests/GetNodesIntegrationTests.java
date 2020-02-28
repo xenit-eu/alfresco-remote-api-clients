@@ -24,7 +24,7 @@ public interface GetNodesIntegrationTests {
                 .hasOnlyOneElementSatisfying(node -> {
                     assertThat(node.getId()).isEqualTo(13);
                     assertThat(node.getNodeRef()).startsWith("workspace://SpacesStore/");
-                    assertThat(node.getTxnId()).isEqualTo(6);
+                    assertThat(node.getTxnId()).isPositive();
                     assertThat(node.getStatus()).isEqualTo("u");
 //                    assertThat(node.getAclId()).isEqualTo(10);
                     assertThat(node.getTenant()).isEmpty();

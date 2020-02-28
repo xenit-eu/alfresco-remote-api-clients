@@ -1,62 +1,18 @@
 package eu.xenit.alfresco.restapi.client.spi.query;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
-public class GetNodeQueryParameters implements QueryParameters {
-
-    List<Include> includes = new ArrayList<>();
+public class GetNodeQueryParameters extends NodeQueryParameters {
 
     String relativePath;
 
-    List<String> fields = new ArrayList<>();
-
-
     @Override
     public Params queryParameters() {
-        Params params = new Params();
-        params.putIfNonEmpty("include", includes.stream().map(Include::getKey).collect(Collectors.toList()));
-        params.putIfNonEmpty("relativePath", relativePath);
-        params.putIfNonEmpty("relativePath", fields);
-        return params;
-    }
-
-    public GetNodeQueryParameters withInclude(Include include) {
-        includes.add(include);
-        return this;
-    }
-
-    public GetNodeQueryParameters withAllIncludes() {
-        for (Include value : Include.values()) {
-            withInclude(value);
-        }
-        return this;
-    }
-
-    public enum Include {
-        ALLOWED_OPERATIONS("allowableOperations"),
-        ASPECT_NAMES("aspectNames"),
-        ASSOCIATION("association"),
-        IS_LINK("isLink"),
-        IS_FAVORITE("isFavorite"),
-        IS_LOCKED("isLocked"),
-        PATH("path"),
-        PROPERTIES("properties"),
-        PERMISSIONS("permissions");
-
-        Include(String key) {
-            this.key = key;
-        }
-
-        private final String key;
-
-        public String getKey() {
-            return key;
-        }
+        return super.queryParameters().putIfNonEmpty("relativePath", relativePath);
     }
 }

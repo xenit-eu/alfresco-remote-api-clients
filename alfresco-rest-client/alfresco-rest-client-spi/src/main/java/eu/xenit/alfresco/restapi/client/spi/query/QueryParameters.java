@@ -9,18 +9,20 @@ public interface QueryParameters {
 
     class Params extends HashMap<String, String> {
 
-        void putIfNonEmpty(String key, String value) {
+        Params putIfNonEmpty(String key, String value) {
             if (value == null || value.trim().isEmpty()) {
-                return;
+                return this;
             }
             put(key, value);
+            return this;
         }
 
-        void putIfNonEmpty(String key, Collection<String> values) {
+        Params putIfNonEmpty(String key, Collection<String> values) {
             if (values == null || values.isEmpty()) {
-                return;
+                return this;
             }
             values.forEach(value -> this.put(key, value));
+            return this;
         }
 
         @Override

@@ -34,7 +34,7 @@ public interface GetMetadataIntegrationTests {
                 .isNotNull()
                 .hasOnlyOneElementSatisfying(node -> {
                     assertThat(node.getId()).isEqualTo(13);
-                    assertThat(node.getTxnId()).isEqualTo(6);
+                    assertThat(node.getTxnId()).isPositive();
                     assertThat(node.getType()).isEqualTo("cm:folder");
                     assertThat(node.getProperties())
                             .containsEntry("{http://www.alfresco.org/model/content/1.0}name", "Company Home");

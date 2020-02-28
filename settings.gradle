@@ -10,3 +10,7 @@ include ':alfresco-webscripts-client:alfresco-webscripts-spi'
 include ':alfresco-webscripts-client:alfresco-webscripts-spring'
 include ':alfresco-webscripts-client:alfresco-webscripts-ditto'
 include ':alfresco-webscripts-client:alfresco-webscripts-integration-tests'
+
+include ':alfresco-rest-client:alfresco-rest-client-spi'
+include ':alfresco-rest-client:alfresco-rest-client-spring'
+include ':alfresco-rest-client:alfresco-rest-client-integration-tests'
