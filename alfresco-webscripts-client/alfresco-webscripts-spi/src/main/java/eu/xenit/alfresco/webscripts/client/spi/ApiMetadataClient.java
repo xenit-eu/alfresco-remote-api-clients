@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Data;
 
+/**
+ * See: ${host}/alfresco/service/index/package/org/alfresco/repository/metadata
+ */
 public interface ApiMetadataClient {
 
     Metadata get(String nodeRef);

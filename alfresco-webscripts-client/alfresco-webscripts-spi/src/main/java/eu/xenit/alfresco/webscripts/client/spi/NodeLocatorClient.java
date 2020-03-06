@@ -6,6 +6,11 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Client for the Alfresco "${host}/alfresco/service/api/nodelocator/" endpoints
+ * <p>
+ * See: ${host}/alfresco/service/index/package/org/alfresco/repository/nodelocator
+ */
 public interface NodeLocatorClient {
 
     @RequiredArgsConstructor
