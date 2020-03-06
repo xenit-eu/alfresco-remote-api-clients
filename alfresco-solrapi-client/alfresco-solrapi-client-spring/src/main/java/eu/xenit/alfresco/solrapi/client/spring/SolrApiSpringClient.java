@@ -84,7 +84,7 @@ public class SolrApiSpringClient implements SolrApiClient {
         conditionalQueryParam(uriBuilder, "fromId", fromId, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "fromTime", fromTime, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "maxResults", maxResults, val ->
-                val != null && val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
+                val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
 
         AclChangeSetList response = restTemplate.getForObject(uriBuilder.toUriString(), AclChangeSetList.class);
         return response.getAclChangeSets();
