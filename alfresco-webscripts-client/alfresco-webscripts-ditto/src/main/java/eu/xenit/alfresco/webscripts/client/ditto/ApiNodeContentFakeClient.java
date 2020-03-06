@@ -4,10 +4,12 @@ import eu.xenit.alfresco.webscripts.client.spi.ApiNodeContentClient;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.ContentView;
 import eu.xenit.testing.ditto.api.NodeView;
+import eu.xenit.testing.ditto.api.model.ContentData;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.util.Map.Entry;
 import org.apache.commons.io.IOUtils;
 
 public class ApiNodeContentFakeClient implements ApiNodeContentClient {
@@ -35,16 +37,24 @@ public class ApiNodeContentFakeClient implements ApiNodeContentClient {
 
     @Override
     public void getContent(String nodeRef, String contentProperty, OutputStream outputStream) {
-        if (!"cm:content".equals(contentProperty)) {
-            throw new UnsupportedOperationException("Only cm:content supported at the moment");
+        final String finalContentProp = (contentProperty == null) ? "cm:content" : contentProperty;
+
+        if (finalContentProp.contains("{")) {
+            throw new IllegalArgumentException("Only short QNames supported: " + contentProperty);
         }
 
-        if (!this.nodeView.getNode(nodeRef).isPresent() ||
-                !this.nodeView.getNode(nodeRef).get().getProperties().getContentData().isPresent()) {
-            throw new RuntimeException("Node not available or has no content: " + nodeRef);
+        if (!this.nodeView.getNode(nodeRef).isPresent()) {
+            throw new RuntimeException("Node not available: " + nodeRef);
         }
 
-        try (InputStream inputStream = contentView.getContent(nodeRef)
+        ContentData value = (ContentData) this.nodeView.getNode(nodeRef).get().getProperties().stream()
+                .filter(entry -> finalContentProp.equals(entry.getKey().toPrefixString()))
+                .map(Entry::getValue)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(
+                        "Property '" + contentProperty + "' not found for node: " + nodeRef));
+
+        try (InputStream inputStream = contentView.getContent(value.getContentUrl())
                 .orElseThrow(() -> new IllegalStateException("Node " + nodeRef + " does not exist"))) {
             IOUtils.copy(inputStream, outputStream);
         } catch (IOException e) {
