@@ -19,7 +19,6 @@ public class AclsQueryParameters {
 
     public AclsQueryParameters withAclChangeSets(List<Long> aclChangeSetIds) {
         this.aclChangeSetIds = aclChangeSetIds;
-        this.maxResults = Integer.MAX_VALUE;
         return this;
     }
 }
