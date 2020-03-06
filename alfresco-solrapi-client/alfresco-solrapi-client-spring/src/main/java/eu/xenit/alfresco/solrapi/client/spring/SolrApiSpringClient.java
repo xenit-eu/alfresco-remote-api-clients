@@ -131,7 +131,7 @@ public class SolrApiSpringClient implements SolrApiClient {
         conditionalQueryParam(uriBuilder, "toCommitTime", toCommitTime, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "maxTxnId", maxTxnId, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "maxResults", maxResults, val ->
-                val != null && val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
+                val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
 
         return restTemplate.getForObject(uriBuilder.toUriString(), SolrTransactions.class);
     }
