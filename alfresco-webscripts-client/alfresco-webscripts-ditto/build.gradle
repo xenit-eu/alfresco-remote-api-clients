@@ -35,6 +35,8 @@ dependencies {
     api project(':alfresco-webscripts-client:alfresco-webscripts-spi')
     api "eu.xenit.testing.ditto:ditto:${dittoVersion}"
 
+    implementation 'commons-io:commons-io:2.5'
+
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 

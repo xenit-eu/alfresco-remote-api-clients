@@ -53,10 +53,13 @@ public class ApiNodeContentSpringClient implements ApiNodeContentClient {
 
     @SneakyThrows(UnsupportedEncodingException.class)
     @Override
-    public void getContent(String nodeRef, String contentProperty, OutputStream outputStream) {
+    public void getContent(String nodeRef, String contentPropertyShortQName, OutputStream outputStream) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
-        if (StringUtils.hasText(contentProperty)) {
-            uriBuilder.path(";" + URLEncoder.encode(contentProperty, "UTF-8"));
+        if (StringUtils.hasText(contentPropertyShortQName)) {
+            if (contentPropertyShortQName.contains("{")) {
+                throw new IllegalArgumentException("Expected short QName but got: '" + contentPropertyShortQName + "'");
+            }
+            uriBuilder.path(";" + URLEncoder.encode(contentPropertyShortQName, "UTF-8"));
         }
         uriBuilder.path("/" + convertToUrlSegment(nodeRef));
 
