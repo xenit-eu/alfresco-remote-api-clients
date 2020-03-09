@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSets;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSetList;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclReadersList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
@@ -13,6 +15,8 @@ import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetadataList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
+import eu.xenit.alfresco.solrapi.client.spi.query.AclReadersQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spi.query.AclsQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import java.io.IOException;
@@ -72,21 +76,50 @@ public class SolrApiSpringClient implements SolrApiClient {
         return client;
     }
 
+
     @Override
-    public AclChangeSets getAclChangeSets(Long fromCommitTime, Long minAclChangeSetId, Long toCommitTime,
-            Long maxAclChangeSetId, int maxResults) {
-        throw new UnsupportedOperationException();
+    public List<AclChangeSet> getAclChangeSets(Long fromId, Long fromTime, int maxResults)
+    {
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url).path("/aclchangesets");
+        conditionalQueryParam(uriBuilder, "fromId", fromId, Objects::nonNull);
+        conditionalQueryParam(uriBuilder, "fromTime", fromTime, Objects::nonNull);
+        conditionalQueryParam(uriBuilder, "maxResults", maxResults, val ->
+                val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
+
+        AclChangeSetList response = restTemplate.getForObject(uriBuilder.toUriString(), AclChangeSetList.class);
+        return response.getAclChangeSets();
     }
 
     @Override
-    public List<Acl> getAcls(List<AclChangeSet> aclChangeSets, Long minAclId, int maxResults) {
-        throw new UnsupportedOperationException();
+    public List<Acl> getAcls(AclsQueryParameters parameters) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/acls").build().toUri();
+
+        HttpEntity<AclsQueryParameters> request = new HttpEntity<AclsQueryParameters>(parameters, defaultHttpHeaders());
+        ResponseEntity<AclList> result = restTemplate.exchange(uri, HttpMethod
+                .POST, request, AclList.class);
+
+        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP "+result.getStatusCodeValue());
+
+        AclList aclList = result.getBody();
+        Assert.notNull(aclList, "Response for getAcls(" + parameters + ") should not be null");
+        return aclList.getAcls();
     }
 
     @Override
-    public List<AclReaders> getAclReaders(List<Acl> acls) {
-        throw new UnsupportedOperationException();
+    public List<AclReaders> getAclReaders(AclReadersQueryParameters parameters) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/aclsReaders").build().toUri();
+
+        HttpEntity<AclReadersQueryParameters> request = new HttpEntity<AclReadersQueryParameters>(parameters, defaultHttpHeaders());
+        ResponseEntity<AclReadersList> result = restTemplate.exchange(uri, HttpMethod
+                .POST, request, AclReadersList.class);
+
+        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP "+result.getStatusCodeValue());
+
+        AclReadersList aclReadersList = result.getBody();
+        Assert.notNull(aclReadersList, "Response for getAclsReaders(" + parameters + ") should not be null");
+        return aclReadersList.getAclsReaders();
     }
+
 
     @Override
     public SolrTransactions getTransactions(Long fromCommitTime, Long minTxnId, Long toCommitTime, Long maxTxnId,
@@ -98,7 +131,7 @@ public class SolrApiSpringClient implements SolrApiClient {
         conditionalQueryParam(uriBuilder, "toCommitTime", toCommitTime, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "maxTxnId", maxTxnId, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "maxResults", maxResults, val ->
-                val != null && val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
+                val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
 
         return restTemplate.getForObject(uriBuilder.toUriString(), SolrTransactions.class);
     }

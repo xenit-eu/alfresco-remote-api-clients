@@ -25,15 +25,16 @@
  */
 package eu.xenit.alfresco.solrapi.client.spi;
 
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSets;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
+import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
+import eu.xenit.alfresco.solrapi.client.spi.query.AclReadersQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spi.query.AclsQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import java.util.List;
@@ -52,38 +53,11 @@ import java.util.List;
  */
 public interface SolrApiClient {
 
-    /**
-     * Get the ACL ChangeSets
-     *
-     * @param fromCommitTime the lowest commit time (optional)
-     * @param minAclChangeSetId the lowest ChangeSet ID (optional)
-     * @param maxResults the maximum number of results (a reasonable value only)
-     * @return the ACL ChangeSets in order of commit time and ID
-     */
-    AclChangeSets getAclChangeSets(Long fromCommitTime, Long minAclChangeSetId, Long toCommitTime,
-            Long maxAclChangeSetId, int maxResults);
+    public List<AclChangeSet> getAclChangeSets(Long fromId, Long fromTime, int maxResults);
 
-    /**
-     * Get the ACLs associated with a given list of ACL ChangeSets.  The ACLs may be truncated for the last ACL
-     * ChangeSet in the return values - the ACL count from the {@link #getAclChangeSets(Long, Long, Long, Long, int) ACL
-     * ChangeSets}.
-     *
-     * @param aclChangeSets the ACL ChangeSets to include
-     * @param minAclId the lowest ACL ID (may be {@code null})
-     * @param maxResults the maximum number of results to retrieve
-     * @return the ACLs (includes ChangeSet ID)
-     */
-    List<Acl> getAcls(List<AclChangeSet> aclChangeSets, Long minAclId, int maxResults);
+    List<Acl> getAcls(AclsQueryParameters parameters);
 
-
-    /**
-     * Get the ACL readers for a given list of ACLs
-     *
-     * @param acls the ACLs
-     * @return the readers for the ACLs
-     */
-    List<AclReaders> getAclReaders(List<Acl> acls);
-
+    List<AclReaders> getAclReaders(AclReadersQueryParameters parameters);
 
     /**
      * Get all transactions that are within the given boundaries

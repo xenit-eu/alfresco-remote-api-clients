@@ -4,7 +4,6 @@ package eu.xenit.alfresco.solrapi.client.ditto;
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSets;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
@@ -14,6 +13,8 @@ import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransaction;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
+import eu.xenit.alfresco.solrapi.client.spi.query.AclReadersQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spi.query.AclsQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
@@ -57,20 +58,18 @@ public class SolrApiFakeClient implements SolrApiClient {
         this.nodeView = nodeView;
     }
 
-
     @Override
-    public AclChangeSets getAclChangeSets(Long fromCommitTime, Long minAclChangeSetId, Long toCommitTime,
-            Long maxAclChangeSetId, int maxResults) {
+    public List<AclChangeSet> getAclChangeSets(Long fromId, Long fromTime, int maxResults) {
         return null;
     }
 
     @Override
-    public List<Acl> getAcls(List<AclChangeSet> aclChangeSets, Long minAclId, int maxResults) {
+    public List<Acl> getAcls(AclsQueryParameters parameters) {
         return null;
     }
 
     @Override
-    public List<AclReaders> getAclReaders(List<Acl> acls) {
+    public List<AclReaders> getAclReaders(AclReadersQueryParameters parameters) {
         return null;
     }
 
