@@ -15,6 +15,8 @@ public class AlfrescoProperties {
     private String user = "admin";
     private String password = "admin";
 
+    private boolean insecure = false;
+
     public static Builder builder() {
         return new Builder();
     }
@@ -24,6 +26,7 @@ public class AlfrescoProperties {
         private UriComponentsBuilder inner = UriComponentsBuilder.fromHttpUrl("http://localhost:8080/alfresco/");
         private String user = "admin";
         private String password = "admin";
+        private boolean insecure = false;
 
         public Builder scheme(String scheme) {
             this.inner.scheme(scheme);
@@ -44,6 +47,11 @@ public class AlfrescoProperties {
             return this;
         }
 
+        public Builder insecure(boolean insecure) {
+            this.insecure = insecure;
+            return this;
+        }
+
         public Builder user(String user) {
             this.user = user;
             return this;
@@ -55,7 +63,7 @@ public class AlfrescoProperties {
         }
 
         public AlfrescoProperties build() {
-            return new AlfrescoProperties(this.inner.build().toString(), this.user, this.password);
+            return new AlfrescoProperties(this.inner.build().toString(), this.user, this.password, this.insecure);
         }
     }
 
