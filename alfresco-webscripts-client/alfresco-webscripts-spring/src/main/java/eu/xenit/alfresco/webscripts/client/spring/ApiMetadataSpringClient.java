@@ -1,6 +1,7 @@
 package eu.xenit.alfresco.webscripts.client.spring;
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
+import eu.xenit.alfresco.webscripts.client.spring.http.RestTemplateHelper;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;

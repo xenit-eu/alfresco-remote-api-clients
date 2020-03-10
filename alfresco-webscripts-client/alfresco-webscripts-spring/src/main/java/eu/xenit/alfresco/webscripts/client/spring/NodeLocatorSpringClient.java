@@ -3,6 +3,7 @@ package eu.xenit.alfresco.webscripts.client.spring;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.alfresco.webscripts.client.spi.NodeLocatorClient;
+import eu.xenit.alfresco.webscripts.client.spring.http.RestTemplateHelper;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;

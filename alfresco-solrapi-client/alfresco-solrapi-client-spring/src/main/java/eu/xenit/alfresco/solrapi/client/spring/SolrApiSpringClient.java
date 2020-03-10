@@ -19,6 +19,8 @@ import eu.xenit.alfresco.solrapi.client.spi.query.AclReadersQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.AclsQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spring.http.InsecureSslHttpComponentsClientHttpRequestFactory;
+import eu.xenit.alfresco.solrapi.client.spring.http.SolrRequestFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -33,6 +35,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
@@ -47,6 +50,12 @@ public class SolrApiSpringClient implements SolrApiClient {
     public SolrApiSpringClient(SolrApiProperties solrApiProperties, SolrSslProperties solrSslProperties)
             throws GeneralSecurityException, IOException {
         this(solrApiProperties, new SolrRequestFactory(solrSslProperties));
+    }
+
+    public SolrApiSpringClient(SolrApiProperties solrProperties) {
+        this(solrProperties, solrProperties.isInsecureSsl() ?
+                new InsecureSslHttpComponentsClientHttpRequestFactory() :
+                new HttpComponentsClientHttpRequestFactory());
     }
 
     public SolrApiSpringClient(SolrApiProperties solrProperties, ClientHttpRequestFactory requestFactory) {
@@ -78,8 +87,7 @@ public class SolrApiSpringClient implements SolrApiClient {
 
 
     @Override
-    public List<AclChangeSet> getAclChangeSets(Long fromId, Long fromTime, int maxResults)
-    {
+    public List<AclChangeSet> getAclChangeSets(Long fromId, Long fromTime, int maxResults) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url).path("/aclchangesets");
         conditionalQueryParam(uriBuilder, "fromId", fromId, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "fromTime", fromTime, Objects::nonNull);
@@ -98,7 +106,7 @@ public class SolrApiSpringClient implements SolrApiClient {
         ResponseEntity<AclList> result = restTemplate.exchange(uri, HttpMethod
                 .POST, request, AclList.class);
 
-        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP "+result.getStatusCodeValue());
+        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
 
         AclList aclList = result.getBody();
         Assert.notNull(aclList, "Response for getAcls(" + parameters + ") should not be null");
@@ -109,11 +117,12 @@ public class SolrApiSpringClient implements SolrApiClient {
     public List<AclReaders> getAclReaders(AclReadersQueryParameters parameters) {
         URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/aclsReaders").build().toUri();
 
-        HttpEntity<AclReadersQueryParameters> request = new HttpEntity<AclReadersQueryParameters>(parameters, defaultHttpHeaders());
+        HttpEntity<AclReadersQueryParameters> request = new HttpEntity<AclReadersQueryParameters>(parameters,
+                defaultHttpHeaders());
         ResponseEntity<AclReadersList> result = restTemplate.exchange(uri, HttpMethod
                 .POST, request, AclReadersList.class);
 
-        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP "+result.getStatusCodeValue());
+        Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
 
         AclReadersList aclReadersList = result.getBody();
         Assert.notNull(aclReadersList, "Response for getAclsReaders(" + parameters + ") should not be null");

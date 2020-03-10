@@ -2,6 +2,7 @@ package eu.xenit.alfresco.webscripts.client.spring;
 
 import eu.xenit.alfresco.webscripts.client.spi.SlingShotClient;
 import eu.xenit.alfresco.webscripts.client.spi.model.slingshot.Metadata;
+import eu.xenit.alfresco.webscripts.client.spring.http.RestTemplateHelper;
 import java.net.URI;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
