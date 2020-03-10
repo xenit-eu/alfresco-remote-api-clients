@@ -1,9 +1,8 @@
-package eu.xenit.alfresco.webscripts.client.spring;
+package eu.xenit.alfresco.webscripts.client.spring.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.xenit.alfresco.webscripts.client.spring.AlfrescoProperties;
 import java.util.Collections;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
@@ -24,21 +23,16 @@ public class RestTemplateHelper {
         RestTemplate client = new RestTemplate(Collections.singletonList(
                 new MappingJackson2HttpMessageConverter(new ObjectMapper()))
         );
-        client.setRequestFactory(requestFactory(props.isInsecure()));
+        client.setRequestFactory(requestFactory(props.isInsecureSsl()));
         client.getInterceptors().add(new BasicAuthenticationInterceptor(props.getUser(), props.getPassword()));
         return client;
     }
 
     private static ClientHttpRequestFactory requestFactory(boolean insecure) {
-        HttpComponentsClientHttpRequestFactory ret = new HttpComponentsClientHttpRequestFactory();
-
         if (insecure) {
-            ret.setHttpClient(HttpClients.custom()
-                    .setSSLHostnameVerifier(new NoopHostnameVerifier())
-                    .build());
+            return new InsecureSslHttpComponentsClientHttpRequestFactory();
         }
-
-        return ret;
+        return new HttpComponentsClientHttpRequestFactory();
     }
 
 

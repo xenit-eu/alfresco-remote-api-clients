@@ -1,6 +1,7 @@
 package eu.xenit.alfresco.webscripts.client.spring;
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiNodeContentClient;
+import eu.xenit.alfresco.webscripts.client.spring.http.RestTemplateHelper;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;

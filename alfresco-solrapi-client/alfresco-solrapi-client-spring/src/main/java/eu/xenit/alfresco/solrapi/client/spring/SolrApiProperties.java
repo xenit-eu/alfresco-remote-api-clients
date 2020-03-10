@@ -12,13 +12,16 @@ public class SolrApiProperties {
 
     String url = "https://localhost:8443/alfresco/";
 
+    boolean insecureSsl = false;
+
     public static Builder builder() {
         return new Builder();
     }
 
-    public static class Builder{
+    public static class Builder {
 
         private UriComponentsBuilder inner = UriComponentsBuilder.fromHttpUrl("https://localhost:8443/alfresco/");
+        boolean insecureSsl = false;
 
         public Builder scheme(String scheme) {
             this.inner.scheme(scheme);
@@ -35,12 +38,17 @@ public class SolrApiProperties {
             return this;
         }
 
+        public Builder insecureSsl(boolean insecureSsl) {
+            this.insecureSsl = insecureSsl;
+            return this;
+        }
+
         public Builder path(String path) {
             return this;
         }
 
         public SolrApiProperties build() {
-            return new SolrApiProperties(this.inner.build().toString());
+            return new SolrApiProperties(this.inner.build().toString(), insecureSsl);
         }
     }
 }

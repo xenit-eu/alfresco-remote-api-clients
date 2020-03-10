@@ -1,6 +1,7 @@
 package eu.xenit.alfresco.solrapi.client.spring;
 
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
+import eu.xenit.alfresco.solrapi.client.spring.http.SolrRequestFactory;
 import eu.xenit.alfresco.solrapi.client.tests.GetAclChangeSetsIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetAclReadersIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetAclsIntegrationTests;
