@@ -87,7 +87,7 @@ public class SolrApiSpringClient implements SolrApiClient {
 
 
     @Override
-    public List<AclChangeSet> getAclChangeSets(Long fromId, Long fromTime, int maxResults) {
+    public AclChangeSetList getAclChangeSets(Long fromId, Long fromTime, int maxResults) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url).path("/aclchangesets");
         conditionalQueryParam(uriBuilder, "fromId", fromId, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "fromTime", fromTime, Objects::nonNull);
@@ -95,7 +95,7 @@ public class SolrApiSpringClient implements SolrApiClient {
                 val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
 
         AclChangeSetList response = restTemplate.getForObject(uriBuilder.toUriString(), AclChangeSetList.class);
-        return response.getAclChangeSets();
+        return response;
     }
 
     @Override

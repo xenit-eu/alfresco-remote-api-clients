@@ -27,6 +27,7 @@ package eu.xenit.alfresco.solrapi.client.spi;
 
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSetList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
@@ -53,7 +54,7 @@ import java.util.List;
  */
 public interface SolrApiClient {
 
-    public List<AclChangeSet> getAclChangeSets(Long fromId, Long fromTime, int maxResults);
+    public AclChangeSetList getAclChangeSets(Long fromId, Long fromTime, int maxResults);
 
     List<Acl> getAcls(AclsQueryParameters parameters);
 
