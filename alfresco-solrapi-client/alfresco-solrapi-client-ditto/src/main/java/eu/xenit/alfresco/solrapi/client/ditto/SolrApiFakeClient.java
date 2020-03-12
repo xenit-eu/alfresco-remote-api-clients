@@ -4,6 +4,7 @@ package eu.xenit.alfresco.solrapi.client.ditto;
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
+import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSetList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
@@ -59,7 +60,7 @@ public class SolrApiFakeClient implements SolrApiClient {
     }
 
     @Override
-    public List<AclChangeSet> getAclChangeSets(Long fromId, Long fromTime, int maxResults) {
+    public AclChangeSetList getAclChangeSets(Long fromId, Long fromTime, int maxResults) {
         return null;
     }
 
