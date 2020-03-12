@@ -3,10 +3,7 @@ package eu.xenit.alfresco.webscripts.client.spring;
 import eu.xenit.alfresco.webscripts.client.spi.ApiNodeContentClient;
 import eu.xenit.alfresco.webscripts.client.spring.http.RestTemplateHelper;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -52,7 +49,6 @@ public class ApiNodeContentSpringClient implements ApiNodeContentClient {
         return true;
     }
 
-    @SneakyThrows(UnsupportedEncodingException.class)
     @Override
     public void getContent(String nodeRef, String contentPropertyShortQName, OutputStream outputStream) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
@@ -60,7 +56,7 @@ public class ApiNodeContentSpringClient implements ApiNodeContentClient {
             if (contentPropertyShortQName.contains("{")) {
                 throw new IllegalArgumentException("Expected short QName but got: '" + contentPropertyShortQName + "'");
             }
-            uriBuilder.path(";" + URLEncoder.encode(contentPropertyShortQName, "UTF-8"));
+            uriBuilder.path(";" + contentPropertyShortQName);
         }
         uriBuilder.path("/" + convertToUrlSegment(nodeRef));
 
