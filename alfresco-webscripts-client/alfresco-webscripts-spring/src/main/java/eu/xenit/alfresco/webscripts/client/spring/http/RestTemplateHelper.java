@@ -1,7 +1,8 @@
 package eu.xenit.alfresco.webscripts.client.spring.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.xenit.alfresco.webscripts.client.spring.AlfrescoProperties;
+import eu.xenit.alfresco.webscripts.client.spring.model.AlfrescoProperties;
+import eu.xenit.alfresco.webscripts.client.spring.model.HttpProperties;
 import java.util.Collections;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -23,16 +24,22 @@ public class RestTemplateHelper {
         RestTemplate client = new RestTemplate(Collections.singletonList(
                 new MappingJackson2HttpMessageConverter(new ObjectMapper()))
         );
-        client.setRequestFactory(requestFactory(props.isInsecureSsl()));
+        client.setRequestFactory(requestFactory(props.getHttp()));
         client.getInterceptors().add(new BasicAuthenticationInterceptor(props.getUser(), props.getPassword()));
         return client;
     }
 
-    private static ClientHttpRequestFactory requestFactory(boolean insecure) {
-        if (insecure) {
-            return new InsecureSslHttpComponentsClientHttpRequestFactory();
-        }
-        return new HttpComponentsClientHttpRequestFactory();
+    private static ClientHttpRequestFactory requestFactory(HttpProperties httpProperties) {
+        HttpComponentsClientHttpRequestFactory ret =
+                httpProperties.isInsecureSsl() ?
+                        new InsecureSslHttpComponentsClientHttpRequestFactory() :
+                        new HttpComponentsClientHttpRequestFactory();
+
+        ret.setReadTimeout(httpProperties.getTimeout().getSocket());
+        ret.setConnectTimeout(httpProperties.getTimeout().getConnect());
+        ret.setConnectionRequestTimeout(httpProperties.getTimeout().getConnectionRequest());
+
+        return ret;
     }
 
 

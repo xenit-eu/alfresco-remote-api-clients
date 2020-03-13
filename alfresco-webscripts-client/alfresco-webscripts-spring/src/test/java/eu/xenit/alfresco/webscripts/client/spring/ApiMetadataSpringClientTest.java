@@ -9,6 +9,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient;
 import eu.xenit.alfresco.webscripts.client.spi.ApiMetadataClient.Metadata;
+import eu.xenit.alfresco.webscripts.client.spring.model.AlfrescoProperties;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
