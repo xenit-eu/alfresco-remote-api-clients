@@ -2,6 +2,8 @@ package eu.xenit.alfresco.solrapi.client.spring;
 
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spring.http.SolrRequestFactory;
+import eu.xenit.alfresco.solrapi.client.spring.model.SolrApiProperties;
+import eu.xenit.alfresco.solrapi.client.spring.model.SolrSslProperties;
 import eu.xenit.alfresco.solrapi.client.tests.GetAclChangeSetsIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetAclReadersIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetAclsIntegrationTests;
@@ -12,10 +14,9 @@ import eu.xenit.alfresco.solrapi.client.tests.GetTransactionsIntegrationTests;
 class SolrApiSpringClientIntegrationTest {
 
     SolrApiProperties solrApiProperties() {
-        return SolrApiProperties.builder()
-                .host(System.getProperty("alfresco.host", "localhost"))
-                .port(Integer.parseInt(System.getProperty("alfresco.tcp.8443", "8443")))
-                .build();
+        return new SolrApiProperties()
+                .setUrl("https://" + System.getProperty("alfresco.host", "localhost") + ":" +
+                        System.getProperty("alfresco.tcp.8443", "8443") + "/alfresco");
     }
 
     public SolrApiClient solrApiClient() {

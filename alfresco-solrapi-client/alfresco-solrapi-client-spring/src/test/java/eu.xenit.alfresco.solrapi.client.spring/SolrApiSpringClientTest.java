@@ -17,6 +17,7 @@ import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransaction;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spring.model.SolrApiProperties;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
