@@ -1,4 +1,4 @@
-package eu.xenit.alfresco.solrapi.client.spring;
+package eu.xenit.alfresco.solrapi.client.spring.model;
 
 
 import lombok.Data;

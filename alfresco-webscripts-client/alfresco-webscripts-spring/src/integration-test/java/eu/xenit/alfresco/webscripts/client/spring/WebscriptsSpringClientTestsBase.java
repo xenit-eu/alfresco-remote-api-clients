@@ -1,5 +1,6 @@
 package eu.xenit.alfresco.webscripts.client.spring;
 
+import eu.xenit.alfresco.webscripts.client.spring.model.AlfrescoProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 
 public abstract class WebscriptsSpringClientTestsBase {
@@ -11,10 +12,8 @@ public abstract class WebscriptsSpringClientTestsBase {
     }
 
     protected AlfrescoProperties alfrescoProperties() {
-        return AlfrescoProperties.builder()
-                .host(alfrescoHost())
-                .port(alfrescoPort())
-                .build();
+        return new AlfrescoProperties()
+                .setUrl("http://" + alfrescoHost() + ":" + alfrescoPort() + "/alfresco/");
     }
 
     private static String alfrescoHost() {

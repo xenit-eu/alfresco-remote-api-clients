@@ -2,6 +2,7 @@ package eu.xenit.alfresco.webscripts.client.spring;
 
 import eu.xenit.alfresco.webscripts.client.spi.ApiNodeContentClient;
 import eu.xenit.alfresco.webscripts.client.spring.http.RestTemplateHelper;
+import eu.xenit.alfresco.webscripts.client.spring.model.AlfrescoProperties;
 import java.io.OutputStream;
 import java.net.URI;
 import org.slf4j.Logger;

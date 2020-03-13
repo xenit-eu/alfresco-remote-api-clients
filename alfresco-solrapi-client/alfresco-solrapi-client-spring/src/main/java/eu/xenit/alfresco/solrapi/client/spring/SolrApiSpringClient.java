@@ -3,7 +3,6 @@ package eu.xenit.alfresco.solrapi.client.spring;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSetList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
@@ -21,6 +20,9 @@ import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spring.http.InsecureSslHttpComponentsClientHttpRequestFactory;
 import eu.xenit.alfresco.solrapi.client.spring.http.SolrRequestFactory;
+import eu.xenit.alfresco.solrapi.client.spring.model.HttpProperties;
+import eu.xenit.alfresco.solrapi.client.spring.model.SolrApiProperties;
+import eu.xenit.alfresco.solrapi.client.spring.model.SolrSslProperties;
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -53,9 +55,19 @@ public class SolrApiSpringClient implements SolrApiClient {
     }
 
     public SolrApiSpringClient(SolrApiProperties solrProperties) {
-        this(solrProperties, solrProperties.isInsecureSsl() ?
+        this(solrProperties, createHttpRequestFactor(solrProperties.getHttp()));
+    }
+
+    private static ClientHttpRequestFactory createHttpRequestFactor(HttpProperties httpProperties) {
+        HttpComponentsClientHttpRequestFactory ret = httpProperties.isInsecureSsl() ?
                 new InsecureSslHttpComponentsClientHttpRequestFactory() :
-                new HttpComponentsClientHttpRequestFactory());
+                new HttpComponentsClientHttpRequestFactory();
+
+        ret.setReadTimeout(httpProperties.getTimeout().getSocket());
+        ret.setConnectTimeout(httpProperties.getTimeout().getConnect());
+        ret.setConnectionRequestTimeout(httpProperties.getTimeout().getConnectionRequest());
+
+        return ret;
     }
 
     public SolrApiSpringClient(SolrApiProperties solrProperties, ClientHttpRequestFactory requestFactory) {
