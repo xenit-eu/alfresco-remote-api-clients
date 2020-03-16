@@ -9,6 +9,7 @@ import eu.xenit.alfresco.solrapi.client.tests.GetAclReadersIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetAclsIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetMetadataIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetNodesIntegrationTests;
+import eu.xenit.alfresco.solrapi.client.tests.GetTextContentResponseIntegrationTests;
 import eu.xenit.alfresco.solrapi.client.tests.GetTransactionsIntegrationTests;
 
 class SolrApiSpringClientIntegrationTest {
@@ -64,4 +65,8 @@ class SolrApiSpringClientIntegrationTest {
 
     }
 
+    static class TextContentResponse
+            extends SolrApiSpringClientIntegrationTest
+            implements GetTextContentResponseIntegrationTests {
+    }
 }

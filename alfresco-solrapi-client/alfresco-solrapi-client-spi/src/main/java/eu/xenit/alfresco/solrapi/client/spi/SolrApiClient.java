@@ -26,11 +26,11 @@
 package eu.xenit.alfresco.solrapi.client.spi;
 
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSetList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
+import eu.xenit.alfresco.solrapi.client.spi.dto.GetTextContentResponse;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
@@ -75,6 +75,8 @@ public interface SolrApiClient {
     List<SolrNode> getNodes(NodesQueryParameters parameters) ;
 
     List<SolrNodeMetaData> getNodesMetaData(NodeMetaDataQueryParameters params);
+
+    GetTextContentResponse getTextContent(Long nodeId, String propertyQName);
 
     AlfrescoModel getModel(String coreName, String modelName);
 
