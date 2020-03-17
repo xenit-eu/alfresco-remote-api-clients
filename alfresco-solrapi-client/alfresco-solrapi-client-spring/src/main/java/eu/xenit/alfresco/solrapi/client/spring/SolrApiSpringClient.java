@@ -202,6 +202,10 @@ public class SolrApiSpringClient implements SolrApiClient {
         ResponseEntity<Resource> exchange = restTemplate
                 .exchange(uriBuilder.toUriString(), HttpMethod.GET, null, Resource.class);
 
+        return getGetTextContentResponse(exchange);
+    }
+
+    private GetTextContentResponse getGetTextContentResponse(ResponseEntity<Resource> exchange) {
         GetTextContentResponse content = new GetTextContentResponse();
         try {
             if(exchange.getBody()!=null)
@@ -219,7 +223,7 @@ public class SolrApiSpringClient implements SolrApiClient {
                 content.setTransformException(transformStatusException.get(0));
             content.setStatus(getStatus(exchange.getStatusCode(),transformStatus));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Cannot get a GetTextContentResponse object: " + e.getLocalizedMessage());
         }
         return content;
     }
