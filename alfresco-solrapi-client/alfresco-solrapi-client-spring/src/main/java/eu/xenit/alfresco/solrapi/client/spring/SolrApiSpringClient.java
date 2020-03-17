@@ -64,18 +64,6 @@ public class SolrApiSpringClient implements SolrApiClient {
         this(solrProperties, createHttpRequestFactor(solrProperties.getHttp()));
     }
 
-    private static ClientHttpRequestFactory createHttpRequestFactor(HttpProperties httpProperties) {
-        HttpComponentsClientHttpRequestFactory ret = httpProperties.isInsecureSsl() ?
-                new InsecureSslHttpComponentsClientHttpRequestFactory() :
-                new HttpComponentsClientHttpRequestFactory();
-
-        ret.setReadTimeout(httpProperties.getTimeout().getSocket());
-        ret.setConnectTimeout(httpProperties.getTimeout().getConnect());
-        ret.setConnectionRequestTimeout(httpProperties.getTimeout().getConnectionRequest());
-
-        return ret;
-    }
-
     public SolrApiSpringClient(SolrApiProperties solrProperties, ClientHttpRequestFactory requestFactory) {
         this(solrProperties, buildRestTemplate(requestFactory));
     }
@@ -91,6 +79,18 @@ public class SolrApiSpringClient implements SolrApiClient {
         this.restTemplate = restTemplate;
     }
 
+    private static ClientHttpRequestFactory createHttpRequestFactor(HttpProperties httpProperties) {
+        HttpComponentsClientHttpRequestFactory ret = httpProperties.isInsecureSsl() ?
+                new InsecureSslHttpComponentsClientHttpRequestFactory() :
+                new HttpComponentsClientHttpRequestFactory();
+
+        ret.setReadTimeout(httpProperties.getTimeout().getSocket());
+        ret.setConnectTimeout(httpProperties.getTimeout().getConnect());
+        ret.setConnectionRequestTimeout(httpProperties.getTimeout().getConnectionRequest());
+
+        return ret;
+    }
+
     /**
      * Build a RestTemplate, but side-step all features that use classpath-detection. That gives superfluous errors when
      * used in environments with a special classloader (e.g. Fusion connector)
@@ -104,6 +104,21 @@ public class SolrApiSpringClient implements SolrApiClient {
         return client;
     }
 
+    private static void conditionalQueryParam(UriComponentsBuilder builder, String key, Object value,
+            Predicate<Object> condition) {
+        Objects.requireNonNull(builder, "builder is required");
+        Objects.requireNonNull(key, "key is required");
+        if (condition.test(value)) {
+            builder.queryParam(key, value);
+        }
+    }
+
+    private static HttpHeaders defaultHttpHeaders() {
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+        requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return requestHeaders;
+    }
 
     @Override
     public AclChangeSetList getAclChangeSets(Long fromId, Long fromTime, int maxResults) {
@@ -147,7 +162,6 @@ public class SolrApiSpringClient implements SolrApiClient {
         Assert.notNull(aclReadersList, "Response for getAclsReaders(" + parameters + ") should not be null");
         return aclReadersList.getAclsReaders();
     }
-
 
     @Override
     public SolrTransactions getTransactions(Long fromCommitTime, Long minTxnId, Long toCommitTime, Long maxTxnId,
@@ -208,59 +222,50 @@ public class SolrApiSpringClient implements SolrApiClient {
     private GetTextContentResponse getGetTextContentResponse(ResponseEntity<Resource> exchange) {
         GetTextContentResponse content = new GetTextContentResponse();
         try {
-            if(exchange.getBody()!=null)
+            if (exchange.getBody() != null) {
                 content.setContent(exchange.getBody().getInputStream());
-            if(exchange.getHeaders().getContentType()!=null && exchange.getHeaders().getContentType().getCharset()!=null)
+            }
+            if (exchange.getHeaders().getContentType() != null
+                    && exchange.getHeaders().getContentType().getCharset() != null) {
                 content.setContentEncoding(exchange.getHeaders().getContentType().getCharset().displayName());
+            }
             List<String> transformStatus = exchange.getHeaders().get("X-Alfresco-transformStatus");
-            if(transformStatus!=null && !transformStatus.isEmpty())
+            if (transformStatus != null && !transformStatus.isEmpty()) {
                 content.setTransformStatusStr(transformStatus.get(0));
+            }
             List<String> transformDuration = exchange.getHeaders().get("X-Alfresco-transformDuration");
-            if(transformDuration!=null )
-                content.setTransformDuration(transformDuration.get(0) != null ? Long.valueOf(transformDuration.get(0)) : null);
+            if (transformDuration != null) {
+                content.setTransformDuration(
+                        transformDuration.get(0) != null ? Long.valueOf(transformDuration.get(0)) : null);
+            }
             List<String> transformStatusException = exchange.getHeaders().get("X-Alfresco-transformException");
-            if(transformStatusException!=null && !transformStatusException.isEmpty())
+            if (transformStatusException != null && !transformStatusException.isEmpty()) {
                 content.setTransformException(transformStatusException.get(0));
-            content.setStatus(getStatus(exchange.getStatusCode(),transformStatus));
+            }
+            content.setStatus(getStatus(exchange.getStatusCode(), transformStatus));
         } catch (IOException e) {
             log.error("Cannot get a GetTextContentResponse object: " + e.getLocalizedMessage());
         }
         return content;
     }
 
-
     private SolrApiContentStatus getStatus(HttpStatus status, List<String> transformStatusStr) {
         SolrApiContentStatus solrApiContentStatus;
-        if(status == HttpStatus.NOT_MODIFIED)
-        {
+        if (status == HttpStatus.NOT_MODIFIED) {
             return SolrApiContentStatus.NOT_MODIFIED;
-        }
-        else if(status == HttpStatus.INTERNAL_SERVER_ERROR)
-        {
+        } else if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
             return SolrApiContentStatus.GENERAL_FAILURE;
-        }
-        else if(status == HttpStatus.OK)
-        {
+        } else if (status == HttpStatus.OK) {
             return SolrApiContentStatus.OK;
-        }
-        else if(status == HttpStatus.NO_CONTENT)
-        {
-            if(transformStatusStr == null || transformStatusStr.isEmpty())
-            {
+        } else if (status == HttpStatus.NO_CONTENT) {
+            if (transformStatusStr == null || transformStatusStr.isEmpty()) {
                 return SolrApiContentStatus.UNKNOWN;
-            }
-            else
-            {
-                if(transformStatusStr.get(0).equals("noTransform"))
-                {
+            } else {
+                if (transformStatusStr.get(0).equals("noTransform")) {
                     return SolrApiContentStatus.NO_TRANSFORM;
-                }
-                else if(transformStatusStr.get(0).equals("transformFailed"))
-                {
+                } else if (transformStatusStr.get(0).equals("transformFailed")) {
                     return SolrApiContentStatus.TRANSFORM_FAILED;
-                }
-                else
-                {
+                } else {
                     return SolrApiContentStatus.UNKNOWN;
                 }
             }
@@ -281,21 +286,5 @@ public class SolrApiSpringClient implements SolrApiClient {
     @Override
     public void close() {
 
-    }
-
-    private static void conditionalQueryParam(UriComponentsBuilder builder, String key, Object value,
-            Predicate<Object> condition) {
-        Objects.requireNonNull(builder, "builder is required");
-        Objects.requireNonNull(key, "key is required");
-        if (condition.test(value)) {
-            builder.queryParam(key, value);
-        }
-    }
-
-    private static HttpHeaders defaultHttpHeaders() {
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-        requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        return requestHeaders;
     }
 }
