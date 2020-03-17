@@ -3,11 +3,11 @@ package eu.xenit.alfresco.solrapi.client.ditto;
 
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSetList;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModel;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AlfrescoModelDiff;
+import eu.xenit.alfresco.solrapi.client.spi.dto.GetTextContentResponse;
 import eu.xenit.alfresco.solrapi.client.spi.dto.NodeNamePaths;
 import eu.xenit.alfresco.solrapi.client.spi.dto.NodePathInfo;
 import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
@@ -139,6 +139,11 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
                 .map(toSolrModel(params))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public GetTextContentResponse getTextContent(Long nodeId, String propertyQName) {
+        return null;
     }
 
     private Function<Node, SolrNodeMetaData> toSolrModel(NodeMetaDataQueryParameters params) {
