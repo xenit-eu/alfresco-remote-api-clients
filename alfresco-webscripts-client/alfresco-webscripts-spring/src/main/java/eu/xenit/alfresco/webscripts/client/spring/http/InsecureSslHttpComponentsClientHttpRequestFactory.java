@@ -2,6 +2,7 @@ package eu.xenit.alfresco.webscripts.client.spring.http;
 
 import javax.net.ssl.SSLContext;
 import lombok.SneakyThrows;
+import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.HttpClients;
@@ -11,7 +12,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 public class InsecureSslHttpComponentsClientHttpRequestFactory extends HttpComponentsClientHttpRequestFactory {
 
     @SneakyThrows
-    public InsecureSslHttpComponentsClientHttpRequestFactory() {
+    public InsecureSslHttpComponentsClientHttpRequestFactory(HttpClient httpClient) {
+        super(httpClient);
+
         SSLContext sslContext = SSLContextBuilder
                 .create()
                 .loadTrustMaterial(new TrustSelfSignedStrategy())
@@ -21,5 +24,9 @@ public class InsecureSslHttpComponentsClientHttpRequestFactory extends HttpCompo
                 .setSSLContext(sslContext)
                 .setSSLHostnameVerifier(new NoopHostnameVerifier())
                 .build());
+    }
+
+    public InsecureSslHttpComponentsClientHttpRequestFactory() {
+        this(HttpClients.createSystem());
     }
 }

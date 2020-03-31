@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.alfresco.webscripts.client.spring.model.AlfrescoProperties;
 import eu.xenit.alfresco.webscripts.client.spring.model.HttpProperties;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
@@ -30,10 +33,14 @@ public class RestTemplateHelper {
     }
 
     private static ClientHttpRequestFactory requestFactory(HttpProperties httpProperties) {
+        HttpClient client = HttpClientBuilder.create().useSystemProperties()
+                .setConnectionTimeToLive(httpProperties.getConnectionTimeToLive(), TimeUnit.MILLISECONDS)
+                .build();
+
         HttpComponentsClientHttpRequestFactory ret =
                 httpProperties.isInsecureSsl() ?
-                        new InsecureSslHttpComponentsClientHttpRequestFactory() :
-                        new HttpComponentsClientHttpRequestFactory();
+                        new InsecureSslHttpComponentsClientHttpRequestFactory(client) :
+                        new HttpComponentsClientHttpRequestFactory(client);
 
         ret.setReadTimeout(httpProperties.getTimeout().getSocket());
         ret.setConnectTimeout(httpProperties.getTimeout().getConnect());
