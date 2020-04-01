@@ -33,14 +33,17 @@ public class RestTemplateHelper {
     }
 
     private static ClientHttpRequestFactory requestFactory(HttpProperties httpProperties) {
-        HttpClient client = HttpClientBuilder.create().useSystemProperties()
-                .setConnectionTimeToLive(httpProperties.getConnectionTimeToLive(), TimeUnit.MILLISECONDS)
-                .build();
 
-        HttpComponentsClientHttpRequestFactory ret =
-                httpProperties.isInsecureSsl() ?
-                        new InsecureSslHttpComponentsClientHttpRequestFactory(client) :
-                        new HttpComponentsClientHttpRequestFactory(client);
+        HttpComponentsClientHttpRequestFactory ret;
+        if (httpProperties.isInsecureSsl()) {
+            ret = new InsecureSslHttpComponentsClientHttpRequestFactory(builder -> builder
+                    .setConnectionTimeToLive(httpProperties.getConnectionTimeToLive(), TimeUnit.MILLISECONDS));
+        } else {
+            HttpClient client = HttpClientBuilder.create().useSystemProperties()
+                    .setConnectionTimeToLive(httpProperties.getConnectionTimeToLive(), TimeUnit.MILLISECONDS)
+                    .build();
+            ret = new HttpComponentsClientHttpRequestFactory(client);
+        }
 
         ret.setReadTimeout(httpProperties.getTimeout().getSocket());
         ret.setConnectTimeout(httpProperties.getTimeout().getConnect());
@@ -48,6 +51,4 @@ public class RestTemplateHelper {
 
         return ret;
     }
-
-
 }
