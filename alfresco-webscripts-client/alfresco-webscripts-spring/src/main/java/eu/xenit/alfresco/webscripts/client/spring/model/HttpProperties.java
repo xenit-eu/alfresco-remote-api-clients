@@ -13,6 +13,7 @@ public class HttpProperties {
 
     private boolean insecureSsl;
 
+    private long connectionTimeToLive = -1L;
     private TimeoutProperties timeout = new TimeoutProperties();
 
     @Data
