@@ -138,9 +138,9 @@ public class GetNodesMetadata {
                     assertThat(node.getAspects()).contains(Content.AUDITABLE.toPrefixString());
                     assertThat(node.getPaths()).extracting(NodePathInfo::getPath)
                             .containsExactly(
-                                    /* TODO: what I actually expect:
-                                        "/{http://www.alfresco.org/model/content/1.0}Folder" + */
-                                    "/{http://www.alfresco.org/model/content/1.0}Sub Folder" +
+                                    "/{http://www.alfresco.org/model/application/1.0}company_home" +
+                                            "/{http://www.alfresco.org/model/content/1.0}Folder" +
+                                            "/{http://www.alfresco.org/model/content/1.0}Sub Folder" +
                                             "/{http://www.alfresco.org/model/content/1.0}document.txt");
                     assertThat(node.getParentAssocs()).isNotEmpty();
                     assertThat(node.getParentAssocs().get(0)).contains(
