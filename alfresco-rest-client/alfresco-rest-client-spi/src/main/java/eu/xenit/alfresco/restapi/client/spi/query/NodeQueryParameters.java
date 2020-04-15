@@ -8,12 +8,16 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class NodeQueryParameters implements QueryParameters {
+public class NodeQueryParameters<SELF extends NodeQueryParameters<SELF>> implements QueryParameters {
 
     List<Include> includes = new ArrayList<>();
 
     List<String> fields = new ArrayList<>();
 
+    @SuppressWarnings("unchecked")
+    protected SELF self() {
+        return (SELF) this;
+    }
 
     @Override
     public Params queryParameters() {
@@ -23,16 +27,16 @@ public class NodeQueryParameters implements QueryParameters {
         return params;
     }
 
-    public NodeQueryParameters withInclude(Include include) {
+    public SELF withInclude(Include include) {
         includes.add(include);
-        return this;
+        return self();
     }
 
-    public NodeQueryParameters withAllIncludes() {
+    public SELF withAllIncludes() {
         for (Include value : Include.values()) {
             withInclude(value);
         }
-        return this;
+        return self();
     }
 
     public enum Include {

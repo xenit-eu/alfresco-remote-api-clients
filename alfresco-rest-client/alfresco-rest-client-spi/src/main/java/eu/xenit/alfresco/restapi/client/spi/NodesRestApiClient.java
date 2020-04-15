@@ -32,11 +32,11 @@ public interface NodesRestApiClient {
 
     default NodeList getChildren(String nodeId) {
         return getChildren(nodeId, new PaginationQueryParameters(), new FilterQueryParameters(),
-                new NodeQueryParameters());
+                new NodeQueryParameters<>());
     }
 
     NodeList getChildren(String nodeId, PaginationQueryParameters paginationQueryParameters,
-            FilterQueryParameters filterQueryParameters, NodeQueryParameters nodeQueryParameters);
+            FilterQueryParameters filterQueryParameters, NodeQueryParameters<?> nodeQueryParameters);
 
     default NodeEntry createChild(String nodeId, NodeCreateBody nodeCreateBody) {
         return createChild(nodeId, nodeCreateBody, new CreateNodeQueryParameters());
@@ -45,18 +45,18 @@ public interface NodesRestApiClient {
     NodeEntry createChild(String nodeId, NodeCreateBody nodeCreateBody, CreateNodeQueryParameters queryParameters);
 
     default NodeList getSources(String sourceNodeId) {
-        return getSources(sourceNodeId, new FilterQueryParameters(), new NodeQueryParameters());
+        return getSources(sourceNodeId, new FilterQueryParameters(), new NodeQueryParameters<>());
     }
 
     NodeList getSources(String nodeId, FilterQueryParameters filterQueryParameters,
-            NodeQueryParameters nodeQueryParameters);
+            NodeQueryParameters<?> nodeQueryParameters);
 
     default NodeList getTargets(String nodeId) {
-        return getTargets(nodeId, new FilterQueryParameters(), new NodeQueryParameters());
+        return getTargets(nodeId, new FilterQueryParameters(), new NodeQueryParameters<>());
     }
 
     NodeList getTargets(String nodeId, FilterQueryParameters filterQueryParameters,
-            NodeQueryParameters nodeQueryParameters);
+            NodeQueryParameters<?> nodeQueryParameters);
 
     TargetAssociationEntry createTargetAssociation(String nodeId, TargetAssociation targetAssociation);
 

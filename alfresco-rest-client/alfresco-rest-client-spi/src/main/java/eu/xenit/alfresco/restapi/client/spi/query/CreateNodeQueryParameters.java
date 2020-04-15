@@ -8,9 +8,14 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
-public class CreateNodeQueryParameters extends NodeQueryParameters {
+public class CreateNodeQueryParameters extends NodeQueryParameters<CreateNodeQueryParameters> {
 
     private Boolean autoRename;
+
+    public CreateNodeQueryParameters setAutoRename(Boolean autoRename) {
+        this.autoRename = autoRename;
+        return self();
+    }
 
     @Override
     public Params queryParameters() {
