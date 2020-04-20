@@ -2,14 +2,17 @@ package eu.xenit.alfresco.restapi.client.spi.query;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Accessors(chain = true)
-public class GetNodeQueryParameters extends NodeQueryParameters {
+public class GetNodeQueryParameters extends NodeQueryParameters<GetNodeQueryParameters> {
 
     String relativePath;
+
+    public GetNodeQueryParameters setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
+        return self();
+    }
 
     @Override
     public Params queryParameters() {

@@ -35,5 +35,6 @@ public class Node {
     private List<String> allowedOperations;
     private Path path;
     private Permissions permissions;
+    private String versionComment;
 
 }

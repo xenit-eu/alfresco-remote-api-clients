@@ -6,11 +6,6 @@ import eu.xenit.alfresco.restapi.client.spi.model.NodeEntry;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeList;
 import eu.xenit.alfresco.restapi.client.spi.model.TargetAssociation;
 import eu.xenit.alfresco.restapi.client.spi.model.TargetAssociationEntry;
-import eu.xenit.alfresco.restapi.client.spi.model.exceptions.ApiException;
-import eu.xenit.alfresco.restapi.client.spi.model.exceptions.ConstraintViolatedException;
-import eu.xenit.alfresco.restapi.client.spi.model.exceptions.InvalidArgumentException;
-import eu.xenit.alfresco.restapi.client.spi.model.exceptions.NotFoundException;
-import eu.xenit.alfresco.restapi.client.spi.model.exceptions.PermissionDeniedException;
 import eu.xenit.alfresco.restapi.client.spi.query.CreateNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteTargetQueryParameters;
@@ -21,13 +16,6 @@ import eu.xenit.alfresco.restapi.client.spi.query.PaginationQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.QueryParameters;
 import java.net.URI;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpClientErrorException.BadRequest;
-import org.springframework.web.client.HttpClientErrorException.Conflict;
-import org.springframework.web.client.HttpClientErrorException.Forbidden;
-import org.springframework.web.client.HttpClientErrorException.NotFound;
-import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class NodesRestApiSpringClient extends RestApiSpringClient implements NodesRestApiClient {
@@ -63,7 +51,7 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
 
     @Override
     public NodeList getChildren(String nodeId, PaginationQueryParameters paginationQueryParameters,
-            FilterQueryParameters filterQueryParameters, NodeQueryParameters nodeQueryParameters) {
+            FilterQueryParameters filterQueryParameters, NodeQueryParameters<?> nodeQueryParameters) {
         URI uri = children(nodeId, paginationQueryParameters, filterQueryParameters, nodeQueryParameters);
 
         RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
@@ -81,7 +69,7 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
 
     @Override
     public NodeList getSources(String nodeId, FilterQueryParameters filterQueryParameters,
-            NodeQueryParameters nodeQueryParameters) {
+            NodeQueryParameters<?> nodeQueryParameters) {
         RequestEntity<Void> requestEntity = RequestEntity
                 .get(uri(nodeId, "/sources", filterQueryParameters, nodeQueryParameters)).build();
         return execute(nodeId, requestEntity, NodeList.class);
@@ -89,7 +77,7 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
 
     @Override
     public NodeList getTargets(String nodeId, FilterQueryParameters filterQueryParameters,
-            NodeQueryParameters nodeQueryParameters) {
+            NodeQueryParameters<?> nodeQueryParameters) {
         RequestEntity<Void> requestEntity = RequestEntity
                 .get(targets(nodeId, filterQueryParameters, nodeQueryParameters)).build();
         return execute(nodeId, requestEntity, NodeList.class);
@@ -114,39 +102,12 @@ public class NodesRestApiSpringClient extends RestApiSpringClient implements Nod
         execute(nodeId, requestEntity, Void.class);
     }
 
-    private <T, R> R execute(String nodeId, RequestEntity<T> requestEntity, Class<R> responseClass) {
-        try {
-            ResponseEntity<R> responseEntity = restTemplate.exchange(requestEntity, responseClass);
-            return responseEntity.getBody();
-        } catch (BadRequest e) {
-            throw new InvalidArgumentException(nodeId);
-        } catch (Unauthorized | Forbidden e) {
-            throw new PermissionDeniedException(nodeId);
-        } catch (NotFound e) {
-            throw new NotFoundException(nodeId);
-        } catch (Conflict e) {
-            throw new ConstraintViolatedException(e);
-        } catch (HttpClientErrorException e) {
-            throw new ApiException(e);
-        }
-    }
-
     private URI children(String nodeId, QueryParameters... queryParameters) {
         return uri(nodeId, "/children", queryParameters);
     }
 
     private URI targets(String nodeId, QueryParameters... queryParameters) {
         return uri(nodeId, "/targets", queryParameters);
-    }
-
-    private URI uri(String nodeId, String path, QueryParameters... queryParameters) {
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url).path("/" + nodeId + path);
-        if (queryParameters != null) {
-            for (QueryParameters queryParameter : queryParameters) {
-                withQueryParameters(uriBuilder, queryParameter);
-            }
-        }
-        return uriBuilder.build().toUri();
     }
 
 
