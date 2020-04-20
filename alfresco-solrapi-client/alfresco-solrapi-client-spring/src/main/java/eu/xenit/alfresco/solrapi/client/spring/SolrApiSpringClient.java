@@ -1,6 +1,9 @@
 package eu.xenit.alfresco.solrapi.client.spring;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.xenit.alfresco.client.exception.HttpStatusException;
+import eu.xenit.alfresco.client.exception.StatusCode;
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSetList;
@@ -33,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
@@ -40,12 +44,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.Assert;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -198,13 +204,44 @@ public class SolrApiSpringClient implements SolrApiClient {
     public List<SolrNodeMetaData> getNodesMetaData(NodeMetaDataQueryParameters params) {
         URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/metadata").build().toUri();
 
-        HttpEntity<NodeMetaDataQueryParameters> request = new HttpEntity<>(params, defaultHttpHeaders());
-        ResponseEntity<SolrNodeMetadataList> result = restTemplate.exchange(uri, HttpMethod
-                .POST, request, SolrNodeMetadataList.class);
+        RequestEntity<NodeMetaDataQueryParameters> requestEntity = RequestEntity.post(uri)
+                .headers(defaultHttpHeaders())
+                .body(params);
+        ResponseEntity<SolrNodeMetadataList> result = execute(requestEntity, SolrNodeMetadataList.class);
 
         Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
         Assert.notNull(result.getBody(), "Response for getNodes(" + params + ") should not be null");
         return result.getBody().getNodes();
+    }
+
+    private final ObjectMapper exceptionResponseObjectMapper = new ObjectMapper();
+
+    private <T, R> ResponseEntity<R> execute(RequestEntity<T> requestEntity, Class<R> responseClass) {
+        try {
+            return restTemplate.exchange(requestEntity, responseClass);
+        } catch (HttpStatusCodeException e) {
+            final String message = tryToExtractMessage(e.getResponseBodyAsString());
+            throw new HttpStatusException(StatusCode.valueOf(e.getRawStatusCode()), message, e);
+        }
+    }
+
+    private String tryToExtractMessage(String responseBody) {
+        try {
+            SolrApiExceptionResponse response =
+                    exceptionResponseObjectMapper.readValue(responseBody, SolrApiExceptionResponse.class);
+            return response.getMessage();
+        } catch (Exception e) {
+            log.warn("Failed to extract message from response: {}", responseBody, e);
+            return null;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Data
+    private static class SolrApiExceptionResponse {
+
+        private String message;
+
     }
 
     @Override
