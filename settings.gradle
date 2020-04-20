@@ -1,10 +1,11 @@
 rootProject.name = 'alfresco-remote-api-clients'
 
+include ':alfresco-remote-api-exceptions'
+
 include ':alfresco-solrapi-client:alfresco-solrapi-client-spi'
 include ':alfresco-solrapi-client:alfresco-solrapi-client-spring'
 include ':alfresco-solrapi-client:alfresco-solrapi-client-ditto'
 include ':alfresco-solrapi-client:alfresco-solrapi-integration-tests'
-
 
 include ':alfresco-webscripts-client:alfresco-webscripts-spi'
 include ':alfresco-webscripts-client:alfresco-webscripts-spring'
