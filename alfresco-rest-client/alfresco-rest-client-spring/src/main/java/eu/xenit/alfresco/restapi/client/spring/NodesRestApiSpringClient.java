@@ -1,5 +1,8 @@
 package eu.xenit.alfresco.restapi.client.spring;
 
+import eu.xenit.alfresco.client.exception.AlfrescoClientResponseException;
+import eu.xenit.alfresco.client.exception.ResourceNotFoundException;
+import eu.xenit.alfresco.client.exception.StatusCode;
 import eu.xenit.alfresco.restapi.client.spi.NodesRestApiClient;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeCreateBody;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeEntry;
@@ -16,6 +19,9 @@ import eu.xenit.alfresco.restapi.client.spi.query.PaginationQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.QueryParameters;
 import java.net.URI;
 import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException.NotFound;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class NodesRestApiSpringClient extends RestApiSpringClient implements NodesRestApiClient {

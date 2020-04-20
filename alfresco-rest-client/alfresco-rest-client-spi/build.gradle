@@ -9,6 +9,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
+    api project(":alfresco-remote-api-exceptions")
     api "com.fasterxml.jackson.core:jackson-annotations:2.10.0"
 
     testImplementation "org.assertj:assertj-core:${assertjVersion}"
