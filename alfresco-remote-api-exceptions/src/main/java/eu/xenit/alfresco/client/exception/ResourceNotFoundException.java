@@ -1,6 +1,6 @@
 package eu.xenit.alfresco.client.exception;
 
-public class ResourceNotFoundException extends AlfrescoClientResponseException {
+public class ResourceNotFoundException extends HttpStatusException {
 
     public ResourceNotFoundException(String resourceType, String resourceId) {
         super(StatusCode.NOT_FOUND, getMessage(resourceType, resourceId));

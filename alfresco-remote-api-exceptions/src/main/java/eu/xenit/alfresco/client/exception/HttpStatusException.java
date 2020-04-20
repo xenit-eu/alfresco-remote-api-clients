@@ -1,12 +1,12 @@
 package eu.xenit.alfresco.client.exception;
 
-public class AlfrescoClientResponseException extends AlfrescoClientException {
+public class HttpStatusException extends AlfrescoClientException {
 
-    public AlfrescoClientResponseException(StatusCode statusCode, String statusText) {
+    public HttpStatusException(StatusCode statusCode, String statusText) {
         super(getMessage(statusCode, statusText));
     }
 
-    public AlfrescoClientResponseException(StatusCode statusCode, String statusText, Throwable cause) {
+    public HttpStatusException(StatusCode statusCode, String statusText, Throwable cause) {
         super(getMessage(statusCode, statusText), cause);
     }
 

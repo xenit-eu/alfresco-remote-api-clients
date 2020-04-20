@@ -3,7 +3,7 @@ package eu.xenit.alfresco.restapi.client.tests;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import eu.xenit.alfresco.client.exception.AlfrescoClientResponseException;
+import eu.xenit.alfresco.client.exception.HttpStatusException;
 import eu.xenit.alfresco.client.exception.ResourceNotFoundException;
 import eu.xenit.alfresco.restapi.client.spi.Constants;
 import eu.xenit.alfresco.restapi.client.spi.NodesRestApiClient;
@@ -144,7 +144,7 @@ public interface NodesRestApiIntegrationTests {
         sourceAssocNodeListValidator.accept(nodesRestApiClient().getSources(targetNode.getId(),
                 new FilterQueryParameters().whereAssocType(assocType), new NodeQueryParameters()));
 
-        assertThrows(AlfrescoClientResponseException.class,
+        assertThrows(HttpStatusException.class,
                 () -> nodesRestApiClient().deleteTargetAssociation(sourceNode.getId(), targetNode.getId(),
                         new DeleteTargetQueryParameters().setAssocType("cm:invalid")));
         nodesRestApiClient().deleteTargetAssociation(sourceNode.getId(), targetNode.getId());

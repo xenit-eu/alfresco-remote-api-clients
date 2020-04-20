@@ -1,7 +1,7 @@
 package eu.xenit.alfresco.restapi.client.spring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.xenit.alfresco.client.exception.AlfrescoClientResponseException;
+import eu.xenit.alfresco.client.exception.HttpStatusException;
 import eu.xenit.alfresco.client.exception.ResourceNotFoundException;
 import eu.xenit.alfresco.client.exception.StatusCode;
 import eu.xenit.alfresco.restapi.client.spi.query.QueryParameters;
@@ -54,7 +54,7 @@ public abstract class RestApiSpringClient {
         } catch (NotFound e) {
             throw new ResourceNotFoundException("Node", nodeId);
         } catch (HttpStatusCodeException e) {
-            throw new AlfrescoClientResponseException(StatusCode.valueOf(e.getRawStatusCode()), e.getStatusText(), e);
+            throw new HttpStatusException(StatusCode.valueOf(e.getRawStatusCode()), e.getStatusText(), e);
         }
     }
 
