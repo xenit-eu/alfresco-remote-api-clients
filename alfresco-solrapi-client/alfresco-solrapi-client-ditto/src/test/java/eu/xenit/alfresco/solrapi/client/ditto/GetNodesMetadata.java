@@ -104,19 +104,19 @@ public class GetNodesMetadata {
         AlfrescoDataSet dataSet = AlfrescoDataSet.bootstrapAlfresco()
                 .skipToTransaction(15L)
                 .addTransaction(t -> {
-                    t.skipToNodeId(79L);
+                    t.skipToNodeId(1079L);
                     Node folder = t.addNode(n -> {
                         n.name("Folder");
                         n.type(Content.FOLDER);
                         n.property(Content.OWNER, "Neo");
                     });
-                    t.skipToNodeId(89L);
+                    t.skipToNodeId(1089L);
                     Node subFolder = t.addNode(folder, n -> {
                         n.name("Sub Folder");
                         n.type(Content.FOLDER);
                         n.property(Content.OWNER, "Morpheus");
                     });
-                    t.skipToNodeId(90L);
+                    t.skipToNodeId(1090L);
                     t.addDocument(subFolder, n -> {
                         n.name("document.txt");
                         n.property(Content.OWNER, "Morpheus");
@@ -126,11 +126,11 @@ public class GetNodesMetadata {
 
         SolrApiClient client = new SolrApiFakeClient(dataSet);
         List<SolrNodeMetaData> nodesMetaData = client
-                .getNodesMetaData(new NodeMetaDataQueryParameters().withNodeIds(90L));
+                .getNodesMetaData(new NodeMetaDataQueryParameters().withNodeIds(1090L));
 
         assertThat(nodesMetaData)
                 .hasOnlyOneElementSatisfying(node -> {
-                    assertThat(node.getId()).isEqualTo(90L);
+                    assertThat(node.getId()).isEqualTo(1090L);
                     assertThat(node.getType()).isEqualTo("cm:content");
                     assertThat(node.getTxnId()).isEqualTo(15L);
                     assertThat(node.getProperties().get(Content.NAME.toString())).isEqualTo("document.txt");
