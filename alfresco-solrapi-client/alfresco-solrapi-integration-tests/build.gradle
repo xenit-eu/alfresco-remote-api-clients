@@ -8,6 +8,7 @@ repositories {
 
 dependencies {
     api project(':alfresco-solrapi-client:alfresco-solrapi-client-spi')
+    api project(':alfresco-remote-api-exceptions')
 
     api "org.assertj:assertj-core:${assertjVersion}"
     api "org.junit.jupiter:junit-jupiter-api:${junitVersion}"

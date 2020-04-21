@@ -32,6 +32,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok"
 
     api project(':alfresco-solrapi-client:alfresco-solrapi-client-spi')
+    api project(':alfresco-remote-api-exceptions')
 
     implementation 'org.springframework.boot:spring-boot'
     implementation 'org.springframework:spring-web'
@@ -49,6 +50,8 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     integrationTestImplementation project(':alfresco-solrapi-client:alfresco-solrapi-integration-tests')
+    integrationTestImplementation project(':alfresco-rest-client:alfresco-rest-client-spring')
+    integrationTestImplementation project(':alfresco-webscripts-client:alfresco-webscripts-spring')
     integrationTestRuntimeOnly 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 
 }

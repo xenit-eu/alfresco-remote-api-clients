@@ -1,6 +1,8 @@
 
 package eu.xenit.alfresco.solrapi.client.ditto;
 
+import eu.xenit.alfresco.client.exception.HttpStatusException;
+import eu.xenit.alfresco.client.exception.StatusCode;
 import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.spi.dto.Acl;
 import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSetList;
@@ -22,6 +24,7 @@ import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.TransactionView;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
+import eu.xenit.testing.ditto.api.data.ContentModel.Version2;
 import eu.xenit.testing.ditto.api.model.ContentData;
 import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
@@ -137,8 +140,23 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.containedIn(params.getNodeIds()))
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
+                .peek(this::noLiveNodeExistsCheck)
                 .map(toSolrModel(params))
                 .collect(Collectors.toList());
+    }
+
+    private void noLiveNodeExistsCheck(Node node) {
+        if (!("version2Store".equals(node.getNodeRef().getStoreIdentifier()))) {
+            return;
+        }
+        final String liveNodeRef = (String) node.getProperties().get(Version2.FROZEN_NODE_REF).orElse(null);
+        if (liveNodeRef == null || liveNodeRef.trim().isEmpty()) {
+            return;
+        }
+        final String deletedNodeRef = liveNodeRef.replace("workspace://SpacesStore/", "archive://SpacesStore/");
+        if (nodeView.getNode(deletedNodeRef).isPresent()) {
+            throw new HttpStatusException(StatusCode.INTERNAL_SERVER_ERROR, "No live node exists");
+        }
     }
 
     @Override
