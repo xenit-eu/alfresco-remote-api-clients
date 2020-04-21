@@ -23,15 +23,24 @@ public class ModelHelper {
         put("cm", createNamespace("http://www.alfresco.org/model/content/1.0", "cm"));
         put("app", createNamespace("http://www.alfresco.org/model/application/1.0", "app"));
         put("sys", createNamespace("http://www.alfresco.org/model/system/1.0", "sys"));
-        put("d",   createNamespace("http://www.alfresco.org/model/dictionary/1.0", "d"));
+        put("d", createNamespace("http://www.alfresco.org/model/dictionary/1.0", "d"));
+        put("st", createNamespace("http://www.alfresco.org/model/site/1.0", "st"));
+        put("ver2", createNamespace("http://www.alfresco.org/model/versionstore/2.0", "ver2"));
+        put("usr", createNamespace("http://www.alfresco.org/model/user/1.0", "usr"));
     }};
 
     private Map<String, Function<Serializable, String>> typeToDeserializer = new HashMap<String, Function<Serializable, String>>() {{
         put("d:text", serializable -> (String) serializable);
+        put("d:noderef", serializable -> (String) serializable);
         put("d:mltext", Object::toString);
+        put("d:date", serializable -> (String) serializable);
         put("d:datetime", serializable -> (String) serializable);
         put("d:long", String::valueOf);
+        put("d:int", String::valueOf);
+        put("d:qname", Object::toString);
         put("d:locale", serializable -> (String) serializable); // TODO correct?
+        put("d:content", Object::toString);
+        put("d:boolean", serializable -> Boolean.toString((Boolean) serializable));
     }};
 
 
@@ -44,6 +53,9 @@ public class ModelHelper {
         Namespace app = getPrefixToNamespaceMap().get("app");
         Namespace sys = getPrefixToNamespaceMap().get("sys");
         Namespace d = getPrefixToNamespaceMap().get("d");
+        Namespace st = getPrefixToNamespaceMap().get("st");
+        Namespace ver2 = getPrefixToNamespaceMap().get("ver2");
+        Namespace usr = getPrefixToNamespaceMap().get("usr");
 
         setDefaultModelInfos(Arrays.asList(
                 createModel(createQName(cm, "description"), createQName(d, "mltext")),
@@ -53,12 +65,60 @@ public class ModelHelper {
                 createModel(createQName(cm, "created"), createQName(d, "datetime")),
                 createModel(createQName(cm, "modifier"), createQName(d, "text")),
                 createModel(createQName(cm, "modified"), createQName(d, "datetime")),
+                createModel(createQName(cm, "content"), createQName(d, "content")),
+                createModel(createQName(cm, "versionLabel"), createQName(d, "text")),
+                createModel(createQName(cm, "versionType"), createQName(d, "text")),
+                createModel(createQName(cm, "initialVersion"), createQName(d, "boolean")),
+                createModel(createQName(cm, "autoVersion"), createQName(d, "boolean")),
+                createModel(createQName(cm, "autoVersionOnUpdateProps"), createQName(d, "boolean")),
+                createModel(createQName(cm, "lockOwner"), createQName(d, "text")),
+                createModel(createQName(cm, "lockType"), createQName(d, "text")),
+                createModel(createQName(cm, "lockLifetime"), createQName(d, "text")),
+                createModel(createQName(cm, "expiryDate"), createQName(d, "date")),
+                createModel(createQName(cm, "lockIsDeep"), createQName(d, "boolean")),
+                createModel(createQName(cm, "lockAdditionalInfo"), createQName(d, "text")),
+
                 createModel(createQName(app, "icon"), createQName(d, "text")),
                 createModel(createQName(sys, "node-dbid"), createQName(d, "long")),
                 createModel(createQName(sys, "node-uuid"), createQName(d, "text")),
                 createModel(createQName(sys, "store-protocol"), createQName(d, "text")),
                 createModel(createQName(sys, "store-identifier"), createQName(d, "text")),
-                createModel(createQName(sys, "locale"), createQName(d, "locale"))
+                createModel(createQName(sys, "locale"), createQName(d, "locale")),
+
+                createModel(createQName(st, "sitePreset"), createQName(d, "text")),
+                createModel(createQName(st, "siteVisibility"), createQName(d, "text")),
+                createModel(createQName(st, "componentId"), createQName(d, "text")),
+                createModel(createQName(st, "additionalInformation"), createQName(d, "text")),
+
+                createModel(createQName(ver2, "versionedNodeId"), createQName(d, "text")),
+                createModel(createQName(ver2, "assocDbId"), createQName(d, "long")),
+                createModel(createQName(ver2, "targetVersionRef"), createQName(d, "noderef")),
+                createModel(createQName(ver2, "versionNumber"), createQName(d, "int")),
+                createModel(createQName(ver2, "versionLabel"), createQName(d, "text")),
+                createModel(createQName(ver2, "description"), createQName(d, "text")),
+                createModel(createQName(ver2, "frozenNodeType"), createQName(d, "qname")),
+                createModel(createQName(ver2, "frozenAspects"), createQName(d, "qname")),
+                createModel(createQName(ver2, "frozenNodeStoreProtocol"), createQName(d, "text")),
+                createModel(createQName(ver2, "frozenNodeId"), createQName(d, "text")),
+                createModel(createQName(ver2, "frozenNodeDbId"), createQName(d, "long")),
+                createModel(createQName(ver2, "frozenCreated"), createQName(d, "datetime")),
+                createModel(createQName(ver2, "frozenCreator"), createQName(d, "text")),
+                createModel(createQName(ver2, "frozenModified"), createQName(d, "datetime")),
+                createModel(createQName(ver2, "frozenModifier"), createQName(d, "text")),
+                createModel(createQName(ver2, "frozenAccessed"), createQName(d, "datetime")),
+                createModel(createQName(ver2, "versionDescription"), createQName(d, "text"), true),
+                createModel(createQName(ver2, "frozenNodeRef"), createQName(d, "text"), true),
+
+                createModel(createQName(usr, "username"), createQName(d, "text")),
+                createModel(createQName(usr, "password"), createQName(d, "text")),
+                createModel(createQName(usr, "password2"), createQName(d, "text")),
+                createModel(createQName(usr, "enabled"), createQName(d, "boolean")),
+                createModel(createQName(usr, "accountExpires"), createQName(d, "boolean")),
+                createModel(createQName(usr, "accountExpiryDate"), createQName(d, "datetime")),
+                createModel(createQName(usr, "credentialsExpire"), createQName(d, "boolean")),
+                createModel(createQName(usr, "credentialsExpiryDate"), createQName(d, "datetime")),
+                createModel(createQName(usr, "accountLocked"), createQName(d, "boolean")),
+                createModel(createQName(usr, "salt"), createQName(d, "text"))
         ));
     }
 
@@ -71,7 +131,9 @@ public class ModelHelper {
         Objects.requireNonNull(qName);
         Objects.requireNonNull(type);
         Function<Serializable, String> deserializer = typeToDeserializer.get(type.toPrefixString());
-        Objects.requireNonNull(deserializer);
+        if (deserializer == null) {
+            throw new IllegalStateException("No deserializer available for type: " + type.toPrefixString());
+        }
         boolean isContent = "d:content".equals(type.toPrefixString());
         boolean isNodeRef = "d:noderef".equals(type.toPrefixString());
         return new ModelInfo(qName, type, type.toString(), deserializer, isContent, isNodeRef, isResidual);
