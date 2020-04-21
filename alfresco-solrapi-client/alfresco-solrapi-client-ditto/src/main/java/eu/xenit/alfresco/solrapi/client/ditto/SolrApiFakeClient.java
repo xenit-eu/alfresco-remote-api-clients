@@ -154,10 +154,9 @@ public class SolrApiFakeClient implements SolrApiClient {
             doIfTrue(params.isIncludeType(), () -> ret.setType(node.getType().toPrefixString()));
             doIfTrue(params.isIncludeNodeRef(), () -> ret.setNodeRef(node.getNodeRef().toString()));
             doIfTrue(params.isIncludeProperties(), () -> ret.setProperties(node.getProperties().stream()
-                    .collect(Collectors.toMap(
-                            entry -> entry.getKey().toString(),
-                            entry -> convertPropertyValue(entry.getValue())
-                    ))));
+                    .collect(HashMap::new,
+                            (map, entry) -> map.put(entry.getKey().toString(), convertPropertyValue(entry.getValue())),
+                            HashMap::putAll))); // Collectors.toMap doesn't support null values (JDK-8148463)
             doIfTrue(params.isIncludeAspects(), () -> ret.setAspects(node.getAspects().stream()
                     .map(QName::toPrefixString)
                     .collect(Collectors.toList())));

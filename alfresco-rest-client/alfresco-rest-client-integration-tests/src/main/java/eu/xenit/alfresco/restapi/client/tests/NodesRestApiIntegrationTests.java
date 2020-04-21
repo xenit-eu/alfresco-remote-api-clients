@@ -3,6 +3,8 @@ package eu.xenit.alfresco.restapi.client.tests;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import eu.xenit.alfresco.client.exception.HttpStatusException;
+import eu.xenit.alfresco.client.exception.ResourceNotFoundException;
 import eu.xenit.alfresco.restapi.client.spi.Constants;
 import eu.xenit.alfresco.restapi.client.spi.NodesRestApiClient;
 import eu.xenit.alfresco.restapi.client.spi.model.Node;
@@ -12,8 +14,6 @@ import eu.xenit.alfresco.restapi.client.spi.model.NodeList;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeList.NodeChildAssociations;
 import eu.xenit.alfresco.restapi.client.spi.model.TargetAssociation;
 import eu.xenit.alfresco.restapi.client.spi.model.TargetAssociationEntry;
-import eu.xenit.alfresco.restapi.client.spi.model.exceptions.InvalidArgumentException;
-import eu.xenit.alfresco.restapi.client.spi.model.exceptions.NotFoundException;
 import eu.xenit.alfresco.restapi.client.spi.query.CreateNodeQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.DeleteTargetQueryParameters;
 import eu.xenit.alfresco.restapi.client.spi.query.FilterQueryParameters;
@@ -49,7 +49,7 @@ public interface NodesRestApiIntegrationTests {
 
     @Test
     default void deleteNode_nonExisting() {
-        assertThrows(NotFoundException.class, () -> nodesRestApiClient().delete("id-do-not-exist"));
+        assertThrows(ResourceNotFoundException.class, () -> nodesRestApiClient().delete("id-do-not-exist"));
     }
 
     @Test
@@ -67,7 +67,7 @@ public interface NodesRestApiIntegrationTests {
 
         nodesRestApiClient().delete(createdId);
 
-        assertThrows(NotFoundException.class, () -> nodesRestApiClient().get(createdId));
+        assertThrows(ResourceNotFoundException.class, () -> nodesRestApiClient().get(createdId));
     }
 
     @Test
@@ -144,7 +144,7 @@ public interface NodesRestApiIntegrationTests {
         sourceAssocNodeListValidator.accept(nodesRestApiClient().getSources(targetNode.getId(),
                 new FilterQueryParameters().whereAssocType(assocType), new NodeQueryParameters()));
 
-        assertThrows(InvalidArgumentException.class,
+        assertThrows(HttpStatusException.class,
                 () -> nodesRestApiClient().deleteTargetAssociation(sourceNode.getId(), targetNode.getId(),
                         new DeleteTargetQueryParameters().setAssocType("cm:invalid")));
         nodesRestApiClient().deleteTargetAssociation(sourceNode.getId(), targetNode.getId());
@@ -176,7 +176,7 @@ public interface NodesRestApiIntegrationTests {
     default void cleanup(String nodeId) {
         try {
             nodesRestApiClient().delete(nodeId);
-        } catch (NotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             // ignore
         }
     }
