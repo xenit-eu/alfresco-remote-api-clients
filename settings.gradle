@@ -1,6 +1,7 @@
 rootProject.name = 'alfresco-remote-api-clients'
 
 include ':alfresco-remote-api-exceptions'
+include ':http-requests'
 
 include ':alfresco-solrapi-client:alfresco-solrapi-client-spi'
 include ':alfresco-solrapi-client:alfresco-solrapi-client-spring'
