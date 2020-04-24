@@ -2,7 +2,6 @@ subprojects {
     repositories {
         mavenCentral()
         maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }
-
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
