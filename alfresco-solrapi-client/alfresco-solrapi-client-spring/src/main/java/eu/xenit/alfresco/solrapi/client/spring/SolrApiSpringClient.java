@@ -44,7 +44,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -134,8 +133,9 @@ public class SolrApiSpringClient implements SolrApiClient {
         conditionalQueryParam(uriBuilder, "maxResults", maxResults, val ->
                 val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
 
-        AclChangeSetList response = restTemplate.getForObject(uriBuilder.toUriString(), AclChangeSetList.class);
-        return response;
+        ResponseEntity<AclChangeSetList> response =
+                execute(uriBuilder.build().toUri(), HttpMethod.GET, AclChangeSetList.class);
+        return response.getBody();
     }
 
     @Override
@@ -143,8 +143,7 @@ public class SolrApiSpringClient implements SolrApiClient {
         URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/acls").build().toUri();
 
         HttpEntity<AclsQueryParameters> request = new HttpEntity<AclsQueryParameters>(parameters, defaultHttpHeaders());
-        ResponseEntity<AclList> result = restTemplate.exchange(uri, HttpMethod
-                .POST, request, AclList.class);
+        ResponseEntity<AclList> result = execute(uri, HttpMethod.POST, request, AclList.class);
 
         Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
 
@@ -157,10 +156,9 @@ public class SolrApiSpringClient implements SolrApiClient {
     public List<AclReaders> getAclReaders(AclReadersQueryParameters parameters) {
         URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/aclsReaders").build().toUri();
 
-        HttpEntity<AclReadersQueryParameters> request = new HttpEntity<AclReadersQueryParameters>(parameters,
+        HttpEntity<AclReadersQueryParameters> request = new HttpEntity<>(parameters,
                 defaultHttpHeaders());
-        ResponseEntity<AclReadersList> result = restTemplate.exchange(uri, HttpMethod
-                .POST, request, AclReadersList.class);
+        ResponseEntity<AclReadersList> result = execute(uri, HttpMethod.POST, request, AclReadersList.class);
 
         Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
 
@@ -181,7 +179,9 @@ public class SolrApiSpringClient implements SolrApiClient {
         conditionalQueryParam(uriBuilder, "maxResults", maxResults, val ->
                 val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
 
-        return restTemplate.getForObject(uriBuilder.toUriString(), SolrTransactions.class);
+        ResponseEntity<SolrTransactions> response
+                = execute(uriBuilder.build().toUri(), HttpMethod.GET, SolrTransactions.class);
+        return response.getBody();
     }
 
     @Override
@@ -189,11 +189,10 @@ public class SolrApiSpringClient implements SolrApiClient {
         URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/nodes").build().toUri();
 
         HttpEntity<NodesQueryParameters> request = new HttpEntity<>(parameters, defaultHttpHeaders());
-        ResponseEntity<SolrNodeList> result = restTemplate.exchange(uri, HttpMethod
-                .POST, request, SolrNodeList.class);
-//
+        ResponseEntity<SolrNodeList> result =
+                execute(uri, HttpMethod.POST, request, SolrNodeList.class);
+
         Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
-//        Assert.notNull(result.getBody(), "Response for getNodes(" + params + ") should not be null");
 
         SolrNodeList solrNodeList = result.getBody();
         Assert.notNull(solrNodeList, "Response for getNodes(" + parameters + ") should not be null");
@@ -204,10 +203,9 @@ public class SolrApiSpringClient implements SolrApiClient {
     public List<SolrNodeMetaData> getNodesMetaData(NodeMetaDataQueryParameters params) {
         URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/metadata").build().toUri();
 
-        RequestEntity<NodeMetaDataQueryParameters> requestEntity = RequestEntity.post(uri)
-                .headers(defaultHttpHeaders())
-                .body(params);
-        ResponseEntity<SolrNodeMetadataList> result = execute(requestEntity, SolrNodeMetadataList.class);
+        HttpEntity<NodeMetaDataQueryParameters> request = new HttpEntity<>(params, defaultHttpHeaders());
+        ResponseEntity<SolrNodeMetadataList> result =
+                execute(uri, HttpMethod.POST, request, SolrNodeMetadataList.class);
 
         Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
         Assert.notNull(result.getBody(), "Response for getNodes(" + params + ") should not be null");
@@ -216,9 +214,14 @@ public class SolrApiSpringClient implements SolrApiClient {
 
     private final ObjectMapper exceptionResponseObjectMapper = new ObjectMapper();
 
-    private <T, R> ResponseEntity<R> execute(RequestEntity<T> requestEntity, Class<R> responseClass) {
+    private <T, R> ResponseEntity<R> execute(URI uri, HttpMethod httpMethod, Class<R> responseClass) {
+        return execute(uri, httpMethod, HttpEntity.EMPTY, responseClass);
+    }
+
+    private <T, R> ResponseEntity<R> execute(URI uri, HttpMethod httpMethod, HttpEntity<T> entity,
+            Class<R> responseClass) {
         try {
-            return restTemplate.exchange(requestEntity, responseClass);
+            return restTemplate.exchange(uri, httpMethod, entity, responseClass);
         } catch (HttpStatusCodeException e) {
             final String message = tryToExtractMessage(e.getResponseBodyAsString());
             throw new HttpStatusException(StatusCode.valueOf(e.getRawStatusCode()), message, e);
@@ -250,10 +253,8 @@ public class SolrApiSpringClient implements SolrApiClient {
         conditionalQueryParam(uriBuilder, "nodeId", nodeId, Objects::nonNull);
         conditionalQueryParam(uriBuilder, "propertyQName", propertyQName, Objects::nonNull);
 
-        ResponseEntity<Resource> exchange = restTemplate
-                .exchange(uriBuilder.toUriString(), HttpMethod.GET, null, Resource.class);
-
-        return getGetTextContentResponse(exchange);
+        ResponseEntity<Resource> response = execute(uriBuilder.build().toUri(), HttpMethod.GET, Resource.class);
+        return getGetTextContentResponse(response);
     }
 
     private GetTextContentResponse getGetTextContentResponse(ResponseEntity<Resource> exchange) {
