@@ -21,7 +21,7 @@ public class GetNodesMetadata {
 
     private static NodeView nodeViewMock() {
         NodeView nodeView = mock(NodeView.class);
-        when(nodeView.stream()).then((a) -> Stream.of(
+        when(nodeView.allNodes()).then((a) -> Stream.of(
                 new TestNode(1L, System.STORE_ROOT).setTxnId(6L),
                 new TestNode(13L, Content.FOLDER)
                         .setTxnId(6L)
@@ -102,7 +102,7 @@ public class GetNodesMetadata {
     @Test
     void getNodesMetadata_folderWithSubFolder() {
         AlfrescoDataSet dataSet = AlfrescoDataSet.bootstrapAlfresco()
-                .skipToTransaction(15L)
+                .configure(config -> config.skipToTxnId(15L))
                 .addTransaction(t -> {
                     t.skipToNodeId(1079L);
                     Node folder = t.addNode(n -> {

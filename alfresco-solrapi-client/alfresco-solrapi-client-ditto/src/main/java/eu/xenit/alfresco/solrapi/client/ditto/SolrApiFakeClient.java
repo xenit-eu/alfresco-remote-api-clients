@@ -136,7 +136,7 @@ public class SolrApiFakeClient implements SolrApiClient {
 
     @Override
     public List<SolrNodeMetaData> getNodesMetaData(NodeMetaDataQueryParameters params) {
-        return this.nodeView.stream()
+        return this.nodeView.allNodes()
                 .filter(Node.Filters.containedIn(params.getNodeIds()))
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
@@ -206,20 +206,18 @@ public class SolrApiFakeClient implements SolrApiClient {
                     .stream()
                     .map(assoc -> assoc.getParent().getNodeRef().toString())
                     .collect(Collectors.toList())));
-            doIfTrue(params.isIncludeChildAssociations() && node.getChildNodeCollection() != null, () -> {
-                ret.setChildAssocs(node.getChildNodeCollection()
-                        .getAssociations()
-                        .map(this::toAssocString)
-                        .collect(Collectors.toList())
-                );
-            });
-            doIfTrue(params.isIncludeParentAssociations() && node.getParentNodeCollection() != null, () -> {
-                ret.setParentAssocs(node.getParentNodeCollection()
-                        .getAssociations()
-                        .map(this::toAssocString)
-                        .collect(Collectors.toList())
-                );
-            });
+            doIfTrue(params.isIncludeChildAssociations() && node.getChildNodeCollection() != null, () ->
+                    ret.setChildAssocs(node.getChildNodeCollection()
+                            .getAssociations()
+                            .map(this::toAssocString)
+                            .collect(Collectors.toList())
+                    ));
+            doIfTrue(params.isIncludeParentAssociations() && node.getParentNodeCollection() != null, () ->
+                    ret.setParentAssocs(node.getParentNodeCollection()
+                            .getAssociations()
+                            .map(this::toAssocString)
+                            .collect(Collectors.toList())
+                    ));
             return ret;
         };
     }
@@ -292,7 +290,7 @@ public class SolrApiFakeClient implements SolrApiClient {
         return propertyValue;
     }
 
-    private <T, P> void doIfTrue(boolean bool, Runnable runnable) {
+    private void doIfTrue(boolean bool, Runnable runnable) {
         if (bool) {
             runnable.run();
         }
@@ -334,16 +332,6 @@ public class SolrApiFakeClient implements SolrApiClient {
             return this;
         }
 
-    }
-
-    private static Function<Node, SolrNode> mapNodeToSolrNode(long txnId, String status) {
-        return (node) -> new SolrNode(
-                node.getNodeId(),
-                node.getNodeRef().toString(),
-                txnId, status,
-                "",
-                -1,
-                "");
     }
 
     private String toAssocString(ParentChildAssoc assoc) {

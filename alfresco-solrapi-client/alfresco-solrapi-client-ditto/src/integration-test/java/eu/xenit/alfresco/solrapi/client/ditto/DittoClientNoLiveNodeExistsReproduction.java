@@ -17,6 +17,10 @@ public class DittoClientNoLiveNodeExistsReproduction implements GetMetadataNoLiv
 
     private AlfrescoDataSet dataSet;
 
+    public DittoClientNoLiveNodeExistsReproduction() {
+        this.dataSet = AlfrescoDataSet.empty();
+    }
+
     @Override
     public SolrApiClient solrApiClient() {
         return new SolrApiFakeClient(dataSet);
@@ -26,29 +30,30 @@ public class DittoClientNoLiveNodeExistsReproduction implements GetMetadataNoLiv
     public String createVersionableNode(String name) {
         final String uuid = UUID.randomUUID().toString();
 
-        dataSet = AlfrescoDataSet.builder()
-                .addTransaction(txn -> {
-                    txn.addNode(node -> {
-                        node.storeRefProtocol("workspace");
-                        node.storeRefIdentifier("version2Store");
-                        node.name(name);
-                        node.type(Content.CONTENT);
-                        node.property(Version2.FROZEN_NODE_REF, "workspace://SpacesStore/" + uuid);
-                    });
-                    txn.addNode(node -> {
-                        node.uuid(uuid);
-                        node.name(name);
-                        node.type(Content.CONTENT);
-                    });
-                })
-                .build();
+        this.dataSet =
+                dataSet.toBuilder()
+                        .addTransaction(txn -> {
+                            txn.addNode(node -> {
+                                node.storeRefProtocol("workspace");
+                                node.storeRefIdentifier("version2Store");
+                                node.name(name);
+                                node.type(Content.CONTENT);
+                                node.property(Version2.FROZEN_NODE_REF, "workspace://SpacesStore/" + uuid);
+                            });
+                            txn.addNode(node -> {
+                                node.uuid(uuid);
+                                node.name(name);
+                                node.type(Content.CONTENT);
+                            });
+                        })
+                        .build();
 
         return uuid;
     }
 
     @Override
     public List<Long> getVersionNodeIds(String liveNodeUuid) {
-        return dataSet.getNodeView().stream()
+        return dataSet.getNodeView().allNodes()
                 .filter(node -> ("workspace://SpacesStore/" + liveNodeUuid).equals(
                         node.getProperties().get(Version2.FROZEN_NODE_REF).orElse(null)))
                 .map(Node::getNodeId)
@@ -58,9 +63,8 @@ public class DittoClientNoLiveNodeExistsReproduction implements GetMetadataNoLiv
     @Override
     public void deleteNode(String liveNodeUuid) {
         DataSetBuilder dataSetBuilder = AlfrescoDataSet.builder();
-        dataSet.getNodeView().stream().forEach(node -> {
-            dataSetBuilder.addTransaction(tnx -> {
-                tnx.addNode(newNode -> {
+        dataSet.getNodeView().allNodes().forEach(node ->
+                dataSetBuilder.addTransaction(tnx -> tnx.addNode(newNode -> {
                     if (node.getNodeRef().getUuid().equals(liveNodeUuid)) {
                         newNode.storeRefProtocol("archive");
                         newNode.storeRefIdentifier("SpacesStore");
@@ -76,9 +80,7 @@ public class DittoClientNoLiveNodeExistsReproduction implements GetMetadataNoLiv
                             .filter(entry -> !(System.STORE_PROTOCOL.equals(entry.getKey())))
                             .collect(Collectors.toMap(Entry::getKey,
                                     Entry::getValue)));
-                });
-            });
-        });
+                })));
         dataSet = dataSetBuilder.build();
 
     }

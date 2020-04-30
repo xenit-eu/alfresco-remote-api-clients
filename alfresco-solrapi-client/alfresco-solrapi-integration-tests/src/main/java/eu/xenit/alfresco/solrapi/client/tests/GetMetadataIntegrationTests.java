@@ -55,10 +55,9 @@ public interface GetMetadataIntegrationTests {
                             });
                     assertThat(node.getNamePaths())
                             .as("namePaths")
-                            .hasOnlyOneElementSatisfying(path -> {
-                                assertThat(path.getNamePath())
-                                        .hasOnlyOneElementSatisfying(p -> assertThat(p).isEqualTo("Company Home"));
-                            });
+                            .hasOnlyOneElementSatisfying(path ->
+                                    assertThat(path.getNamePath())
+                                            .hasOnlyOneElementSatisfying(p -> assertThat(p).isEqualTo("Company Home")));
                     assertThat(node.getAncestors())
                             .as("ancestors")
                             .hasOnlyOneElementSatisfying(ancestor -> assertThat(ancestor).matches(PATTERN_NODEREF));
