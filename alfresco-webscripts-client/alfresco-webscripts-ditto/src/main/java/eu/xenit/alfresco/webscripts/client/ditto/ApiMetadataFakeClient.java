@@ -72,7 +72,7 @@ public class ApiMetadataFakeClient implements ApiMetadataClient {
         ret.setNodeRef(nodeRef);
 
         Optional<Node> dittoNode =
-                this.nodeView.stream().filter(n -> nodeRef.equals(n.getNodeRef().toString())).findAny();
+                this.nodeView.allNodes().filter(n -> nodeRef.equals(n.getNodeRef().toString())).findAny();
 
         if (!dittoNode.isPresent()) {
             ret.setError("true");
