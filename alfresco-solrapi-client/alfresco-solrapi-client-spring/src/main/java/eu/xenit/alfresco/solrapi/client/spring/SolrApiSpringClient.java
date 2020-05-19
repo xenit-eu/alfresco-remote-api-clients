@@ -118,7 +118,7 @@ public class SolrApiSpringClient implements SolrApiClient {
         }
     }
 
-    private static HttpHeaders defaultHttpHeaders() {
+    protected static HttpHeaders defaultHttpHeaders() {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
         requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -214,11 +214,11 @@ public class SolrApiSpringClient implements SolrApiClient {
 
     private final ObjectMapper exceptionResponseObjectMapper = new ObjectMapper();
 
-    private <T, R> ResponseEntity<R> execute(URI uri, HttpMethod httpMethod, Class<R> responseClass) {
+    protected <R> ResponseEntity<R> execute(URI uri, HttpMethod httpMethod, Class<R> responseClass) {
         return execute(uri, httpMethod, HttpEntity.EMPTY, responseClass);
     }
 
-    private <T, R> ResponseEntity<R> execute(URI uri, HttpMethod httpMethod, HttpEntity<T> entity,
+    protected <T, R> ResponseEntity<R> execute(URI uri, HttpMethod httpMethod, HttpEntity<T> entity,
             Class<R> responseClass) {
         try {
             return restTemplate.exchange(uri, httpMethod, entity, responseClass);
