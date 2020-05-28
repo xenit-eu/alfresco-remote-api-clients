@@ -35,7 +35,7 @@ public class SolrApiFakeClient implements SolrApiClient {
     private SolrModelMapper solrModelMapper = new SolrModelMapper();
     private LiveNodeExistChecker liveNodeExistChecker = new LiveNodeExistChecker();
 
-    private SolrApiFakeClient(Builder builder) {
+    protected <T extends SolrApiFakeClient> SolrApiFakeClient(Builder<T> builder) {
         this(builder.data);
     }
 
@@ -318,27 +318,21 @@ public class SolrApiFakeClient implements SolrApiClient {
 
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder<?> builder() {
+        return new Builder<SolrApiFakeClient>() {};
     }
 
-    public static class Builder {
-
+    protected static abstract class Builder<T extends SolrApiFakeClient> {
         private AlfrescoDataSet data;
 
-        private Builder() {
-
+        public Builder<T> withDataSet(AlfrescoDataSet dataSet) {
+            this.data = dataSet;
+            return this;
         }
 
         public SolrApiFakeClient build() {
             return new SolrApiFakeClient(this);
         }
-
-        public Builder withDataSet(AlfrescoDataSet dataSet) {
-            this.data = dataSet;
-            return this;
-        }
-
     }
 
     public SolrModelMapper getSolrModelMapper() {
