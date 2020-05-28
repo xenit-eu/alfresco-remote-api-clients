@@ -20,6 +20,7 @@ import eu.xenit.alfresco.client.solrapi.api.query.AclReadersQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.AclsQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
+import eu.xenit.alfresco.solrapi.client.ditto.dto.SolrNodeMetaDataModel;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.TransactionView;
@@ -142,7 +143,30 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
                 .peek(this::noLiveNodeExistsCheck)
                 .map(toSolrModel(params))
+                .map(this::toApiModel)
                 .collect(Collectors.toList());
+    }
+
+    // TODO move this to a model-mapper
+    private SolrNodeMetaData toApiModel(SolrNodeMetaDataModel model) {
+        return new SolrNodeMetaData(
+                model.getId(),
+                model.getAclId(),
+                model.getTxnId(),
+                model.getNodeRef(),
+                model.getType(),
+                model.getProperties(),
+                model.getAspects(),
+                model.getPaths(),
+                model.getNamePaths(),
+                model.getAncestors(),
+                model.getParentAssocs(),
+                model.getParentAssocsCrc(),
+                model.getChildAssocs(),
+                model.getChildIds(),
+                model.getOwner(),
+                model.getTenantDomain());
+
     }
 
     private void noLiveNodeExistsCheck(Node node) {
@@ -164,9 +188,9 @@ public class SolrApiFakeClient implements SolrApiClient {
         return null;
     }
 
-    private Function<Node, SolrNodeMetaData> toSolrModel(NodeMetaDataQueryParameters params) {
+    private Function<Node, SolrNodeMetaDataModel> toSolrModel(NodeMetaDataQueryParameters params) {
         return node -> {
-            SolrNodeMetaData ret = new SolrNodeMetaData();
+            SolrNodeMetaDataModel ret = new SolrNodeMetaDataModel();
             ret.setId(node.getNodeId());
             doIfTrue(params.isIncludeTxnId(), () -> ret.setTxnId(node.getTxnId()));
             doIfTrue(params.isIncludeType(), () -> ret.setType(node.getType().toPrefixString()));
