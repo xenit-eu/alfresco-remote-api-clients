@@ -1,8 +1,5 @@
-
 package eu.xenit.alfresco.solrapi.client.ditto;
 
-import eu.xenit.alfresco.client.api.exception.HttpStatusException;
-import eu.xenit.alfresco.client.api.exception.StatusCode;
 import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
 import eu.xenit.alfresco.client.solrapi.api.model.Acl;
 import eu.xenit.alfresco.client.solrapi.api.model.AclChangeSetList;
@@ -11,8 +8,6 @@ import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModel;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModelDiff;
 import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
 import eu.xenit.alfresco.client.solrapi.api.model.GetTextContentResponse;
-import eu.xenit.alfresco.client.solrapi.api.model.NodeNamePaths;
-import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransaction;
@@ -25,23 +20,10 @@ import eu.xenit.alfresco.solrapi.client.ditto.dto.SolrNodeMetaDataModel;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.TransactionView;
-import eu.xenit.testing.ditto.api.data.ContentModel.Content;
-import eu.xenit.testing.ditto.api.data.ContentModel.Version2;
-import eu.xenit.testing.ditto.api.model.ContentData;
-import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
-import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
-import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.api.model.Transaction;
 import eu.xenit.testing.ditto.api.model.Transaction.Filters;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Data;
@@ -50,6 +32,9 @@ public class SolrApiFakeClient implements SolrApiClient {
 
     private final TransactionView txnView;
     private final NodeView nodeView;
+
+    private SolrModelMapper solrModelMapper = new SolrModelMapper();
+    private LiveNodeExistChecker liveNodeExistChecker = new LiveNodeExistChecker();
 
     private SolrApiFakeClient(Builder builder) {
         this(builder.data);
@@ -140,10 +125,10 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.containedIn(params.getNodeIds()))
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
-                .peek(this::noLiveNodeExistsCheck)
-                .map(toSolrModel(params))
-                .map(this::toApiModel)
-                .collect(Collectors.toList());
+                .peek(node -> getLiveNodeExistChecker().noLiveNodeExistsCheck(node, nodeView))
+                .map(getSolrModelMapper().toSolrModel(params))
+		.map(this::toApiModel)
+		.collect(Collectors.toList());
     }
 
     // TODO move this to a model-mapper
@@ -362,6 +347,22 @@ public class SolrApiFakeClient implements SolrApiClient {
             this.data = dataSet;
             return this;
         }
+    }
+
+    public SolrModelMapper getSolrModelMapper() {
+        return solrModelMapper;
+    }
+
+    public void setSolrModelMapper(SolrModelMapper solrModelMapper) {
+        this.solrModelMapper = solrModelMapper;
+    }
+
+    public LiveNodeExistChecker getLiveNodeExistChecker() {
+        return liveNodeExistChecker;
+    }
+
+    public void setLiveNodeExistChecker(LiveNodeExistChecker liveNodeExistChecker) {
+        this.liveNodeExistChecker = liveNodeExistChecker;
     }
 
 }
