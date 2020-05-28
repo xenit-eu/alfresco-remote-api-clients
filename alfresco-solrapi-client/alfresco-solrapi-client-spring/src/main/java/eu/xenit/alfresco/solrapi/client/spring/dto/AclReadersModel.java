@@ -1,16 +1,16 @@
-package eu.xenit.alfresco.client.solrapi.api.model;
+package eu.xenit.alfresco.solrapi.client.spring.dto;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 
-@Value
+@Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@NoArgsConstructor
 @AllArgsConstructor
-public class AclReaders
+public class AclReadersModel
 {
     @EqualsAndHashCode.Include
     private long aclId;
@@ -20,7 +20,11 @@ public class AclReaders
     private long aclChangeSetId;
     private String tenantDomain;
 
-    public AclReaders(long aclId, List<String> readers, List<String> denied, long aclChangeSetId) {
-        this(aclId, readers, denied, aclChangeSetId, "");
+    public AclReadersModel(long aclId, List<String> readers, List<String> denied, long aclChangeSetId) {
+        this.aclId = aclId;
+        this.readers = readers;
+        this.denied = denied;
+        this.aclChangeSetId = aclChangeSetId;
+        tenantDomain = "";
     }
 }

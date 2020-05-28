@@ -7,27 +7,29 @@ import eu.xenit.alfresco.client.api.exception.StatusCode;
 import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
 import eu.xenit.alfresco.client.solrapi.api.model.Acl;
 import eu.xenit.alfresco.client.solrapi.api.model.AclChangeSetList;
-import eu.xenit.alfresco.client.solrapi.api.model.AclList;
 import eu.xenit.alfresco.client.solrapi.api.model.AclReaders;
-import eu.xenit.alfresco.client.solrapi.api.model.AclReadersList;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModel;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModelDiff;
 import eu.xenit.alfresco.client.solrapi.api.model.GetTextContentResponse;
 import eu.xenit.alfresco.client.solrapi.api.model.GetTextContentResponse.SolrApiContentStatus;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeList;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetadataList;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransactions;
 import eu.xenit.alfresco.client.solrapi.api.query.AclReadersQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.AclsQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
-import eu.xenit.alfresco.solrapi.client.spring.http.InsecureSslHttpComponentsClientHttpRequestFactory;
-import eu.xenit.alfresco.solrapi.client.spring.http.SolrRequestFactory;
 import eu.xenit.alfresco.solrapi.client.spring.config.HttpProperties;
 import eu.xenit.alfresco.solrapi.client.spring.config.SolrApiProperties;
 import eu.xenit.alfresco.solrapi.client.spring.config.SolrSslProperties;
+import eu.xenit.alfresco.solrapi.client.spring.dto.AclChangeSetListModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.AclListModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.AclReadersListModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeListModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeMetadataListModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.SolrTransactionsModel;
+import eu.xenit.alfresco.solrapi.client.spring.http.InsecureSslHttpComponentsClientHttpRequestFactory;
+import eu.xenit.alfresco.solrapi.client.spring.http.SolrRequestFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -59,6 +61,8 @@ public class SolrApiSpringClient implements SolrApiClient {
 
     private final RestTemplate restTemplate;
     private final String url;
+
+    private final SpringModelMapper modelMapper = new SpringModelMapper();
 
     public SolrApiSpringClient(SolrApiProperties solrApiProperties, SolrSslProperties solrSslProperties)
             throws GeneralSecurityException, IOException {
@@ -133,9 +137,10 @@ public class SolrApiSpringClient implements SolrApiClient {
         conditionalQueryParam(uriBuilder, "maxResults", maxResults, val ->
                 val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
 
-        ResponseEntity<AclChangeSetList> response =
-                execute(uriBuilder.build().toUri(), HttpMethod.GET, AclChangeSetList.class);
-        return response.getBody();
+        ResponseEntity<AclChangeSetListModel> response =
+                execute(uriBuilder.build().toUri(), HttpMethod.GET, AclChangeSetListModel.class);
+
+        return this.modelMapper.toApiModel(response.getBody());
     }
 
     @Override
@@ -143,13 +148,14 @@ public class SolrApiSpringClient implements SolrApiClient {
         URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/acls").build().toUri();
 
         HttpEntity<AclsQueryParameters> request = new HttpEntity<AclsQueryParameters>(parameters, defaultHttpHeaders());
-        ResponseEntity<AclList> result = execute(uri, HttpMethod.POST, request, AclList.class);
+        ResponseEntity<AclListModel> result = execute(uri, HttpMethod.POST, request, AclListModel.class);
 
         Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
 
-        AclList aclList = result.getBody();
+        AclListModel aclList = result.getBody();
         Assert.notNull(aclList, "Response for getAcls(" + parameters + ") should not be null");
-        return aclList.getAcls();
+
+        return this.modelMapper.toApiModel(aclList);
     }
 
     @Override
@@ -158,13 +164,15 @@ public class SolrApiSpringClient implements SolrApiClient {
 
         HttpEntity<AclReadersQueryParameters> request = new HttpEntity<>(parameters,
                 defaultHttpHeaders());
-        ResponseEntity<AclReadersList> result = execute(uri, HttpMethod.POST, request, AclReadersList.class);
+        ResponseEntity<AclReadersListModel> result = execute(uri, HttpMethod.POST, request, AclReadersListModel.class);
 
         Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
 
-        AclReadersList aclReadersList = result.getBody();
+        AclReadersListModel aclReadersList = result.getBody();
         Assert.notNull(aclReadersList, "Response for getAclsReaders(" + parameters + ") should not be null");
-        return aclReadersList.getAclsReaders();
+
+
+        return this.modelMapper.toApiModel(aclReadersList);
     }
 
     @Override
@@ -179,9 +187,9 @@ public class SolrApiSpringClient implements SolrApiClient {
         conditionalQueryParam(uriBuilder, "maxResults", maxResults, val ->
                 val != Integer.valueOf(0) && val != Integer.valueOf(Integer.MAX_VALUE));
 
-        ResponseEntity<SolrTransactions> response
-                = execute(uriBuilder.build().toUri(), HttpMethod.GET, SolrTransactions.class);
-        return response.getBody();
+        ResponseEntity<SolrTransactionsModel> response
+                = execute(uriBuilder.build().toUri(), HttpMethod.GET, SolrTransactionsModel.class);
+        return this.modelMapper.toApiModel(response.getBody());
     }
 
     @Override
@@ -189,14 +197,15 @@ public class SolrApiSpringClient implements SolrApiClient {
         URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/nodes").build().toUri();
 
         HttpEntity<NodesQueryParameters> request = new HttpEntity<>(parameters, defaultHttpHeaders());
-        ResponseEntity<SolrNodeList> result =
-                execute(uri, HttpMethod.POST, request, SolrNodeList.class);
+        ResponseEntity<SolrNodeListModel> result =
+                execute(uri, HttpMethod.POST, request, SolrNodeListModel.class);
 
         Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
 
-        SolrNodeList solrNodeList = result.getBody();
+        SolrNodeListModel solrNodeList = result.getBody();
         Assert.notNull(solrNodeList, "Response for getNodes(" + parameters + ") should not be null");
-        return solrNodeList.getNodes();
+
+        return this.modelMapper.toApiModel(solrNodeList);
     }
 
     @Override
@@ -204,12 +213,14 @@ public class SolrApiSpringClient implements SolrApiClient {
         URI uri = UriComponentsBuilder.fromHttpUrl(url).path("/metadata").build().toUri();
 
         HttpEntity<NodeMetaDataQueryParameters> request = new HttpEntity<>(params, defaultHttpHeaders());
-        ResponseEntity<SolrNodeMetadataList> result =
-                execute(uri, HttpMethod.POST, request, SolrNodeMetadataList.class);
+        ResponseEntity<SolrNodeMetadataListModel> result =
+                execute(uri, HttpMethod.POST, request, SolrNodeMetadataListModel.class);
 
         Assert.isTrue(result.getStatusCodeValue() == 200, "HTTP " + result.getStatusCodeValue());
         Assert.notNull(result.getBody(), "Response for getNodes(" + params + ") should not be null");
-        return result.getBody().getNodes();
+
+
+        return this.modelMapper.toApiModel(result.getBody());
     }
 
     private final ObjectMapper exceptionResponseObjectMapper = new ObjectMapper();
