@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
+import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
 import eu.xenit.testing.ditto.api.TransactionView;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.data.ContentModel.System;

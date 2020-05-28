@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'eu.xenit.alfresco.client'
-version = '0.0.8-SNAPSHOT'
+version = '0.1.0-SNAPSHOT'
 
 subprojects {
     pluginManager.withPlugin('java-library') {

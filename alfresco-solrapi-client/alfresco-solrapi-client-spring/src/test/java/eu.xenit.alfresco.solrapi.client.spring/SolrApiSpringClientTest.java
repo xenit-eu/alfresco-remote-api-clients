@@ -11,13 +11,13 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNode;
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransaction;
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodesQueryParameters;
-import eu.xenit.alfresco.solrapi.client.spring.model.SolrApiProperties;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrTransaction;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrTransactions;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
+import eu.xenit.alfresco.solrapi.client.spring.config.SolrApiProperties;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;

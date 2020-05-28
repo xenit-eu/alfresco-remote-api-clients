@@ -1,6 +1,6 @@
 package eu.xenit.alfresco.solrapi.client.ditto;
 
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
+import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
 import eu.xenit.alfresco.solrapi.client.tests.GetMetadataNoLiveNodeExistsReproduction;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.DataSetBuilder;

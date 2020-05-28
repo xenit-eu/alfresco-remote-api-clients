@@ -2,8 +2,8 @@ package eu.xenit.alfresco.solrapi.client.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.spi.dto.GetTextContentResponse;
+import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
+import eu.xenit.alfresco.client.solrapi.api.model.GetTextContentResponse;
 import java.util.Scanner;
 import org.junit.jupiter.api.Test;
 

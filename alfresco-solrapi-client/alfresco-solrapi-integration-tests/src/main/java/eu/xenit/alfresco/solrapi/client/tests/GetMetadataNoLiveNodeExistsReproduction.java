@@ -3,11 +3,11 @@ package eu.xenit.alfresco.solrapi.client.tests;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import eu.xenit.alfresco.client.exception.HttpStatusException;
-import eu.xenit.alfresco.client.exception.StatusCode;
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.api.exception.HttpStatusException;
+import eu.xenit.alfresco.client.api.exception.StatusCode;
+import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 

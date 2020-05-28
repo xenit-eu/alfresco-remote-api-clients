@@ -1,9 +1,9 @@
 package eu.xenit.alfresco.solrapi.client.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclReaders;
-import eu.xenit.alfresco.solrapi.client.spi.query.AclReadersQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
+import eu.xenit.alfresco.client.solrapi.api.model.AclReaders;
+import eu.xenit.alfresco.client.solrapi.api.query.AclReadersQueryParameters;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
