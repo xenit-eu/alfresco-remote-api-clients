@@ -32,7 +32,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-    api project(':alfresco-solrapi-client:alfresco-solrapi-client-spi')
+    api project(':alfresco-solrapi-client:alfresco-solrapi-client-api')
     api project(':alfresco-remote-api-exceptions')
     api "eu.xenit.testing.ditto:ditto:${dittoVersion}"
 

@@ -1,6 +1,6 @@
 package eu.xenit.alfresco.solrapi.client.spring.http;
 
-import eu.xenit.alfresco.solrapi.client.spring.model.SolrSslProperties;
+import eu.xenit.alfresco.solrapi.client.spring.config.SolrSslProperties;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;

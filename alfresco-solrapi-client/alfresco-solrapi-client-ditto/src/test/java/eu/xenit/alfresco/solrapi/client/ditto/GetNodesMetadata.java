@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.spi.dto.NodePathInfo;
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrNodeMetaData;
-import eu.xenit.alfresco.solrapi.client.spi.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
+import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;

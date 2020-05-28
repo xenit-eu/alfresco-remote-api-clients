@@ -1,9 +1,9 @@
 package eu.xenit.alfresco.restapi.client.spring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.xenit.alfresco.client.exception.HttpStatusException;
-import eu.xenit.alfresco.client.exception.ResourceNotFoundException;
-import eu.xenit.alfresco.client.exception.StatusCode;
+import eu.xenit.alfresco.client.api.exception.HttpStatusException;
+import eu.xenit.alfresco.client.api.exception.ResourceNotFoundException;
+import eu.xenit.alfresco.client.api.exception.StatusCode;
 import eu.xenit.alfresco.restapi.client.spi.query.QueryParameters;
 import java.net.URI;
 import java.util.Collections;

@@ -2,7 +2,7 @@ package eu.xenit.alfresco.solrapi.client.ditto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import eu.xenit.alfresco.solrapi.client.spi.dto.SolrTransactions;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrTransactions;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import org.junit.jupiter.api.Test;
 

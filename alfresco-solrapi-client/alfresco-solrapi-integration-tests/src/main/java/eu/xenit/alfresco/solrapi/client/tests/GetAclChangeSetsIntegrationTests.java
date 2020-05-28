@@ -2,10 +2,8 @@ package eu.xenit.alfresco.solrapi.client.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import eu.xenit.alfresco.solrapi.client.spi.SolrApiClient;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSet;
-import eu.xenit.alfresco.solrapi.client.spi.dto.AclChangeSetList;
-import java.util.List;
+import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
+import eu.xenit.alfresco.client.solrapi.api.model.AclChangeSetList;
 import org.junit.jupiter.api.Test;
 
 public interface GetAclChangeSetsIntegrationTests {

@@ -3,7 +3,7 @@ package eu.xenit.alfresco.solrapi.client.spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import eu.xenit.alfresco.client.exception.ResourceNotFoundException;
+import eu.xenit.alfresco.client.api.exception.ResourceNotFoundException;
 import eu.xenit.alfresco.restapi.client.spi.Constants;
 import eu.xenit.alfresco.restapi.client.spi.NodesRestApiClient;
 import eu.xenit.alfresco.restapi.client.spi.model.NodeCreateBody;

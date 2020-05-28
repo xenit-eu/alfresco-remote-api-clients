@@ -31,7 +31,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
 
-    api project(':alfresco-solrapi-client:alfresco-solrapi-client-spi')
+    api project(':alfresco-solrapi-client:alfresco-solrapi-client-api')
     api project(':alfresco-remote-api-exceptions')
 
     implementation 'org.springframework.boot:spring-boot'
