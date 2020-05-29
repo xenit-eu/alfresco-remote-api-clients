@@ -89,14 +89,12 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Transaction.Filters.maxTxnIdExclusive(maxTxnId))
                 .limit(maxResults)
 
-                .map(txn -> {
-                    SolrTransaction solrTxn = new SolrTransaction();
-                    solrTxn.setId(txn.getId());
-                    solrTxn.setCommitTimeMs(txn.getCommitTimeMs());
-                    solrTxn.setUpdates(txn.getUpdated().size());
-                    solrTxn.setDeletes(txn.getDeleted().size());
-                    return solrTxn;
-                })
+                .map(txn -> new SolrTransaction(
+                        txn.getId(),
+                        txn.getCommitTimeMs(),
+                        txn.getUpdated().size(),
+                        txn.getDeleted().size()
+                ))
 
                 .collect(Collectors.toList());
 

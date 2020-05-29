@@ -12,11 +12,11 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class SolrNodeMetaDataModel
+    public class SolrNodeMetaDataModel
 {
-    private long id;
-    private long aclId;
-    private long txnId;
+    private long id = -1;
+    private long aclId = -1;
+    private long txnId = -1;
 
     private String nodeRef;
     private String type;
