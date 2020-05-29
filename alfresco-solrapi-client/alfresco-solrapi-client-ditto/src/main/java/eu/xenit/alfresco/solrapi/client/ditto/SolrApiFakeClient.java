@@ -15,7 +15,6 @@ import eu.xenit.alfresco.client.solrapi.api.query.AclReadersQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.AclsQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
-import eu.xenit.alfresco.solrapi.client.ditto.dto.SolrNodeMetaDataModel;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.TransactionView;
@@ -126,181 +125,14 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
                 .peek(node -> getLiveNodeExistChecker().noLiveNodeExistsCheck(node, nodeView))
                 .map(getSolrModelMapper().toSolrModel(params))
-		.map(this::toApiModel)                
+		.map(solrModelMapper::toApiModel)
 		.collect(Collectors.toList());
     }
 
-    // TODO move this to a model-mapper
-    private SolrNodeMetaData toApiModel(SolrNodeMetaDataModel model) {
-        return new SolrNodeMetaData(
-                model.getId(),
-                model.getAclId(),
-                model.getTxnId(),
-                model.getNodeRef(),
-                model.getType(),
-                model.getProperties(),
-                model.getAspects(),
-                model.getPaths(),
-                model.getNamePaths(),
-                model.getAncestors(),
-                model.getParentAssocs(),
-                model.getParentAssocsCrc(),
-                model.getChildAssocs(),
-                model.getChildIds(),
-                model.getOwner(),
-                model.getTenantDomain());
-
-    }
-
-    private void noLiveNodeExistsCheck(Node node) {
-        if (!("version2Store".equals(node.getNodeRef().getStoreIdentifier()))) {
-            return;
-        }
-        final String liveNodeRef = (String) node.getProperties().get(Version2.FROZEN_NODE_REF).orElse(null);
-        if (liveNodeRef == null || liveNodeRef.trim().isEmpty()) {
-            return;
-        }
-        final String deletedNodeRef = liveNodeRef.replace("workspace://SpacesStore/", "archive://SpacesStore/");
-        if (nodeView.getNode(deletedNodeRef).isPresent()) {
-            throw new HttpStatusException(StatusCode.INTERNAL_SERVER_ERROR, "No live node exists");
-        }
-    }
 
     @Override
     public GetTextContentResponse getTextContent(Long nodeId, String propertyQName) {
         return null;
-    }
-
-    private Function<Node, SolrNodeMetaDataModel> toSolrModel(NodeMetaDataQueryParameters params) {
-        return node -> {
-            SolrNodeMetaDataModel ret = new SolrNodeMetaDataModel();
-            ret.setId(node.getNodeId());
-            doIfTrue(params.isIncludeTxnId(), () -> ret.setTxnId(node.getTxnId()));
-            doIfTrue(params.isIncludeType(), () -> ret.setType(node.getType().toPrefixString()));
-            doIfTrue(params.isIncludeNodeRef(), () -> ret.setNodeRef(node.getNodeRef().toString()));
-            doIfTrue(params.isIncludeProperties(), () -> ret.setProperties(node.getProperties().stream()
-                    .collect(HashMap::new,
-                            (map, entry) -> map.put(entry.getKey().toString(), convertPropertyValue(entry.getValue())),
-                            HashMap::putAll))); // Collectors.toMap doesn't support null values (JDK-8148463)
-            doIfTrue(params.isIncludeAspects(), () -> ret.setAspects(node.getAspects().stream()
-                    .map(QName::toPrefixString)
-                    .collect(Collectors.toList())));
-            doIfTrue(params.isIncludeOwner(), () -> {
-                String owner = node.getProperties().get(Content.OWNER).map(Object::toString)
-                        .orElse(node.getProperties().get(Content.CREATOR).map(Object::toString).orElse(null));
-                ret.setOwner(owner);
-            });
-            doIfTrue(params.isIncludePaths(), () -> ret.setPaths(this.getParentPaths(node)
-                    .stream()
-                    .map(lineage -> {
-                        String apath = "/" + lineage.stream()
-                                .map(a -> a.getParent().getNodeRef().getUuid())
-                                .collect(Collectors.joining("/"));
-                        String path = "/" + lineage.stream()
-                                .map(a -> a.getChild().getQName().toString())
-                                .collect(Collectors.joining("/"));
-                        return new NodePathInfo(apath, path, null);
-                    })
-                    .collect(Collectors.toList())));
-            doIfTrue(params.isIncludePaths(), () -> {
-                List<NodeNamePaths> namedPaths = this.getParentPaths(node)
-                        .stream()
-                        .map(lineage -> new NodeNamePaths(lineage.stream().map(assoc -> assoc.getChild().getName())))
-                        .collect(Collectors.toList());
-                ret.setNamePaths(namedPaths);
-            });
-            doIfTrue(params.isIncludePaths(), () -> ret.setAncestors(this.getPrimaryPath(node)
-                    .stream()
-                    .map(assoc -> assoc.getParent().getNodeRef().toString())
-                    .collect(Collectors.toList())));
-            doIfTrue(params.isIncludeChildAssociations() && node.getChildNodeCollection() != null, () ->
-                    ret.setChildAssocs(node.getChildNodeCollection()
-                            .getAssociations()
-                            .map(this::toAssocString)
-                            .collect(Collectors.toList())
-                    ));
-            doIfTrue(params.isIncludeParentAssociations() && node.getParentNodeCollection() != null, () ->
-                    ret.setParentAssocs(node.getParentNodeCollection()
-                            .getAssociations()
-                            .map(this::toAssocString)
-                            .collect(Collectors.toList())
-                    ));
-            return ret;
-        };
-    }
-
-    private List<List<ParentChildAssoc>> getParentPaths(Node node) {
-        // TODO Get every parent-path - not only the primary parent path
-        // for each parent assoc:
-        ParentChildAssoc parentAssoc = node.getPrimaryParentAssoc();
-        if (parentAssoc == null) {
-            return new ArrayList<>(Collections.emptyList());
-        }
-
-        List<List<ParentChildAssoc>> parentPaths = getParentPaths(parentAssoc.getParent());
-        if (parentPaths.isEmpty()) {
-            // the parent is a root
-            return toList(toList(parentAssoc));
-        } else {
-            // for each path of the parent
-            return parentPaths.stream()
-                    .peek(path -> path.add(parentAssoc))
-                    .collect(Collectors.toList());
-        }
-
-        // end foreach
-        // collect/flatmap all partial-paths
-
-//        return parialResult;
-
-    }
-
-    private <T> List<T> toList(T item) {
-        if (item == null) {
-            return null;
-        }
-
-        List<T> list = new ArrayList<>();
-        list.add(item);
-        return list;
-    }
-
-    private List<ParentChildAssoc> getPrimaryPath(Node node) {
-        ParentChildAssoc assoc = node.getPrimaryParentAssoc();
-        if (assoc == null) {
-            return new ArrayList<>();
-        }
-
-        List<ParentChildAssoc> result = this.getPrimaryPath(assoc.getParent());
-        result.add(assoc);
-        return result;
-    }
-
-    private static Serializable convertPropertyValue(Serializable propertyValue) {
-        if (propertyValue instanceof MLText) {
-            return (Serializable) ((MLText) propertyValue).stream()
-                    .map(e -> new HashMap<String, Serializable>() {{
-                        put("locale", e.getKey());
-                        put("value", e.getValue());
-                    }})
-                    .collect(Collectors.toList());
-        }
-        if (propertyValue instanceof ContentData) {
-            Map<String, String> retVal = new HashMap<>();
-            retVal.put("contentId", "-1");
-            retVal.put("encoding", ((ContentData) propertyValue).getEncoding());
-            retVal.put("locale", ((ContentData) propertyValue).getLocale());
-            retVal.put("mimetype", ((ContentData) propertyValue).getMimeType());
-            retVal.put("size", Long.toString(((ContentData) propertyValue).getSize()));
-            return (Serializable) retVal;
-        }
-        return propertyValue;
-    }
-
-    private void doIfTrue(boolean bool, Runnable runnable) {
-        if (bool) {
-            runnable.run();
-        }
     }
 
     @Override

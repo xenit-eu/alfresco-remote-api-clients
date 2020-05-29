@@ -4,6 +4,7 @@ import eu.xenit.alfresco.client.solrapi.api.model.NodeNamePaths;
 import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
 import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.solrapi.client.ditto.dto.SolrNodeMetaDataModel;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.ContentData;
 import eu.xenit.testing.ditto.api.model.MLText;
@@ -22,9 +23,30 @@ import java.util.stream.Collectors;
 
 public class SolrModelMapper {
 
-    public Function<Node, SolrNodeMetaData> toSolrModel(NodeMetaDataQueryParameters params) {
+    SolrNodeMetaData toApiModel(SolrNodeMetaDataModel model) {
+        return new SolrNodeMetaData(
+                model.getId(),
+                model.getAclId(),
+                model.getTxnId(),
+                model.getNodeRef(),
+                model.getType(),
+                model.getProperties(),
+                model.getAspects(),
+                model.getPaths(),
+                model.getNamePaths(),
+                model.getAncestors(),
+                model.getParentAssocs(),
+                model.getParentAssocsCrc(),
+                model.getChildAssocs(),
+                model.getChildIds(),
+                model.getOwner(),
+                model.getTenantDomain());
+
+    }
+
+    Function<Node, SolrNodeMetaDataModel> toSolrModel(NodeMetaDataQueryParameters params) {
         return node -> {
-            SolrNodeMetaData ret = new SolrNodeMetaData();
+            SolrNodeMetaDataModel ret = new SolrNodeMetaDataModel();
             ret.setId(node.getNodeId());
             doIfTrue(params.isIncludeTxnId(), () -> ret.setTxnId(node.getTxnId()));
             doIfTrue(params.isIncludeType(), () -> ret.setType(node.getType().toPrefixString()));
@@ -41,7 +63,7 @@ public class SolrModelMapper {
                         .orElse(node.getProperties().get(Content.CREATOR).map(Object::toString).orElse(null));
                 ret.setOwner(owner);
             });
-            doIfTrue(params.isIncludePaths(), () -> ret.setPaths(getParentPaths(node)
+            doIfTrue(params.isIncludePaths(), () -> ret.setPaths(this.getParentPaths(node)
                     .stream()
                     .map(lineage -> {
                         String apath = "/" + lineage.stream()
@@ -54,13 +76,13 @@ public class SolrModelMapper {
                     })
                     .collect(Collectors.toList())));
             doIfTrue(params.isIncludePaths(), () -> {
-                List<NodeNamePaths> namedPaths = getParentPaths(node)
+                List<NodeNamePaths> namedPaths = this.getParentPaths(node)
                         .stream()
                         .map(lineage -> new NodeNamePaths(lineage.stream().map(assoc -> assoc.getChild().getName())))
                         .collect(Collectors.toList());
                 ret.setNamePaths(namedPaths);
             });
-            doIfTrue(params.isIncludePaths(), () -> ret.setAncestors(getPrimaryPath(node)
+            doIfTrue(params.isIncludePaths(), () -> ret.setAncestors(this.getPrimaryPath(node)
                     .stream()
                     .map(assoc -> assoc.getParent().getNodeRef().toString())
                     .collect(Collectors.toList())));
