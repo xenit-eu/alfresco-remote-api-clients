@@ -85,7 +85,7 @@ public class GetNodesMetadata {
         assertThat(nodesMetaData)
                 .hasOnlyOneElementSatisfying(node -> {
                     assertThat(node.getId()).isEqualTo(13L);
-                    assertThat(node.getTxnId()).isEqualTo(-1L);
+                    assertThat(node.getTxnId()).isEqualTo(0L);
                     assertThat(node.getType()).isNull();
                     assertThat(node.getNodeRef()).isNull();
                     assertThat(node.getProperties()).isEmpty();
