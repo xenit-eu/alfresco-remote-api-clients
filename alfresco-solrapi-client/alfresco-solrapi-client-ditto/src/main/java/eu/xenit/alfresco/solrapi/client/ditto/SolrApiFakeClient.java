@@ -123,12 +123,15 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.containedIn(params.getNodeIds()))
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
-                .peek(node -> getLiveNodeExistChecker().noLiveNodeExistsCheck(node, nodeView))
+                .peek(this::noLiveNodeExistsCheck)
                 .map(getSolrModelMapper().toSolrModel(params))
-		.map(solrModelMapper::toApiModel)
+		        .map(getSolrModelMapper()::toApiModel)
 		.collect(Collectors.toList());
     }
 
+    protected void noLiveNodeExistsCheck(Node node) {
+        liveNodeExistChecker.noLiveNodeExistsCheck(node, nodeView);
+    }
 
     @Override
     public GetTextContentResponse getTextContent(Long nodeId, String propertyQName) {
@@ -167,20 +170,28 @@ public class SolrApiFakeClient implements SolrApiClient {
         }
     }
 
-    public SolrModelMapper getSolrModelMapper() {
+    protected SolrModelMapper getSolrModelMapper() {
         return solrModelMapper;
     }
 
-    public void setSolrModelMapper(SolrModelMapper solrModelMapper) {
+    protected void setSolrModelMapper(SolrModelMapper solrModelMapper) {
         this.solrModelMapper = solrModelMapper;
     }
 
-    public LiveNodeExistChecker getLiveNodeExistChecker() {
+    protected LiveNodeExistChecker getLiveNodeExistChecker() {
         return liveNodeExistChecker;
     }
 
-    public void setLiveNodeExistChecker(LiveNodeExistChecker liveNodeExistChecker) {
+    protected void setLiveNodeExistChecker(LiveNodeExistChecker liveNodeExistChecker) {
         this.liveNodeExistChecker = liveNodeExistChecker;
+    }
+
+    protected TransactionView getTxnView() {
+        return txnView;
+    }
+
+    protected NodeView getNodeView() {
+        return nodeView;
     }
 
 }
