@@ -2,10 +2,13 @@ package eu.xenit.alfresco.client.solrapi.api.model;
 
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
-@Value
+@Data
+@AllArgsConstructor
 @Accessors(chain = true)
 public class SolrNodeMetaData
 {

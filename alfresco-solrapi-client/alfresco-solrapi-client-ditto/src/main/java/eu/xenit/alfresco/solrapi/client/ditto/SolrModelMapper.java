@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class SolrModelMapper {
 
-    SolrNodeMetaData toApiModel(SolrNodeMetaDataModel model) {
+    public SolrNodeMetaData toApiModel(SolrNodeMetaDataModel model) {
         return new SolrNodeMetaData(
                 model.getId(),
                 model.getAclId(),
@@ -44,7 +44,7 @@ public class SolrModelMapper {
 
     }
 
-    Function<Node, SolrNodeMetaDataModel> toSolrModel(NodeMetaDataQueryParameters params) {
+    public Function<Node, SolrNodeMetaDataModel> toSolrModel(NodeMetaDataQueryParameters params) {
         return node -> {
             SolrNodeMetaDataModel ret = new SolrNodeMetaDataModel();
             ret.setId(node.getNodeId());
