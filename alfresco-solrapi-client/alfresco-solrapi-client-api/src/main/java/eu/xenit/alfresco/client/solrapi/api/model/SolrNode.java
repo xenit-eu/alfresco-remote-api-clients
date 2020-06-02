@@ -27,7 +27,7 @@ public class SolrNode
 
         // default value for tenant is NOT null, but an empty String
         this.tenant = "";
-        this.shardPropertyValue = "";
+        this.shardPropertyValue = null;
     }
     
     private long id;

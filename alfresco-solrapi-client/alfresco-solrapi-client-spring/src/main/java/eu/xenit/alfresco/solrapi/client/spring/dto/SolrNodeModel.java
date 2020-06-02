@@ -9,28 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SolrNodeModel
 {
-
-    public enum SolrApiNodeStatus
-    {
-        UPDATED,
-        DELETED,
-        UNKNOWN,
-        NON_SHARD_DELETED,
-        NON_SHARD_UPDATED
-    }
-
-    public SolrNodeModel(long nodeId, String nodeRef, long txnId, String status, long aclId)
-    {
-        this.id = nodeId;
-        this.nodeRef = nodeRef;
-        this.txnId = txnId;
-        this.status = status;
-        this.aclId = aclId;
-
-        // default value for tenant is NOT null, but an empty String
-        this.tenant = "";
-    }
-    
     private long id;
     private String nodeRef;
     private long txnId;
