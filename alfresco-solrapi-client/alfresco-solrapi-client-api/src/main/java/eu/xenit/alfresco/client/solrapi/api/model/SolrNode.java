@@ -1,11 +1,9 @@
 package eu.xenit.alfresco.client.solrapi.api.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
-@Data
-@NoArgsConstructor
+@Value
 @AllArgsConstructor
 public class SolrNode
 {
@@ -29,6 +27,7 @@ public class SolrNode
 
         // default value for tenant is NOT null, but an empty String
         this.tenant = "";
+        this.shardPropertyValue = null;
     }
     
     private long id;

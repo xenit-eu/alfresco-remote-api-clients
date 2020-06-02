@@ -1,15 +1,16 @@
-package eu.xenit.alfresco.client.solrapi.api.model;
+package eu.xenit.alfresco.solrapi.client.spring.dto;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 
-@Value
-public class AclChangeSetList
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AclChangeSetListModel
 {
-    private List<AclChangeSet> aclChangeSets;
+    private List<AclChangeSetModel> aclChangeSets;
     private Long maxChangeSetCommitTime;
     private Long maxChangeSetId;
 }

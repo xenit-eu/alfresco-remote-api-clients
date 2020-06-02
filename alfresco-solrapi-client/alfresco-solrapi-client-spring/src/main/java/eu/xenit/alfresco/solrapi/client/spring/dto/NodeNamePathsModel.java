@@ -1,4 +1,4 @@
-package eu.xenit.alfresco.client.solrapi.api.model;
+package eu.xenit.alfresco.solrapi.client.spring.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,15 +6,15 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 
-@Value
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class NodeNamePaths {
+public class NodeNamePathsModel {
 
     List<String> namePath;
 
-    public NodeNamePaths(Stream<String> namePaths) {
+    public NodeNamePathsModel(Stream<String> namePaths) {
         this(namePaths.collect(Collectors.toList()));
     }
 
