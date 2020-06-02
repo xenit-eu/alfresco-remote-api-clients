@@ -10,7 +10,7 @@ Export the certificate from the Java keystore and import it to a new _PKCS#12 ke
 
 ```
 keytool -importkeystore \
-    -srckeystore ./alfresco-solrapi-client-spring/src/integration-test/resources/ssl.repo.client.keystore \
+    -srckeystore ./alfresco-solrapi-client-spring/src/main/resources/ssl.repo.client.keystore \
     -srcstorepass kT9X6oe68t -srcstoretype JCEKS -srcalias ssl.repo \
     -destkeystore alfresco-client.p12 -deststoretype pkcs12 \
     -destalias ssl.repo -destkeypass alfresco -deststorepass alfresco
