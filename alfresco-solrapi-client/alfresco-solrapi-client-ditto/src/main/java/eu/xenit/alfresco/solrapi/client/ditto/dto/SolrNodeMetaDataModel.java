@@ -2,6 +2,7 @@ package eu.xenit.alfresco.solrapi.client.ditto.dto;
 
 import eu.xenit.alfresco.client.solrapi.api.model.NodeNamePaths;
 import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
+import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +28,10 @@ import lombok.experimental.Accessors;
     private List<NodePathInfo> paths = new ArrayList<>();
     private List<NodeNamePaths> namePaths = new ArrayList<>();
     private List<String> ancestors = new ArrayList<>();
-    private List<String> parentAssocs = new ArrayList<>();
+    private List<ParentChildAssoc> parentAssocs = new ArrayList<>();
     private long parentAssocsCrc;
 
-    private List<String> childAssocs = new ArrayList<>();
+    private List<ParentChildAssoc> childAssocs = new ArrayList<>();
     private List<Long> childIds = new ArrayList<>();
 
     private String owner;

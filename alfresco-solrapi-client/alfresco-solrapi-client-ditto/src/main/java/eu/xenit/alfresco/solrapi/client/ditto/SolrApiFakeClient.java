@@ -9,6 +9,7 @@ import eu.xenit.alfresco.client.solrapi.api.model.AclChangeSetList;
 import eu.xenit.alfresco.client.solrapi.api.model.AclReaders;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModel;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModelDiff;
+import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
 import eu.xenit.alfresco.client.solrapi.api.model.GetTextContentResponse;
 import eu.xenit.alfresco.client.solrapi.api.model.NodeNamePaths;
 import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
@@ -158,13 +159,23 @@ public class SolrApiFakeClient implements SolrApiClient {
                 model.getPaths(),
                 model.getNamePaths(),
                 model.getAncestors(),
-                model.getParentAssocs(),
+                model.getParentAssocs().stream().map(this::toApiModel).collect(Collectors.toList()),
                 model.getParentAssocsCrc(),
-                model.getChildAssocs(),
+                model.getChildAssocs().stream().map(this::toApiModel).collect(Collectors.toList()),
                 model.getChildIds(),
                 model.getOwner(),
                 model.getTenantDomain());
 
+    }
+
+    private ChildAssociation toApiModel(ParentChildAssoc assoc) {
+        return new ChildAssociation(
+                assoc.getParent().getNodeRef().toString(),
+                assoc.getChild().getNodeRef().toString(),
+                assoc.getAssocTypeQName().toString(),
+                assoc.getChild().getQName().toString(),
+                assoc.isPrimary(),
+                assoc.getNthSibling());
     }
 
     private void noLiveNodeExistsCheck(Node node) {
@@ -231,13 +242,11 @@ public class SolrApiFakeClient implements SolrApiClient {
             doIfTrue(params.isIncludeChildAssociations() && node.getChildNodeCollection() != null, () ->
                     ret.setChildAssocs(node.getChildNodeCollection()
                             .getAssociations()
-                            .map(this::toAssocString)
                             .collect(Collectors.toList())
                     ));
             doIfTrue(params.isIncludeParentAssociations() && node.getParentNodeCollection() != null, () ->
                     ret.setParentAssocs(node.getParentNodeCollection()
                             .getAssociations()
-                            .map(this::toAssocString)
                             .collect(Collectors.toList())
                     ));
             return ret;
@@ -353,18 +362,6 @@ public class SolrApiFakeClient implements SolrApiClient {
             this.data = dataSet;
             return this;
         }
-
     }
 
-    private String toAssocString(ParentChildAssoc assoc) {
-        List<String> objects = Arrays.asList(
-                assoc.getParent().getNodeRef().toString(),
-                assoc.getChild().getNodeRef().toString(),
-                assoc.getAssocTypeQName().toString(),
-                assoc.getChild().getQName().toString(),
-                String.valueOf(assoc.isPrimary()),
-                "-1" // TODO association index, currently no way of getting it, usually -1 anyway
-        );
-        return String.join("|", objects);
-    }
 }
