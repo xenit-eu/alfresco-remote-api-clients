@@ -10,7 +10,6 @@ import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
 import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
-import eu.xenit.testing.ditto.api.data.ContentModel;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.data.ContentModel.System;
 import eu.xenit.testing.ditto.api.model.Node;
@@ -88,12 +87,13 @@ public class GetNodesMetadata {
                     assertThat(node.getTxnId()).isEqualTo(-1L);
                     assertThat(node.getType()).isNull();
                     assertThat(node.getNodeRef()).isNull();
-                    assertThat(node.getProperties()).isEmpty();
-                    assertThat(node.getAspects()).isEmpty();
+                    assertThat(node.getProperties()).isNull();
+                    assertThat(node.getAspects()).isNull();
                     assertThat(node.getOwner()).isNull();
-                    assertThat(node.getChildIds()).isEmpty();
+                    assertThat(node.getChildIds()).isNull();
+                    assertThat(node.getChildAssocs()).isEmpty();
                     assertThat(node.getParentAssocs()).isEmpty();
-                    assertThat(node.getPaths()).isEmpty();
+                    assertThat(node.getPaths()).isNull();
                     // Alfresco doesn't actually use these filters:
 //                    assertThat(node.getAclId()).isEqualTo(-1L);
 //                    assertThat(node.getChildAssocs()).isEmpty();

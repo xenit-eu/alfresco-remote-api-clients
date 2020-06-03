@@ -2,39 +2,37 @@ package eu.xenit.alfresco.client.solrapi.api.model;
 
 import java.util.List;
 import java.util.Map;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Setter;
-import lombok.Value;
-import lombok.experimental.Accessors;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
-@Data
-@AllArgsConstructor
-@Accessors(chain = true)
-@Setter(AccessLevel.NONE)
-public class SolrNodeMetaData
-{
-    private long id;
-    private long aclId;
-    private long txnId;
+@Getter
+@ToString
+@RequiredArgsConstructor
+@EqualsAndHashCode
+public class SolrNodeMetaData {
 
-    private String nodeRef;
-    private String type;
+    private final long id;
+    private final long aclId;
+    private final long txnId;
 
-    private Map<String, Object> properties;
-    private List<String> aspects;
+    private final String nodeRef;
+    private final String type;
 
-    private List<NodePathInfo> paths;
-    private List<NodeNamePaths> namePaths;
-    private List<String> ancestors;
-    private List<ChildAssociation> parentAssocs;
-    private long parentAssocsCrc;
+    private final Map<String, Object> properties;
+    private final List<String> aspects;
 
-    private List<ChildAssociation> childAssocs;
-    private List<Long> childIds;
+    private final List<NodePathInfo> paths;
+    private final List<NodeNamePaths> namePaths;
+    private final List<String> ancestors;
+    private final List<ChildAssociation> parentAssocs;
+    private final long parentAssocsCrc;
 
-    private String owner;
+    private final List<ChildAssociation> childAssocs;
+    private final List<Long> childIds;
 
-    private String tenantDomain;
+    private final String owner;
+
+    private final String tenantDomain;
 }

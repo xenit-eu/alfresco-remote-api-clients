@@ -1,10 +1,10 @@
 package eu.xenit.alfresco.solrapi.client.ditto;
 
+import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
 import eu.xenit.alfresco.client.solrapi.api.model.NodeNamePaths;
 import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
 import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
-import eu.xenit.alfresco.solrapi.client.ditto.dto.SolrNodeMetaDataModel;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.ContentData;
 import eu.xenit.testing.ditto.api.model.MLText;
@@ -13,111 +13,162 @@ import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
 import eu.xenit.testing.ditto.api.model.QName;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SolrModelMapper {
 
-    public SolrNodeMetaData toApiModel(SolrNodeMetaDataModel model) {
+    public SolrNodeMetaData toSolrModel(Node node, NodeMetaDataQueryParameters params) {
         return new SolrNodeMetaData(
-                model.getId(),
-                model.getAclId(),
-                model.getTxnId(),
-                model.getNodeRef(),
-                model.getType(),
-                model.getProperties(),
-                model.getAspects(),
-                model.getPaths(),
-                model.getNamePaths(),
-                model.getAncestors(),
-                model.getParentAssocs(),
-                model.getParentAssocsCrc(),
-                model.getChildAssocs(),
-                model.getChildIds(),
-                model.getOwner(),
-                model.getTenantDomain());
-
+                node.getNodeId(),
+                -1L,
+                getTxnId(node, params),
+                getNodeRef(node, params),
+                getType(node, params),
+                getProperties(node, params),
+                getAspects(node, params),
+                getPaths(node, params),
+                getNamePaths(node, params),
+                getAncestors(node, params),
+                getParentAssocs(node, params),
+                -1L,
+                getChildAssocs(node, params),
+                getChildIds(node, params),
+                getOwner(node, params),
+                null);
     }
 
-    public Function<Node, SolrNodeMetaDataModel> toSolrModel(NodeMetaDataQueryParameters params) {
-        return node -> {
-            SolrNodeMetaDataModel ret = new SolrNodeMetaDataModel();
-            ret.setId(node.getNodeId());
-            doIfTrue(params.isIncludeTxnId(), () -> ret.setTxnId(node.getTxnId()));
-            doIfTrue(params.isIncludeType(), () -> ret.setType(node.getType().toPrefixString()));
-            doIfTrue(params.isIncludeNodeRef(), () -> ret.setNodeRef(node.getNodeRef().toString()));
-            doIfTrue(params.isIncludeProperties(), () -> ret.setProperties(node.getProperties().stream()
-                    .collect(HashMap::new,
-                            (map, entry) -> map.put(entry.getKey().toString(), convertPropertyValue(entry.getValue())),
-                            HashMap::putAll))); // Collectors.toMap doesn't support null values (JDK-8148463)
-            doIfTrue(params.isIncludeAspects(), () -> ret.setAspects(node.getAspects().stream()
-                    .map(QName::toPrefixString)
-                    .collect(Collectors.toList())));
-            doIfTrue(params.isIncludeOwner(), () -> {
-                String owner = node.getProperties().get(Content.OWNER).map(Object::toString)
-                        .orElse(node.getProperties().get(Content.CREATOR).map(Object::toString).orElse(null));
-                ret.setOwner(owner);
-            });
-            doIfTrue(params.isIncludePaths(), () -> ret.setPaths(this.getParentPaths(node)
-                    .stream()
-                    .map(lineage -> {
-                        String apath = "/" + lineage.stream()
-                                .map(a -> a.getParent().getNodeRef().getUuid())
-                                .collect(Collectors.joining("/"));
-                        String path = "/" + lineage.stream()
-                                .map(a -> a.getChild().getQName().toString())
-                                .collect(Collectors.joining("/"));
-                        return new NodePathInfo(apath, path, null);
-                    })
-                    .collect(Collectors.toList())));
-            doIfTrue(params.isIncludePaths(), () -> {
-                List<NodeNamePaths> namedPaths = this.getParentPaths(node)
-                        .stream()
-                        .map(lineage -> new NodeNamePaths(lineage.stream().map(assoc -> assoc.getChild().getName())))
-                        .collect(Collectors.toList());
-                ret.setNamePaths(namedPaths);
-            });
-            doIfTrue(params.isIncludePaths(), () -> ret.setAncestors(this.getPrimaryPath(node)
-                    .stream()
-                    .map(assoc -> assoc.getParent().getNodeRef().toString())
-                    .collect(Collectors.toList())));
-            doIfTrue(params.isIncludeChildAssociations() && node.getChildNodeCollection() != null, () ->
-                    ret.setChildAssocs(node.getChildNodeCollection()
-                            .getAssociations()
-                            .map(this::toAssocString)
-                            .collect(Collectors.toList())
-                    ));
-            doIfTrue(params.isIncludeParentAssociations() && node.getParentNodeCollection() != null, () ->
-                    ret.setParentAssocs(node.getParentNodeCollection()
-                            .getAssociations()
-                            .map(this::toAssocString)
-                            .collect(Collectors.toList())
-                    ));
-            return ret;
-        };
-    }
-
-    private void doIfTrue(boolean bool, Runnable runnable) {
-        if (bool) {
-            runnable.run();
+    protected long getTxnId(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludeTxnId()) {
+            return -1L;
         }
+        return node.getTxnId();
     }
 
-    private String toAssocString(ParentChildAssoc assoc) {
-        List<String> objects = Arrays.asList(
+    protected String getNodeRef(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludeNodeRef()) {
+            return null;
+        }
+        return node.getNodeRef().toString();
+    }
+
+    protected String getType(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludeType()) {
+            return null;
+        }
+        return node.getType().toPrefixString();
+    }
+
+    protected Map<String, Object> getProperties(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludeProperties()) {
+            return null;
+        }
+
+        return node.getProperties().stream().collect(HashMap::new,
+                (map, entry) -> map.put(entry.getKey().toString(), convertPropertyValue(entry.getValue())),
+                HashMap::putAll); // Collectors.toMap doesn't support null values (JDK-8148463)
+    }
+
+    protected List<String> getAspects(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludeAspects() || node.getAspects() == null) {
+            return null;
+        }
+        return node.getAspects().stream()
+                .map(QName::toPrefixString)
+                .collect(Collectors.toList());
+    }
+
+    protected List<NodePathInfo> getPaths(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludePaths()) {
+            return null;
+        }
+        return this.getParentPaths(node)
+                .stream()
+                .map(lineage -> {
+                    String apath = "/" + lineage.stream()
+                            .map(a -> a.getParent().getNodeRef().getUuid())
+                            .collect(Collectors.joining("/"));
+                    String path = "/" + lineage.stream()
+                            .map(a -> a.getChild().getQName().toString())
+                            .collect(Collectors.joining("/"));
+                    return new NodePathInfo(apath, path, null);
+                })
+                .collect(Collectors.toList());
+    }
+
+    protected List<NodeNamePaths> getNamePaths(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludePaths()) {
+            return null;
+        }
+        return this.getParentPaths(node)
+                .stream()
+                .map(lineage -> new NodeNamePaths(lineage.stream().map(assoc -> assoc.getChild().getName())))
+                .collect(Collectors.toList());
+    }
+
+    protected List<String> getAncestors(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludePaths()) {
+            return null;
+        }
+        return this.getPrimaryPath(node)
+                .stream()
+                .map(assoc -> assoc.getParent().getNodeRef().toString())
+                .collect(Collectors.toList());
+    }
+
+    protected List<ChildAssociation> getParentAssocs(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludeParentAssociations() || node.getParentNodeCollection() == null) {
+            return Collections.emptyList();
+        }
+
+        return node.getParentNodeCollection()
+                .getAssociations()
+                .map(this::toApiModel)
+                .collect(Collectors.toList());
+    }
+
+    protected List<ChildAssociation> getChildAssocs(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludeChildAssociations() || node.getChildNodeCollection() == null) {
+            return Collections.emptyList();
+        }
+
+        return node.getChildNodeCollection()
+                .getAssociations()
+                .map(this::toApiModel)
+                .collect(Collectors.toList());
+    }
+
+    protected ChildAssociation toApiModel(ParentChildAssoc assoc) {
+        return new ChildAssociation(
                 assoc.getParent().getNodeRef().toString(),
                 assoc.getChild().getNodeRef().toString(),
                 assoc.getAssocTypeQName().toString(),
                 assoc.getChild().getQName().toString(),
-                String.valueOf(assoc.isPrimary()),
-                "-1" // TODO association index, currently no way of getting it, usually -1 anyway
-        );
-        return String.join("|", objects);
+                assoc.isPrimary(),
+                assoc.getNthSibling());
+    }
+
+    protected List<Long> getChildIds(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludeChildIds() || node.getChildNodeCollection() == null) {
+            return null;
+        }
+
+        return node.getChildNodeCollection()
+                .getAssociations()
+                .map(ParentChildAssoc::getChild)
+                .map(Node::getNodeId)
+                .collect(Collectors.toList());
+    }
+
+    protected String getOwner(Node node, NodeMetaDataQueryParameters params) {
+        if (!params.isIncludeOwner()) {
+            return null;
+        }
+        return node.getProperties().get(Content.OWNER).map(Object::toString)
+                .orElse(node.getProperties().get(Content.CREATOR).map(Object::toString).orElse(null));
     }
 
     private Serializable convertPropertyValue(Serializable propertyValue) {

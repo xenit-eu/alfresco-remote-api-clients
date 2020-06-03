@@ -6,7 +6,6 @@ import eu.xenit.alfresco.client.solrapi.api.model.AclChangeSetList;
 import eu.xenit.alfresco.client.solrapi.api.model.AclReaders;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModel;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModelDiff;
-import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
 import eu.xenit.alfresco.client.solrapi.api.model.GetTextContentResponse;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
@@ -32,8 +31,8 @@ public class SolrApiFakeClient implements SolrApiClient {
     private final TransactionView txnView;
     private final NodeView nodeView;
 
-    private SolrModelMapper solrModelMapper = new SolrModelMapper();
-    private LiveNodeExistChecker liveNodeExistChecker = new LiveNodeExistChecker();
+    private final SolrModelMapper solrModelMapper = new SolrModelMapper();
+    private final LiveNodeExistChecker liveNodeExistChecker = new LiveNodeExistChecker();
 
     protected SolrApiFakeClient(Builder builder) {
         this(builder.data);
@@ -125,8 +124,7 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
                 .peek(this::noLiveNodeExistsCheck)
-                .map(getSolrModelMapper().toSolrModel(params))
-                .map(getSolrModelMapper()::toApiModel)
+                .map(node -> getSolrModelMapper().toSolrModel(node, params))
                 .collect(Collectors.toList());
     }
 
