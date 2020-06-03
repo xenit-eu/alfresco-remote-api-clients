@@ -22,10 +22,10 @@ public class SolrNodeMetaData
     private List<NodePathInfo> paths;
     private List<NodeNamePaths> namePaths;
     private List<String> ancestors;
-    private List<String> parentAssocs;
+    private List<ChildAssociation> parentAssocs;
     private long parentAssocsCrc;
 
-    private List<String> childAssocs;
+    private List<ChildAssociation> childAssocs;
     private List<Long> childIds;
 
     private String owner;

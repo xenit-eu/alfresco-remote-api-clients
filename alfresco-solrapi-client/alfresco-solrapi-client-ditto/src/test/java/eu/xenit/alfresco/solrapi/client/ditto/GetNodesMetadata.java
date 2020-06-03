@@ -10,6 +10,7 @@ import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
 import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
+import eu.xenit.testing.ditto.api.data.ContentModel;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.data.ContentModel.System;
 import eu.xenit.testing.ditto.api.model.Node;
@@ -143,13 +144,15 @@ public class GetNodesMetadata {
                                             "/{http://www.alfresco.org/model/content/1.0}Sub Folder" +
                                             "/{http://www.alfresco.org/model/content/1.0}document.txt");
                     assertThat(node.getParentAssocs()).isNotEmpty();
-                    assertThat(node.getParentAssocs().get(0)).contains(
-                            node.getNodeRef(),
-                            "contains",
-                            (String) node.getProperties().get(Content.NAME.toString()),
-                            "|true|",
-                            "-1"
-                    );
+                    assertThat(node.getParentAssocs().get(0)).satisfies(assoc -> {
+                        assertThat(assoc.getChildRef()).isEqualTo(node.getNodeRef());
+                        assertThat(assoc.getAssocTypeQName()).isEqualTo(Content.CONTAINS.toString());
+                        assertThat(assoc.getChildQName())
+                                .isEqualTo("{http://www.alfresco.org/model/content/1.0}document.txt");
+                        assertThat(assoc.isPrimary()).isTrue();
+                        assertThat(assoc.getIndex()).isEqualTo(-1);
+                    });
+
                 });
     }
 }

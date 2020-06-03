@@ -4,6 +4,7 @@ import eu.xenit.alfresco.client.solrapi.api.model.Acl;
 import eu.xenit.alfresco.client.solrapi.api.model.AclChangeSet;
 import eu.xenit.alfresco.client.solrapi.api.model.AclChangeSetList;
 import eu.xenit.alfresco.client.solrapi.api.model.AclReaders;
+import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
 import eu.xenit.alfresco.client.solrapi.api.model.NodeNamePaths;
 import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
@@ -101,12 +102,26 @@ public class SpringModelMapper {
                 model.getPaths().stream().map(this::toApiModel).collect(Collectors.toList()),
                 model.getNamePaths().stream().map(this::toApiModel).collect(Collectors.toList()),
                 model.getAncestors(),
-                model.getParentAssocs(),
+                model.getParentAssocs().stream().map(this::createChildAssociation).collect(Collectors.toList()),
                 model.getParentAssocsCrc(),
-                model.getChildAssocs(),
+                model.getChildAssocs().stream().map(this::createChildAssociation).collect(Collectors.toList()),
                 model.getChildIds(),
                 model.getOwner(),
                 model.getTenantDomain());
+    }
+
+    public ChildAssociation createChildAssociation(String model) {
+        String[] split = model.split("\\|");
+
+        String parentRef = split[0];
+        String sourceRef = split[1];
+        String assocType = split[2];
+        String childName = split[3];
+        boolean primary = Boolean.parseBoolean(split[4]);
+        int index = Integer.parseInt(split[5]);
+
+        return new ChildAssociation(parentRef, sourceRef, assocType, childName, primary, index);
+
     }
 
     private NodePathInfo toApiModel(NodePathInfoModel model) {
