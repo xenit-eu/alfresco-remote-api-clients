@@ -1,18 +1,12 @@
-
 package eu.xenit.alfresco.solrapi.client.ditto;
 
-import eu.xenit.alfresco.client.api.exception.HttpStatusException;
-import eu.xenit.alfresco.client.api.exception.StatusCode;
 import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
 import eu.xenit.alfresco.client.solrapi.api.model.Acl;
 import eu.xenit.alfresco.client.solrapi.api.model.AclChangeSetList;
 import eu.xenit.alfresco.client.solrapi.api.model.AclReaders;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModel;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModelDiff;
-import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
 import eu.xenit.alfresco.client.solrapi.api.model.GetTextContentResponse;
-import eu.xenit.alfresco.client.solrapi.api.model.NodeNamePaths;
-import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransaction;
@@ -21,27 +15,13 @@ import eu.xenit.alfresco.client.solrapi.api.query.AclReadersQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.AclsQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
-import eu.xenit.alfresco.solrapi.client.ditto.dto.SolrNodeMetaDataModel;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.TransactionView;
-import eu.xenit.testing.ditto.api.data.ContentModel.Content;
-import eu.xenit.testing.ditto.api.data.ContentModel.Version2;
-import eu.xenit.testing.ditto.api.model.ContentData;
-import eu.xenit.testing.ditto.api.model.MLText;
 import eu.xenit.testing.ditto.api.model.Node;
-import eu.xenit.testing.ditto.api.model.ParentChildAssoc;
-import eu.xenit.testing.ditto.api.model.QName;
 import eu.xenit.testing.ditto.api.model.Transaction;
 import eu.xenit.testing.ditto.api.model.Transaction.Filters;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Data;
@@ -51,7 +31,10 @@ public class SolrApiFakeClient implements SolrApiClient {
     private final TransactionView txnView;
     private final NodeView nodeView;
 
-    private SolrApiFakeClient(Builder builder) {
+    private final SolrModelMapper solrModelMapper = new SolrModelMapper();
+    private final LiveNodeExistChecker liveNodeExistChecker = new LiveNodeExistChecker();
+
+    protected SolrApiFakeClient(Builder builder) {
         this(builder.data);
     }
 
@@ -141,190 +124,17 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
                 .peek(this::noLiveNodeExistsCheck)
-                .map(toSolrModel(params))
-                .map(this::toApiModel)
+                .map(node -> getSolrModelMapper().toSolrModel(node, params))
                 .collect(Collectors.toList());
     }
 
-    // TODO move this to a model-mapper
-    private SolrNodeMetaData toApiModel(SolrNodeMetaDataModel model) {
-        return new SolrNodeMetaData(
-                model.getId(),
-                model.getAclId(),
-                model.getTxnId(),
-                model.getNodeRef(),
-                model.getType(),
-                model.getProperties(),
-                model.getAspects(),
-                model.getPaths(),
-                model.getNamePaths(),
-                model.getAncestors(),
-                model.getParentAssocs().stream().map(this::toApiModel).collect(Collectors.toList()),
-                model.getParentAssocsCrc(),
-                model.getChildAssocs().stream().map(this::toApiModel).collect(Collectors.toList()),
-                model.getChildIds(),
-                model.getOwner(),
-                model.getTenantDomain());
-
-    }
-
-    private ChildAssociation toApiModel(ParentChildAssoc assoc) {
-        return new ChildAssociation(
-                assoc.getParent().getNodeRef().toString(),
-                assoc.getChild().getNodeRef().toString(),
-                assoc.getAssocTypeQName().toString(),
-                assoc.getChild().getQName().toString(),
-                assoc.isPrimary(),
-                assoc.getNthSibling());
-    }
-
-    private void noLiveNodeExistsCheck(Node node) {
-        if (!("version2Store".equals(node.getNodeRef().getStoreIdentifier()))) {
-            return;
-        }
-        final String liveNodeRef = (String) node.getProperties().get(Version2.FROZEN_NODE_REF).orElse(null);
-        if (liveNodeRef == null || liveNodeRef.trim().isEmpty()) {
-            return;
-        }
-        final String deletedNodeRef = liveNodeRef.replace("workspace://SpacesStore/", "archive://SpacesStore/");
-        if (nodeView.getNode(deletedNodeRef).isPresent()) {
-            throw new HttpStatusException(StatusCode.INTERNAL_SERVER_ERROR, "No live node exists");
-        }
+    protected void noLiveNodeExistsCheck(Node node) {
+        liveNodeExistChecker.noLiveNodeExistsCheck(node, nodeView);
     }
 
     @Override
     public GetTextContentResponse getTextContent(Long nodeId, String propertyQName) {
         return null;
-    }
-
-    private Function<Node, SolrNodeMetaDataModel> toSolrModel(NodeMetaDataQueryParameters params) {
-        return node -> {
-            SolrNodeMetaDataModel ret = new SolrNodeMetaDataModel();
-            ret.setId(node.getNodeId());
-            doIfTrue(params.isIncludeTxnId(), () -> ret.setTxnId(node.getTxnId()));
-            doIfTrue(params.isIncludeType(), () -> ret.setType(node.getType().toPrefixString()));
-            doIfTrue(params.isIncludeNodeRef(), () -> ret.setNodeRef(node.getNodeRef().toString()));
-            doIfTrue(params.isIncludeProperties(), () -> ret.setProperties(node.getProperties().stream()
-                    .collect(HashMap::new,
-                            (map, entry) -> map.put(entry.getKey().toString(), convertPropertyValue(entry.getValue())),
-                            HashMap::putAll))); // Collectors.toMap doesn't support null values (JDK-8148463)
-            doIfTrue(params.isIncludeAspects(), () -> ret.setAspects(node.getAspects().stream()
-                    .map(QName::toPrefixString)
-                    .collect(Collectors.toList())));
-            doIfTrue(params.isIncludeOwner(), () -> {
-                String owner = node.getProperties().get(Content.OWNER).map(Object::toString)
-                        .orElse(node.getProperties().get(Content.CREATOR).map(Object::toString).orElse(null));
-                ret.setOwner(owner);
-            });
-            doIfTrue(params.isIncludePaths(), () -> ret.setPaths(this.getParentPaths(node)
-                    .stream()
-                    .map(lineage -> {
-                        String apath = "/" + lineage.stream()
-                                .map(a -> a.getParent().getNodeRef().getUuid())
-                                .collect(Collectors.joining("/"));
-                        String path = "/" + lineage.stream()
-                                .map(a -> a.getChild().getQName().toString())
-                                .collect(Collectors.joining("/"));
-                        return new NodePathInfo(apath, path, null);
-                    })
-                    .collect(Collectors.toList())));
-            doIfTrue(params.isIncludePaths(), () -> {
-                List<NodeNamePaths> namedPaths = this.getParentPaths(node)
-                        .stream()
-                        .map(lineage -> new NodeNamePaths(lineage.stream().map(assoc -> assoc.getChild().getName())))
-                        .collect(Collectors.toList());
-                ret.setNamePaths(namedPaths);
-            });
-            doIfTrue(params.isIncludePaths(), () -> ret.setAncestors(this.getPrimaryPath(node)
-                    .stream()
-                    .map(assoc -> assoc.getParent().getNodeRef().toString())
-                    .collect(Collectors.toList())));
-            doIfTrue(params.isIncludeChildAssociations() && node.getChildNodeCollection() != null, () ->
-                    ret.setChildAssocs(node.getChildNodeCollection()
-                            .getAssociations()
-                            .collect(Collectors.toList())
-                    ));
-            doIfTrue(params.isIncludeParentAssociations() && node.getParentNodeCollection() != null, () ->
-                    ret.setParentAssocs(node.getParentNodeCollection()
-                            .getAssociations()
-                            .collect(Collectors.toList())
-                    ));
-            return ret;
-        };
-    }
-
-    private List<List<ParentChildAssoc>> getParentPaths(Node node) {
-        // TODO Get every parent-path - not only the primary parent path
-        // for each parent assoc:
-        ParentChildAssoc parentAssoc = node.getPrimaryParentAssoc();
-        if (parentAssoc == null) {
-            return new ArrayList<>(Collections.emptyList());
-        }
-
-        List<List<ParentChildAssoc>> parentPaths = getParentPaths(parentAssoc.getParent());
-        if (parentPaths.isEmpty()) {
-            // the parent is a root
-            return toList(toList(parentAssoc));
-        } else {
-            // for each path of the parent
-            return parentPaths.stream()
-                    .peek(path -> path.add(parentAssoc))
-                    .collect(Collectors.toList());
-        }
-
-        // end foreach
-        // collect/flatmap all partial-paths
-
-//        return parialResult;
-
-    }
-
-    private <T> List<T> toList(T item) {
-        if (item == null) {
-            return null;
-        }
-
-        List<T> list = new ArrayList<>();
-        list.add(item);
-        return list;
-    }
-
-    private List<ParentChildAssoc> getPrimaryPath(Node node) {
-        ParentChildAssoc assoc = node.getPrimaryParentAssoc();
-        if (assoc == null) {
-            return new ArrayList<>();
-        }
-
-        List<ParentChildAssoc> result = this.getPrimaryPath(assoc.getParent());
-        result.add(assoc);
-        return result;
-    }
-
-    private static Serializable convertPropertyValue(Serializable propertyValue) {
-        if (propertyValue instanceof MLText) {
-            return (Serializable) ((MLText) propertyValue).stream()
-                    .map(e -> new HashMap<String, Serializable>() {{
-                        put("locale", e.getKey());
-                        put("value", e.getValue());
-                    }})
-                    .collect(Collectors.toList());
-        }
-        if (propertyValue instanceof ContentData) {
-            Map<String, String> retVal = new HashMap<>();
-            retVal.put("contentId", "-1");
-            retVal.put("encoding", ((ContentData) propertyValue).getEncoding());
-            retVal.put("locale", ((ContentData) propertyValue).getLocale());
-            retVal.put("mimetype", ((ContentData) propertyValue).getMimeType());
-            retVal.put("size", Long.toString(((ContentData) propertyValue).getSize()));
-            return (Serializable) retVal;
-        }
-        return propertyValue;
-    }
-
-    private void doIfTrue(boolean bool, Runnable runnable) {
-        if (bool) {
-            runnable.run();
-        }
     }
 
     @Override
@@ -362,6 +172,22 @@ public class SolrApiFakeClient implements SolrApiClient {
             this.data = dataSet;
             return this;
         }
+    }
+
+    protected SolrModelMapper getSolrModelMapper() {
+        return solrModelMapper;
+    }
+
+    protected LiveNodeExistChecker getLiveNodeExistChecker() {
+        return liveNodeExistChecker;
+    }
+
+    protected TransactionView getTxnView() {
+        return txnView;
+    }
+
+    protected NodeView getNodeView() {
+        return nodeView;
     }
 
 }
