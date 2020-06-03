@@ -32,7 +32,7 @@ public class SolrApiFakeClient implements SolrApiClient {
     private final TransactionView txnView;
     private final NodeView nodeView;
 
-    private final SolrModelMapper solrModelMapper = new SolrModelMapper();
+    private final SolrModelMapper modelMapper = new SolrModelMapper();
     private final LiveNodeExistChecker liveNodeExistChecker = new LiveNodeExistChecker();
 
     public SolrApiFakeClient(DataSetBuilder dataSetBuilder) {
@@ -125,7 +125,7 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
                 .peek(this::noLiveNodeExistsCheck)
-                .map(node -> getSolrModelMapper().toSolrModel(node, params))
+                .map(node -> modelMapper.toSolrModel(node, params))
                 .collect(Collectors.toList());
     }
 
@@ -151,22 +151,6 @@ public class SolrApiFakeClient implements SolrApiClient {
     @Override
     public void close() {
 
-    }
-
-    protected SolrModelMapper getSolrModelMapper() {
-        return solrModelMapper;
-    }
-
-    protected LiveNodeExistChecker getLiveNodeExistChecker() {
-        return liveNodeExistChecker;
-    }
-
-    protected TransactionView getTxnView() {
-        return txnView;
-    }
-
-    protected NodeView getNodeView() {
-        return nodeView;
     }
 
 }
