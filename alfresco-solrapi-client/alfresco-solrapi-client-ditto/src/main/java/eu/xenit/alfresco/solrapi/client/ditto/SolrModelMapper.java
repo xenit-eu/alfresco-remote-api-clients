@@ -171,6 +171,17 @@ public class SolrModelMapper {
                 .orElse(node.getProperties().get(Content.CREATOR).map(Object::toString).orElse(null));
     }
 
+    protected List<ParentChildAssoc> getPrimaryPath(Node node) {
+        ParentChildAssoc assoc = node.getPrimaryParentAssoc();
+        if (assoc == null) {
+            return new ArrayList<>();
+        }
+
+        List<ParentChildAssoc> result = getPrimaryPath(assoc.getParent());
+        result.add(assoc);
+        return result;
+    }
+
     private Serializable convertPropertyValue(Serializable propertyValue) {
         if (propertyValue instanceof MLText) {
             return (Serializable) ((MLText) propertyValue).stream()
@@ -226,17 +237,6 @@ public class SolrModelMapper {
         List<T> list = new ArrayList<>();
         list.add(item);
         return list;
-    }
-
-    private List<ParentChildAssoc> getPrimaryPath(Node node) {
-        ParentChildAssoc assoc = node.getPrimaryParentAssoc();
-        if (assoc == null) {
-            return new ArrayList<>();
-        }
-
-        List<ParentChildAssoc> result = getPrimaryPath(assoc.getParent());
-        result.add(assoc);
-        return result;
     }
 
 }

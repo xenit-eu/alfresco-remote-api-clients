@@ -16,6 +16,7 @@ import eu.xenit.alfresco.client.solrapi.api.query.AclsQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
+import eu.xenit.testing.ditto.api.DataSetBuilder;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.TransactionView;
 import eu.xenit.testing.ditto.api.model.Node;
@@ -31,14 +32,14 @@ public class SolrApiFakeClient implements SolrApiClient {
     private final TransactionView txnView;
     private final NodeView nodeView;
 
-    private final SolrModelMapper solrModelMapper = new SolrModelMapper();
+    private final SolrModelMapper modelMapper = new SolrModelMapper();
     private final LiveNodeExistChecker liveNodeExistChecker = new LiveNodeExistChecker();
 
-    protected SolrApiFakeClient(Builder builder) {
-        this(builder.data);
+    public SolrApiFakeClient(DataSetBuilder dataSetBuilder) {
+        this(dataSetBuilder.build());
     }
 
-    SolrApiFakeClient(AlfrescoDataSet dataSet) {
+    public SolrApiFakeClient(AlfrescoDataSet dataSet) {
         this(dataSet.getTransactionView(), dataSet.getNodeView());
     }
 
@@ -124,7 +125,7 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))
                 .filter(Node.Filters.maxNodeIdInclusive(params.getToNodeId()))
                 .peek(this::noLiveNodeExistsCheck)
-                .map(node -> getSolrModelMapper().toSolrModel(node, params))
+                .map(node -> modelMapper.toSolrModel(node, params))
                 .collect(Collectors.toList());
     }
 
@@ -150,44 +151,6 @@ public class SolrApiFakeClient implements SolrApiClient {
     @Override
     public void close() {
 
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-
-        private AlfrescoDataSet data;
-
-        private Builder() {
-
-        }
-
-        public SolrApiFakeClient build() {
-            return new SolrApiFakeClient(this);
-        }
-
-        public Builder withDataSet(AlfrescoDataSet dataSet) {
-            this.data = dataSet;
-            return this;
-        }
-    }
-
-    protected SolrModelMapper getSolrModelMapper() {
-        return solrModelMapper;
-    }
-
-    protected LiveNodeExistChecker getLiveNodeExistChecker() {
-        return liveNodeExistChecker;
-    }
-
-    protected TransactionView getTxnView() {
-        return txnView;
-    }
-
-    protected NodeView getNodeView() {
-        return nodeView;
     }
 
 }

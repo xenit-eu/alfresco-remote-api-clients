@@ -9,18 +9,16 @@ import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 class SolrApiDittoClientIntegrationTest {
 
     public SolrApiClient solrApiClient() {
-        return SolrApiFakeClient.builder()
-                .withDataSet(
-                        AlfrescoDataSet.bootstrapAlfresco()
-                                .addTransaction(t -> {
-                                    t.addNode(n -> {
-                                        n.name("node-with-content.txt");
-                                        n.type("cm:content");
-                                        n.content("I have content");
-                                    });
-                                })
-                                .build())
-                .build();
+        return new SolrApiFakeClient(
+                AlfrescoDataSet.bootstrapAlfresco()
+                        .addTransaction(t -> {
+                            t.addNode(n -> {
+                                n.name("node-with-content.txt");
+                                n.type("cm:content");
+                                n.content("I have content");
+                            });
+                        })
+        );
     }
 
     static class Transactions
