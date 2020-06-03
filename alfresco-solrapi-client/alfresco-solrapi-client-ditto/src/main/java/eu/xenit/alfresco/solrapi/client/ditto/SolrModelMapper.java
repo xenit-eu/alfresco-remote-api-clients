@@ -64,7 +64,7 @@ public class SolrModelMapper {
 
     protected Map<String, Object> getProperties(Node node, NodeMetaDataQueryParameters params) {
         if (!params.isIncludeProperties()) {
-            return null;
+            return Collections.emptyMap();
         }
 
         return node.getProperties().stream().collect(HashMap::new,
@@ -74,7 +74,7 @@ public class SolrModelMapper {
 
     protected List<String> getAspects(Node node, NodeMetaDataQueryParameters params) {
         if (!params.isIncludeAspects() || node.getAspects() == null) {
-            return null;
+            return Collections.emptyList();
         }
         return node.getAspects().stream()
                 .map(QName::toPrefixString)
@@ -83,7 +83,7 @@ public class SolrModelMapper {
 
     protected List<NodePathInfo> getPaths(Node node, NodeMetaDataQueryParameters params) {
         if (!params.isIncludePaths()) {
-            return null;
+            return Collections.emptyList();
         }
         return this.getParentPaths(node)
                 .stream()
@@ -153,7 +153,7 @@ public class SolrModelMapper {
 
     protected List<Long> getChildIds(Node node, NodeMetaDataQueryParameters params) {
         if (!params.isIncludeChildIds() || node.getChildNodeCollection() == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         return node.getChildNodeCollection()

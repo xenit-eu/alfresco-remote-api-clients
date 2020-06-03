@@ -87,13 +87,12 @@ public class GetNodesMetadata {
                     assertThat(node.getTxnId()).isEqualTo(-1L);
                     assertThat(node.getType()).isNull();
                     assertThat(node.getNodeRef()).isNull();
-                    assertThat(node.getProperties()).isNull();
-                    assertThat(node.getAspects()).isNull();
+                    assertThat(node.getProperties()).isEmpty();
+                    assertThat(node.getAspects()).isEmpty();
                     assertThat(node.getOwner()).isNull();
-                    assertThat(node.getChildIds()).isNull();
-                    assertThat(node.getChildAssocs()).isEmpty();
+                    assertThat(node.getChildIds()).isEmpty();
                     assertThat(node.getParentAssocs()).isEmpty();
-                    assertThat(node.getPaths()).isNull();
+                    assertThat(node.getPaths()).isEmpty();
                     // Alfresco doesn't actually use these filters:
 //                    assertThat(node.getAclId()).isEqualTo(-1L);
 //                    assertThat(node.getChildAssocs()).isEmpty();
