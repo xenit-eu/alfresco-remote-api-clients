@@ -6,8 +6,8 @@ import static org.mockito.Mockito.when;
 
 import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
 import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
-import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetadata;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetadataQueryParameters;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.NodeView;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
@@ -46,10 +46,10 @@ public class GetNodesMetadata {
     void getNodesMetadata_companyHome() {
 
         SolrApiClient client = new SolrApiFakeClient(null, nodeViewMock());
-        List<SolrNodeMetaData> nodesMetaData = client
-                .getNodesMetaData(new NodeMetaDataQueryParameters().withNodeIds(13L));
+        List<SolrNodeMetadata> nodesMetadata = client
+                .getNodesMetadata(new NodeMetadataQueryParameters().withNodeIds(13L));
 
-        assertThat(nodesMetaData)
+        assertThat(nodesMetadata)
                 .hasOnlyOneElementSatisfying(node -> {
                     assertThat(node.getId()).isEqualTo(13L);
                     assertThat(node.getType()).isEqualTo("cm:folder");
@@ -64,9 +64,9 @@ public class GetNodesMetadata {
     void getNodesMetadata_companyHome_filterOutput() {
 
         SolrApiClient client = new SolrApiFakeClient(null, nodeViewMock());
-        List<SolrNodeMetaData> nodesMetaData = client
-                .getNodesMetaData(
-                        new NodeMetaDataQueryParameters()
+        List<SolrNodeMetadata> nodesMetadata = client
+                .getNodesMetadata(
+                        new NodeMetadataQueryParameters()
                                 .withNodeIds(13L)
                                 .setIncludeTxnId(false)
                                 .setIncludeType(false)
@@ -81,7 +81,7 @@ public class GetNodesMetadata {
                                 .setIncludePaths(false)
                 );
 
-        assertThat(nodesMetaData)
+        assertThat(nodesMetadata)
                 .hasOnlyOneElementSatisfying(node -> {
                     assertThat(node.getId()).isEqualTo(13L);
                     assertThat(node.getTxnId()).isEqualTo(-1L);
@@ -125,10 +125,10 @@ public class GetNodesMetadata {
                 .build();
 
         SolrApiClient client = new SolrApiFakeClient(dataSet);
-        List<SolrNodeMetaData> nodesMetaData = client
-                .getNodesMetaData(new NodeMetaDataQueryParameters().withNodeIds(1090L));
+        List<SolrNodeMetadata> nodesMetadata = client
+                .getNodesMetadata(new NodeMetadataQueryParameters().withNodeIds(1090L));
 
-        assertThat(nodesMetaData)
+        assertThat(nodesMetadata)
                 .hasOnlyOneElementSatisfying(node -> {
                     assertThat(node.getId()).isEqualTo(1090L);
                     assertThat(node.getType()).isEqualTo("cm:content");

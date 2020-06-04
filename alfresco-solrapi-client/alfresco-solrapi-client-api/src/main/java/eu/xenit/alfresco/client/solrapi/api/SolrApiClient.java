@@ -32,11 +32,11 @@ import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModel;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModelDiff;
 import eu.xenit.alfresco.client.solrapi.api.model.GetTextContentResponse;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetadata;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransactions;
 import eu.xenit.alfresco.client.solrapi.api.query.AclReadersQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.AclsQueryParameters;
-import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetadataQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
 import java.util.List;
 
@@ -74,7 +74,7 @@ public interface SolrApiClient {
 
     List<SolrNode> getNodes(NodesQueryParameters parameters) ;
 
-    List<SolrNodeMetaData> getNodesMetaData(NodeMetaDataQueryParameters params);
+    List<SolrNodeMetadata> getNodesMetadata(NodeMetadataQueryParameters params);
 
     GetTextContentResponse getTextContent(Long nodeId, String propertyQName);
 
