@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public class SolrNodeMetaData {
+public class SolrNodeMetadata {
 
     private final long id;
     private final long aclId;

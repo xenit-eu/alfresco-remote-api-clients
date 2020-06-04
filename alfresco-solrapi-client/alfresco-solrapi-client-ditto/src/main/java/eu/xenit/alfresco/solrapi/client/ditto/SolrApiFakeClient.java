@@ -8,12 +8,12 @@ import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModel;
 import eu.xenit.alfresco.client.solrapi.api.model.AlfrescoModelDiff;
 import eu.xenit.alfresco.client.solrapi.api.model.GetTextContentResponse;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetadata;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransaction;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransactions;
 import eu.xenit.alfresco.client.solrapi.api.query.AclReadersQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.AclsQueryParameters;
-import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetadataQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
 import eu.xenit.testing.ditto.api.AlfrescoDataSet;
 import eu.xenit.testing.ditto.api.DataSetBuilder;
@@ -119,7 +119,7 @@ public class SolrApiFakeClient implements SolrApiClient {
     }
 
     @Override
-    public List<SolrNodeMetaData> getNodesMetaData(NodeMetaDataQueryParameters params) {
+    public List<SolrNodeMetadata> getNodesMetadata(NodeMetadataQueryParameters params) {
         return this.nodeView.allNodes()
                 .filter(Node.Filters.containedIn(params.getNodeIds()))
                 .filter(Node.Filters.minNodeIdInclusive(params.getFromNodeId()))

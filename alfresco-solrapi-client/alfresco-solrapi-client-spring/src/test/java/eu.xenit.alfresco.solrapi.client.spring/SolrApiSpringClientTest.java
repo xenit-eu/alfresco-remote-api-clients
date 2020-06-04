@@ -12,10 +12,10 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetadata;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransaction;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransactions;
-import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetadataQueryParameters;
 import eu.xenit.alfresco.client.solrapi.api.query.NodesQueryParameters;
 import eu.xenit.alfresco.solrapi.client.spring.config.SolrApiProperties;
 import java.util.Arrays;
@@ -120,7 +120,7 @@ class SolrApiSpringClientTest {
     }
 
     @Test
-    void getNodesMetaData() {
+    void getNodesMetadata() {
 
         RestTemplate restTemplate = new RestTemplateBuilder().build();
         SolrApiSpringClient client = new SolrApiSpringClient(new SolrApiProperties(), restTemplate);
@@ -132,13 +132,13 @@ class SolrApiSpringClientTest {
                 .andRespond(withSuccess(new ClassPathResource("solrapi-metadata-nodes-501-505.json"),
                         MediaType.APPLICATION_JSON));
 
-        List<SolrNodeMetaData> nodesMetaData = client.getNodesMetaData(
-                new NodeMetaDataQueryParameters()
+        List<SolrNodeMetadata> nodesMetadata = client.getNodesMetadata(
+                new NodeMetadataQueryParameters()
                         .setFromNodeId(501L)
                         .setToNodeId(505L)
                         .setMaxResults(5));
 
-        assertThat(nodesMetaData)
+        assertThat(nodesMetadata)
                 .isNotNull()
                 .hasSize(5);
 

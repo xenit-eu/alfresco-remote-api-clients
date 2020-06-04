@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class SolrNodeMetaDataModel {
+public class SolrNodeMetadataModel {
 
     private long id = -1L;
     private long aclId = -1L;

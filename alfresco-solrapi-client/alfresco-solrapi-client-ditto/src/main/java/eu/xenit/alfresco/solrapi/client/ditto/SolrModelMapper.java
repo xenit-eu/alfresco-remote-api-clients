@@ -3,8 +3,8 @@ package eu.xenit.alfresco.solrapi.client.ditto;
 import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
 import eu.xenit.alfresco.client.solrapi.api.model.NodeNamePaths;
 import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
-import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetadata;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetadataQueryParameters;
 import eu.xenit.testing.ditto.api.data.ContentModel.Content;
 import eu.xenit.testing.ditto.api.model.ContentData;
 import eu.xenit.testing.ditto.api.model.MLText;
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 
 public class SolrModelMapper {
 
-    public SolrNodeMetaData toSolrModel(Node node, NodeMetaDataQueryParameters params) {
-        return new SolrNodeMetaData(
+    public SolrNodeMetadata toSolrModel(Node node, NodeMetadataQueryParameters params) {
+        return new SolrNodeMetadata(
                 node.getNodeId(),
                 -1L,
                 getTxnId(node, params),
@@ -41,28 +41,28 @@ public class SolrModelMapper {
                 null);
     }
 
-    protected long getTxnId(Node node, NodeMetaDataQueryParameters params) {
+    protected long getTxnId(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludeTxnId()) {
             return -1L;
         }
         return node.getTxnId();
     }
 
-    protected String getNodeRef(Node node, NodeMetaDataQueryParameters params) {
+    protected String getNodeRef(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludeNodeRef()) {
             return null;
         }
         return node.getNodeRef().toString();
     }
 
-    protected String getType(Node node, NodeMetaDataQueryParameters params) {
+    protected String getType(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludeType()) {
             return null;
         }
         return node.getType().toPrefixString();
     }
 
-    protected Map<String, Object> getProperties(Node node, NodeMetaDataQueryParameters params) {
+    protected Map<String, Object> getProperties(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludeProperties()) {
             return Collections.emptyMap();
         }
@@ -72,7 +72,7 @@ public class SolrModelMapper {
                 HashMap::putAll); // Collectors.toMap doesn't support null values (JDK-8148463)
     }
 
-    protected List<String> getAspects(Node node, NodeMetaDataQueryParameters params) {
+    protected List<String> getAspects(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludeAspects() || node.getAspects() == null) {
             return Collections.emptyList();
         }
@@ -81,7 +81,7 @@ public class SolrModelMapper {
                 .collect(Collectors.toList());
     }
 
-    protected List<NodePathInfo> getPaths(Node node, NodeMetaDataQueryParameters params) {
+    protected List<NodePathInfo> getPaths(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludePaths()) {
             return Collections.emptyList();
         }
@@ -99,7 +99,7 @@ public class SolrModelMapper {
                 .collect(Collectors.toList());
     }
 
-    protected List<NodeNamePaths> getNamePaths(Node node, NodeMetaDataQueryParameters params) {
+    protected List<NodeNamePaths> getNamePaths(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludePaths()) {
             return null;
         }
@@ -109,7 +109,7 @@ public class SolrModelMapper {
                 .collect(Collectors.toList());
     }
 
-    protected List<String> getAncestors(Node node, NodeMetaDataQueryParameters params) {
+    protected List<String> getAncestors(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludePaths()) {
             return null;
         }
@@ -119,7 +119,7 @@ public class SolrModelMapper {
                 .collect(Collectors.toList());
     }
 
-    protected List<ChildAssociation> getParentAssocs(Node node, NodeMetaDataQueryParameters params) {
+    protected List<ChildAssociation> getParentAssocs(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludeParentAssociations() || node.getParentNodeCollection() == null) {
             return Collections.emptyList();
         }
@@ -130,7 +130,7 @@ public class SolrModelMapper {
                 .collect(Collectors.toList());
     }
 
-    protected List<ChildAssociation> getChildAssocs(Node node, NodeMetaDataQueryParameters params) {
+    protected List<ChildAssociation> getChildAssocs(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludeChildAssociations() || node.getChildNodeCollection() == null) {
             return Collections.emptyList();
         }
@@ -151,7 +151,7 @@ public class SolrModelMapper {
                 assoc.getNthSibling());
     }
 
-    protected List<Long> getChildIds(Node node, NodeMetaDataQueryParameters params) {
+    protected List<Long> getChildIds(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludeChildIds() || node.getChildNodeCollection() == null) {
             return Collections.emptyList();
         }
@@ -163,7 +163,7 @@ public class SolrModelMapper {
                 .collect(Collectors.toList());
     }
 
-    protected String getOwner(Node node, NodeMetaDataQueryParameters params) {
+    protected String getOwner(Node node, NodeMetadataQueryParameters params) {
         if (!params.isIncludeOwner()) {
             return null;
         }

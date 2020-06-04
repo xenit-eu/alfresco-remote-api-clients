@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class SolrNodeMetadataListModel {
 
-    private List<SolrNodeMetaDataModel> nodes = new ArrayList<>();
+    private List<SolrNodeMetadataModel> nodes = new ArrayList<>();
 
 }

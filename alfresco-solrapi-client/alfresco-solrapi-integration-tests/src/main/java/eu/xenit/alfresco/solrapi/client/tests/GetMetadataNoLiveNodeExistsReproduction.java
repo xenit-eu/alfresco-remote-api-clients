@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import eu.xenit.alfresco.client.api.exception.HttpStatusException;
 import eu.xenit.alfresco.client.api.exception.StatusCode;
 import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
-import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetadata;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetadataQueryParameters;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +21,8 @@ public interface GetMetadataNoLiveNodeExistsReproduction {
 
         List<Long> versionNodeIds = getVersionNodeIds(liveNodeUuid);
 
-        List<SolrNodeMetaData> solrNodeMetadataBeforeDelete =
-                solrApiClient().getNodesMetaData(new NodeMetaDataQueryParameters().setNodeIds(versionNodeIds));
+        List<SolrNodeMetadata> solrNodeMetadataBeforeDelete =
+                solrApiClient().getNodesMetadata(new NodeMetadataQueryParameters().setNodeIds(versionNodeIds));
         assertThat(solrNodeMetadataBeforeDelete)
                 .isNotNull()
                 .hasSize(versionNodeIds.size());
@@ -30,7 +30,7 @@ public interface GetMetadataNoLiveNodeExistsReproduction {
         deleteNode(liveNodeUuid);
 
         HttpStatusException e = assertThrows(HttpStatusException.class,
-                () -> solrApiClient().getNodesMetaData(new NodeMetaDataQueryParameters().setNodeIds(versionNodeIds)));
+                () -> solrApiClient().getNodesMetadata(new NodeMetadataQueryParameters().setNodeIds(versionNodeIds)));
         assertThat(e.getMessage()).contains("No live node exists");
         assertThat(e.getStatusCode()).isEqualTo(StatusCode.INTERNAL_SERVER_ERROR);
     }

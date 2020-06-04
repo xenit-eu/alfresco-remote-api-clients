@@ -39,7 +39,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @JsonInclude(Include.NON_NULL)
-public class NodeMetaDataQueryParameters
+public class NodeMetadataQueryParameters
 {
     private List<Long> nodeIds;
     private Long fromNodeId;
@@ -60,7 +60,7 @@ public class NodeMetaDataQueryParameters
     private boolean includeChildIds = true;
     private boolean includeTxnId = true;
 
-    public NodeMetaDataQueryParameters withNodeIds(Long ... ids) {
+    public NodeMetadataQueryParameters withNodeIds(Long ... ids) {
         this.nodeIds = Arrays.asList(ids);
         return this;
     }

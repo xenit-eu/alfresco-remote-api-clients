@@ -3,8 +3,8 @@ package eu.xenit.alfresco.solrapi.client.tests;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import eu.xenit.alfresco.client.solrapi.api.SolrApiClient;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
-import eu.xenit.alfresco.client.solrapi.api.query.NodeMetaDataQueryParameters;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetadata;
+import eu.xenit.alfresco.client.solrapi.api.query.NodeMetadataQueryParameters;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,13 +24,13 @@ public interface GetMetadataIntegrationTests {
 
         // Assuming that Company Home stays alf_node.id = 13
         // We could need to change this test if that changes across Alfresco versions ?
-        List<SolrNodeMetaData> nodesMetaData = client.getNodesMetaData(
-                new NodeMetaDataQueryParameters()
+        List<SolrNodeMetadata> nodesMetadata = client.getNodesMetadata(
+                new NodeMetadataQueryParameters()
                         .setFromNodeId(13L)
                         .setToNodeId(13L)
                         .setMaxResults(1));
 
-        assertThat(nodesMetaData)
+        assertThat(nodesMetadata)
                 .isNotNull()
                 .hasOnlyOneElementSatisfying(node -> {
                     assertThat(node.getId()).isEqualTo(13);
@@ -81,9 +81,9 @@ public interface GetMetadataIntegrationTests {
     default void getNodesMetadata_companyHome_filterOutput() {
 
         SolrApiClient client = solrApiClient();
-        List<SolrNodeMetaData> nodesMetaData = client
-                .getNodesMetaData(
-                        new NodeMetaDataQueryParameters()
+        List<SolrNodeMetadata> nodesMetadata = client
+                .getNodesMetadata(
+                        new NodeMetadataQueryParameters()
                                 .withNodeIds(13L)
                                 .setIncludeTxnId(false)
                                 .setIncludeType(false)
@@ -98,7 +98,7 @@ public interface GetMetadataIntegrationTests {
                                 .setIncludePaths(false)
                 );
 
-        assertThat(nodesMetaData)
+        assertThat(nodesMetadata)
                 .hasOnlyOneElementSatisfying(node -> {
                     assertThat(node.getId()).isEqualTo(13L);
                     assertThat(node.getTxnId()).isEqualTo(-1L);
@@ -120,30 +120,30 @@ public interface GetMetadataIntegrationTests {
     default void getMetadata_nodeWithContent() {
         SolrApiClient client = solrApiClient();
 
-        SolrNodeMetaData nodesMetaData = findAnyNodeWithContent(client);
+        SolrNodeMetadata nodesMetadata = findAnyNodeWithContent(client);
 
-        assertThat(nodesMetaData).isNotNull();
-        assertThat(nodesMetaData.getProperties()).containsKey("{http://www.alfresco.org/model/content/1.0}content");
-        assertThat(nodesMetaData.getProperties().get("{http://www.alfresco.org/model/content/1.0}content"))
+        assertThat(nodesMetadata).isNotNull();
+        assertThat(nodesMetadata.getProperties()).containsKey("{http://www.alfresco.org/model/content/1.0}content");
+        assertThat(nodesMetadata.getProperties().get("{http://www.alfresco.org/model/content/1.0}content"))
                 .isNotNull()
                 .isInstanceOf(Map.class);
-        assertThat((Map<String, String>) nodesMetaData.getProperties()
+        assertThat((Map<String, String>) nodesMetadata.getProperties()
                 .get("{http://www.alfresco.org/model/content/1.0}content"))
                 .containsOnlyKeys("contentId", "encoding", "locale", "mimetype", "size");
 
     }
 
-    static SolrNodeMetaData findAnyNodeWithContent(SolrApiClient client) {
+    static SolrNodeMetadata findAnyNodeWithContent(SolrApiClient client) {
 
         final int transactionBatchSize = 100;
         for (long i = 0; i < 1000; i = i + transactionBatchSize) {
-            List<SolrNodeMetaData> nodesMetaData = client.getNodesMetaData(
-                    new NodeMetaDataQueryParameters()
+            List<SolrNodeMetadata> nodesMetadata = client.getNodesMetadata(
+                    new NodeMetadataQueryParameters()
                             .setFromNodeId(i)
                             .setToNodeId(i + transactionBatchSize)
                             .setMaxResults(transactionBatchSize));
 
-            Optional<SolrNodeMetaData> metadataWithContent = nodesMetaData.stream()
+            Optional<SolrNodeMetadata> metadataWithContent = nodesMetadata.stream()
                     .filter(m -> m.getProperties().containsKey("{http://www.alfresco.org/model/content/1.0}content"))
                     .findAny();
 

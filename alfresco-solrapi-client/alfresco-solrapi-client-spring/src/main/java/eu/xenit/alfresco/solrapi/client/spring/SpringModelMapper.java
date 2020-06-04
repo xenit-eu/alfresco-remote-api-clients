@@ -8,7 +8,7 @@ import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
 import eu.xenit.alfresco.client.solrapi.api.model.NodeNamePaths;
 import eu.xenit.alfresco.client.solrapi.api.model.NodePathInfo;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrNode;
-import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetaData;
+import eu.xenit.alfresco.client.solrapi.api.model.SolrNodeMetadata;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransaction;
 import eu.xenit.alfresco.client.solrapi.api.model.SolrTransactions;
 import eu.xenit.alfresco.solrapi.client.spring.dto.AclChangeSetListModel;
@@ -19,7 +19,7 @@ import eu.xenit.alfresco.solrapi.client.spring.dto.AclReadersModel;
 import eu.xenit.alfresco.solrapi.client.spring.dto.NodeNamePathsModel;
 import eu.xenit.alfresco.solrapi.client.spring.dto.NodePathInfoModel;
 import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeListModel;
-import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeMetaDataModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeMetadataModel;
 import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeMetadataListModel;
 import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeModel;
 import eu.xenit.alfresco.solrapi.client.spring.dto.SolrTransactionModel;
@@ -85,13 +85,13 @@ public class SpringModelMapper {
         return new SolrTransaction(model.getId(), model.getCommitTimeMs(), model.getUpdates(), model.getDeletes());
     }
 
-    public List<SolrNodeMetaData> toApiModel(SolrNodeMetadataListModel model) {
+    public List<SolrNodeMetadata> toApiModel(SolrNodeMetadataListModel model) {
         Objects.requireNonNull(model, "Argument 'model' is required");
         return model.getNodes().stream().map(this::toApiModel).collect(Collectors.toList());
     }
 
-    private SolrNodeMetaData toApiModel(SolrNodeMetaDataModel model) {
-        return new SolrNodeMetaData(
+    private SolrNodeMetadata toApiModel(SolrNodeMetadataModel model) {
+        return new SolrNodeMetadata(
                 model.getId(),
                 model.getAclId(),
                 model.getTxnId(),
