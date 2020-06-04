@@ -25,7 +25,6 @@ import eu.xenit.testing.ditto.api.model.Transaction.Filters;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Data;
 
 public class SolrApiFakeClient implements SolrApiClient {
 
@@ -89,20 +88,6 @@ public class SolrApiFakeClient implements SolrApiClient {
 
     @Override
     public List<SolrNode> getNodes(NodesQueryParameters parameters) {
-
-        @Data
-        class NodeStatusTuple {
-
-            final Node node;
-            final String status;
-            final long txnId;
-
-            private SolrNode getSolrNode() {
-                return new SolrNode(
-                        node.getNodeId(), node.getNodeRef().toString(),
-                        txnId, status, "", -1, "");
-            }
-        }
 
         return this.txnView.stream()
                 .filter(Filters.containedIn(parameters.getTxnIds()))
