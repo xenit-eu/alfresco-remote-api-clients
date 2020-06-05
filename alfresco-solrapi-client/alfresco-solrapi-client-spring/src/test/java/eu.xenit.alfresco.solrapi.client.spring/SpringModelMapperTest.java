@@ -4,7 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
+import eu.xenit.alfresco.solrapi.client.spring.dto.AclChangeSetListModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.AclListModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.AclReadersListModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeListModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeMetadataListModel;
 import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeMetadataModel;
+import eu.xenit.alfresco.solrapi.client.spring.dto.SolrTransactionsModel;
 import org.junit.jupiter.api.Test;
 
 class SpringModelMapperTest {
@@ -43,10 +49,52 @@ class SpringModelMapperTest {
     }
 
     @Test
-    void toApiModel_nullParentAssocs() {
+    void toApiModel_SolrNodeMetadataModel_nullParentAssocs() {
         SolrNodeMetadataModel solrNodeMetadataModel = new SolrNodeMetadataModel();
         solrNodeMetadataModel.setParentAssocs(null);
         mapper.toApiModel(solrNodeMetadataModel);
+    }
+
+    @Test
+    void toApiModel_SolrNodeMetadataListModel_nullNodes() {
+        SolrNodeMetadataListModel solrNodeMetadataListModel = new SolrNodeMetadataListModel();
+        solrNodeMetadataListModel.setNodes(null);
+        mapper.toApiModel(solrNodeMetadataListModel);
+    }
+
+    @Test
+    void toApiModel_SolrTransactionsModel_nullTransactions() {
+        SolrTransactionsModel solrTransactionsModel = new SolrTransactionsModel();
+        solrTransactionsModel.setTransactions(null);
+        mapper.toApiModel(solrTransactionsModel);
+    }
+
+    @Test
+    void toApiModel_SolrNodeListModel_nullNodes() {
+        SolrNodeListModel solrNodeListModel = new SolrNodeListModel();
+        solrNodeListModel.setNodes(null);
+        mapper.toApiModel(solrNodeListModel);
+    }
+
+    @Test
+    void toApiModel_AclReadersListModel_nullAclReaders() {
+        AclReadersListModel aclReadersListModel = new AclReadersListModel();
+        aclReadersListModel.setAclsReaders(null);
+        mapper.toApiModel(aclReadersListModel);
+    }
+
+    @Test
+    void toApiModel_AclListModel_nullAcls() {
+        AclListModel aclListModel = new AclListModel();
+        aclListModel.setAcls(null);
+        mapper.toApiModel(aclListModel);
+    }
+
+    @Test
+    void toApiModel_AclChangeSetListModel_nullAclChangeSets() {
+        AclChangeSetListModel aclChangeSetListModel = new AclChangeSetListModel();
+        aclChangeSetListModel.setAclChangeSets(null);
+        mapper.toApiModel(aclChangeSetListModel);
     }
 
 
