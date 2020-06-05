@@ -2,9 +2,9 @@ package eu.xenit.alfresco.solrapi.client.spring;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import eu.xenit.alfresco.client.solrapi.api.model.ChildAssociation;
+import eu.xenit.alfresco.solrapi.client.spring.dto.SolrNodeMetadataModel;
 import org.junit.jupiter.api.Test;
 
 class SpringModelMapperTest {
@@ -40,6 +40,13 @@ class SpringModelMapperTest {
                 null /* <-- testing this */,
                 "{http://www.alfresco.org/model/content/1.0}contains",
                 "{http://www.alfresco.org/model/application/1.0}dictionary", true, -1));
+    }
+
+    @Test
+    void toApiModel_nullParentAssocs() {
+        SolrNodeMetadataModel solrNodeMetadataModel = new SolrNodeMetadataModel();
+        solrNodeMetadataModel.setParentAssocs(null);
+        mapper.toApiModel(solrNodeMetadataModel);
     }
 
 
