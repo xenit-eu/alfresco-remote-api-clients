@@ -90,7 +90,7 @@ public class SpringModelMapper {
         return model.getNodes().stream().map(this::toApiModel).collect(Collectors.toList());
     }
 
-    private SolrNodeMetadata toApiModel(SolrNodeMetadataModel model) {
+    SolrNodeMetadata toApiModel(SolrNodeMetadataModel model) {
         return new SolrNodeMetadata(
                 model.getId(),
                 model.getAclId(),
@@ -99,12 +99,18 @@ public class SpringModelMapper {
                 model.getType(),
                 model.getProperties(),
                 model.getAspects(),
-                model.getPaths().stream().map(this::toApiModel).collect(Collectors.toList()),
-                model.getNamePaths().stream().map(this::toApiModel).collect(Collectors.toList()),
+                model.getPaths() == null ? null
+                        : model.getPaths().stream().map(this::toApiModel).collect(Collectors.toList()),
+                model.getNamePaths() == null ? null
+                        : model.getNamePaths().stream().map(this::toApiModel).collect(Collectors.toList()),
                 model.getAncestors(),
-                model.getParentAssocs().stream().map(this::createChildAssociation).collect(Collectors.toList()),
+                model.getParentAssocs() == null ? null
+                        : model.getParentAssocs().stream().map(this::createChildAssociation)
+                                .collect(Collectors.toList()),
                 model.getParentAssocsCrc(),
-                model.getChildAssocs().stream().map(this::createChildAssociation).collect(Collectors.toList()),
+                model.getChildAssocs() == null ? null
+                        : model.getChildAssocs().stream().map(this::createChildAssociation)
+                                .collect(Collectors.toList()),
                 model.getChildIds(),
                 model.getOwner(),
                 model.getTenantDomain());
