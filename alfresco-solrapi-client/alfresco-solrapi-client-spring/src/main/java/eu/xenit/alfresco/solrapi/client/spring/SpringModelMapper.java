@@ -33,7 +33,8 @@ public class SpringModelMapper {
     public AclChangeSetList toApiModel(AclChangeSetListModel model) {
         Objects.requireNonNull(model, "Argument 'model' is required");
         return new AclChangeSetList(
-                model.getAclChangeSets().stream().map(this::toApiModel).collect(Collectors.toList()),
+                model.getAclChangeSets() == null ? null
+                        : model.getAclChangeSets().stream().map(this::toApiModel).collect(Collectors.toList()),
                 model.getMaxChangeSetCommitTime(),
                 model.getMaxChangeSetId());
     }
@@ -45,14 +46,15 @@ public class SpringModelMapper {
 
     public List<Acl> toApiModel(AclListModel model) {
         Objects.requireNonNull(model, "Argument 'model' is required");
-        return model.getAcls().stream()
+        return model.getAcls() == null ? null : model.getAcls().stream()
                 .map(acl -> new Acl(acl.getAclChangeSetId(), acl.getId(), acl.getInheritedId()))
                 .collect(Collectors.toList());
     }
 
     public List<AclReaders> toApiModel(AclReadersListModel model) {
         Objects.requireNonNull(model, "Argument 'model' is required");
-        return model.getAclsReaders().stream().map(this::toApiModel).collect(Collectors.toList());
+        return model.getAclsReaders() == null ? null
+                : model.getAclsReaders().stream().map(this::toApiModel).collect(Collectors.toList());
     }
 
     private AclReaders toApiModel(AclReadersModel model) {
@@ -63,7 +65,8 @@ public class SpringModelMapper {
 
     public List<SolrNode> toApiModel(SolrNodeListModel model) {
         Objects.requireNonNull(model, "Argument 'model' is required");
-        return model.getNodes().stream().map(this::toApiModel).collect(Collectors.toList());
+        return model.getNodes() == null ? null
+                : model.getNodes().stream().map(this::toApiModel).collect(Collectors.toList());
     }
 
     private SolrNode toApiModel(SolrNodeModel model) {
@@ -75,7 +78,8 @@ public class SpringModelMapper {
     public SolrTransactions toApiModel(SolrTransactionsModel model) {
         Objects.requireNonNull(model, "Argument 'model' is required");
         return new SolrTransactions(
-                model.getTransactions().stream().map(this::toApiModel).collect(Collectors.toList()),
+                model.getTransactions() == null ? null
+                        : model.getTransactions().stream().map(this::toApiModel).collect(Collectors.toList()),
                 model.getMaxTxnCommitTime(),
                 model.getMaxTxnId());
     }
@@ -87,10 +91,11 @@ public class SpringModelMapper {
 
     public List<SolrNodeMetadata> toApiModel(SolrNodeMetadataListModel model) {
         Objects.requireNonNull(model, "Argument 'model' is required");
-        return model.getNodes().stream().map(this::toApiModel).collect(Collectors.toList());
+        return model.getNodes() == null ? null
+                : model.getNodes().stream().map(this::toApiModel).collect(Collectors.toList());
     }
 
-    private SolrNodeMetadata toApiModel(SolrNodeMetadataModel model) {
+    SolrNodeMetadata toApiModel(SolrNodeMetadataModel model) {
         return new SolrNodeMetadata(
                 model.getId(),
                 model.getAclId(),
@@ -99,12 +104,18 @@ public class SpringModelMapper {
                 model.getType(),
                 model.getProperties(),
                 model.getAspects(),
-                model.getPaths().stream().map(this::toApiModel).collect(Collectors.toList()),
-                model.getNamePaths().stream().map(this::toApiModel).collect(Collectors.toList()),
+                model.getPaths() == null ? null
+                        : model.getPaths().stream().map(this::toApiModel).collect(Collectors.toList()),
+                model.getNamePaths() == null ? null
+                        : model.getNamePaths().stream().map(this::toApiModel).collect(Collectors.toList()),
                 model.getAncestors(),
-                model.getParentAssocs().stream().map(this::createChildAssociation).collect(Collectors.toList()),
+                model.getParentAssocs() == null ? null
+                        : model.getParentAssocs().stream().map(this::createChildAssociation)
+                                .collect(Collectors.toList()),
                 model.getParentAssocsCrc(),
-                model.getChildAssocs().stream().map(this::createChildAssociation).collect(Collectors.toList()),
+                model.getChildAssocs() == null ? null
+                        : model.getChildAssocs().stream().map(this::createChildAssociation)
+                                .collect(Collectors.toList()),
                 model.getChildIds(),
                 model.getOwner(),
                 model.getTenantDomain());
