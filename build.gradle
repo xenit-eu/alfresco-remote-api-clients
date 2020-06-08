@@ -1,11 +1,19 @@
 plugins {
-    id 'com.avast.gradle.docker-compose' version '0.9.5'
+    id "eu.xenit.docker-compose" version "5.3.0"
+    id 'org.springframework.boot' version '2.6.6' apply false
+    id 'io.spring.dependency-management'  version '1.0.11.RELEASE' apply false
+    id "be.vbgn.ci-detect" version "0.5.0"
 }
 
-group = 'eu.xenit.alfresco.client'
-version = '0.1.0-SNAPSHOT'
-
 subprojects {
+    group = 'eu.xenit.alfresco.client'
+    version = '1.0.0'
+
+    boolean isRelease = ci.branch?.startsWith("release")
+    if (!isRelease) {
+        version += "-SNAPSHOT"
+    }
+
     pluginManager.withPlugin('java-library') {
 
         sourceCompatibility = '1.8'
@@ -15,14 +23,23 @@ subprojects {
             withJavadocJar()
         }
     }
+
+    pluginManager.withPlugin('org.springframework.boot') {
+        bootJar {
+            enabled = false
+        }
+    }
+
 }
 
 ext {
-    lombokVersion = '1.18.10'
-    junitVersion = '5.5.2'
-    assertjVersion = '3.13.2'
-    mockitoVersion = '3.1.0'
-    dittoVersion = '0.5.0-SNAPSHOT'
+    lombokVersion = '1.18.24'
+    jacksonVersion = '2.13.2'
+    junitVersion = '5.8.2'
+    assertjVersion = '3.21.0'
+    mockitoVersion = '4.4.0'
+    commonsIoVersion= '2.11.0'
+    dittoVersion = '0.6.0'
 }
 
 dockerCompose {

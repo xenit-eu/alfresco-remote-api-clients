@@ -33,7 +33,7 @@ public abstract class RestApiSpringClient {
         this.restTemplate = restTemplate;
     }
 
-    /**
+    /*
      * Build a RestTemplate, but side-step all features that use classpath-detection. That gives superfluous errors when
      * used in environments with a special classloader (e.g. Fusion connector)
      */

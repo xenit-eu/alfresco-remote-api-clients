@@ -2,9 +2,6 @@ plugins {
     id 'java-library'
 }
 
-group = rootProject.group
-version = rootProject.version
-
 dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

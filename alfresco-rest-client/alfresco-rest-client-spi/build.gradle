@@ -2,15 +2,12 @@ plugins {
     id 'java-library'
 }
 
-group = rootProject.group
-version = rootProject.version
-
 dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     api project(":alfresco-remote-api-exceptions")
-    api "com.fasterxml.jackson.core:jackson-annotations:2.10.0"
+    api "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
 
     testImplementation "org.assertj:assertj-core:${assertjVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
