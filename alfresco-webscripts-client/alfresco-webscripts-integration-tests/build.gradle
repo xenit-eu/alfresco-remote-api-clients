@@ -2,6 +2,9 @@ plugins {
     id 'java-library'
 }
 
+description = "Integration tests to access Alfresco's Webscripts Endpoint"
+
+
 dependencies {
     api project(':alfresco-webscripts-client:alfresco-webscripts-spi')
 
