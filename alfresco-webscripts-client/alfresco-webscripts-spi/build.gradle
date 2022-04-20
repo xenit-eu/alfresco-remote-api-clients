@@ -2,6 +2,9 @@ plugins {
     id 'java-library'
 }
 
+description = "API definition to access Alfresco's Webscripts Endpoint"
+
+
 dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

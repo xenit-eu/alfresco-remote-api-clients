@@ -2,6 +2,8 @@ plugins {
     id 'java-library'
 }
 
+description = "Ditto implementation to  access Alfresco's SOLR Endpoint"
+
 repositories {
     mavenCentral()
     maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }

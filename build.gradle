@@ -7,7 +7,7 @@ plugins {
 
 subprojects {
     group = 'eu.xenit.alfresco.client'
-    version = '1.0.0'
+    version = '1.0.1'
 
     boolean isRelease = ci.branch?.startsWith("release")
     if (!isRelease) {
