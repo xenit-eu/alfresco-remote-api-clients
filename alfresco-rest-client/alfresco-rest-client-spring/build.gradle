@@ -21,6 +21,8 @@ configurations {
     integrationTestAnnotationProcessor.extendsFrom annotationProcessor
 }
 
+description = "Spring implementation to access Alfresco's Rest Endpoints"
+
 dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
