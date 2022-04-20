@@ -2,9 +2,6 @@ plugins {
     id 'java-library'
 }
 
-group = rootProject.group
-version = rootProject.version
-
 repositories {
     mavenCentral()
     maven { url 'https://artifacts.alfresco.com/nexus/content/groups/public/' }
@@ -35,7 +32,7 @@ dependencies {
     api project(':alfresco-webscripts-client:alfresco-webscripts-spi')
     api "eu.xenit.testing.ditto:ditto:${dittoVersion}"
 
-    implementation 'commons-io:commons-io:2.5'
+    implementation "commons-io:commons-io:${commonsIoVersion}"
 
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
