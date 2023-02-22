@@ -129,7 +129,7 @@ public class SolrApiFakeClient implements SolrApiClient {
                 .collect(Collectors.toList());
     }
 
-    public void noLiveNodeExistsCheck(Node node) {
+    private void noLiveNodeExistsCheck(Node node) {
         liveNodeExistChecker.noLiveNodeExistsCheck(node, nodeView);
     }
 
