@@ -16,12 +16,12 @@ jobs:
           username: ${{ secrets.XENIT_DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.XENIT_DOCKER_REGISTRY_PASSWORD }}
       - name: Unit tests
-        uses: gradle/gradle-build-action@v2.3.0
+        uses: gradle/gradle-build-action@v2.4.2
         with:
           cache-read-only: false
           arguments: test --info
       - name: Integration tests
-        uses: gradle/gradle-build-action@v2.3.0
+        uses: gradle/gradle-build-action@v2.4.2
         with:
           cache-read-only: false
           arguments: integrationTest --info -Pservice.alfresco.tcp.8080=8080 -Pservice.alfresco.tcp.8443=8443
@@ -34,7 +34,7 @@ jobs:
           retention-days: 2
       - name: Publish to Maven Central / Sonatype
         if: ${{ startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/release') }}
-        uses: gradle/gradle-build-action@v2.3.0
+        uses: gradle/gradle-build-action@v2.4.2
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.MAVEN_CENTRAL_GPG_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.MAVEN_CENTRAL_GPG_PASSWORD }}
